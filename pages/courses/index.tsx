@@ -1,14 +1,13 @@
 import { useRouter } from 'next/router'
 
+import CourseList from '../../components/courses/course-list'
+import { getAllCourses } from '../../dummy-data'
+
 function CoursePage() {
   const router = useRouter()
-  router.query.courseId
+  const AllCourses = getAllCourses()
 
-  return (
-    <>
-      <h1>The empty page</h1>
-    </>
-  )
+  return <CourseList items={AllCourses} />
 }
 
 export default CoursePage

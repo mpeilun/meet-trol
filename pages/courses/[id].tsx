@@ -15,13 +15,11 @@ function CourseInnerPage() {
   }
 
   return (
-    <>
-      <ul>
-        <li>{course.id}</li>
-        <li>{course.description}</li>
-        <li>{course.image}</li>
-      </ul>
-    </>
+    <ul>
+      <li>{course.id}</li>
+      <li>{course.description}</li>
+      <li>{course.image}</li>
+    </ul>
   )
 }
 
