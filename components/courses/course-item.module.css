@@ -1,0 +1,14 @@
+.item {
+  margin: 40px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+.content {
+  padding-left: 20px;
+}
+
+.icon {
+  margin-left: 2px;
+}

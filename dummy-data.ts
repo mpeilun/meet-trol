@@ -22,4 +22,8 @@ function getAllCourses() {
   return courseData
 }
 
-export { courseData, getFeatredCourses, getAllCourses }
+function getCourseById(id: string) {
+  return courseData.find((course) => course.id === id)
+}
+
+export { courseData, getFeatredCourses, getAllCourses, getCourseById }
