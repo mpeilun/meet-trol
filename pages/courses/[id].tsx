@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router'
-
 import { CourseDataType, getCourseById } from '../../dummy-data'
 
 function CourseInnerPage() {
@@ -21,6 +20,24 @@ function CourseInnerPage() {
       <li>{course.image}</li>
     </ul>
   )
+}
+
+export async function getStaticPaths() {
+  return {
+    paths: [{ params: { id: 'e1' } }],
+    fallback: true,
+    //true(找無pre-render時，render, 此時還沒有資料, 需要有fallback) false blocking
+  }
+}
+
+export async function getStaticProps(content: any) {
+  console.log(content.params)
+
+  return {
+    props: {
+      items: '',
+    },
+  }
 }
 
 export default CourseInnerPage

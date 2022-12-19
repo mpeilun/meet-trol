@@ -19,7 +19,7 @@ function SerachCoursesPage() {
           onChange={(newValue) => {
             setValue(newValue)
             if (newValue) {
-              router.push(`courses/${newValue.year()}/${newValue.month()}/${newValue.date()}`)
+              router.push(`courses/${newValue.year()}/${newValue.month() + 1}/${newValue.date()}`)
             }
           }}
           renderInput={(params) => <TextField {...params} />}

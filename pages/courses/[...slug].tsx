@@ -14,8 +14,7 @@ function FilterdCoursesPage() {
   }
 
   if (!isNaN(Number(filterData[1])) && !isNaN(Number(filterData[2])) && !isNaN(Number(filterData[3]))) {
-    console.log(filterData)
-    courses = getFilterdEvents(new Date(`${filterData[1]}/${filterData[2]}/${filterData[3]}`))
+    courses = getFilterdEvents(new Date(`${filterData[1]}/${Number(filterData[2])}/${filterData[3]}`))
   } else {
     return <p>Wrong input format</p>
   }

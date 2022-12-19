@@ -9,7 +9,7 @@ import { CourseDataType } from '../../dummy-data'
 
 function CourseItem(props: { course: CourseDataType }) {
   const { course } = props
-  const humanReeadableDate = new Date(course.data).toLocaleDateString('zh-TW', {
+  const humanReeadableDate = new Date(course.date).toLocaleDateString('zh-TW', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
