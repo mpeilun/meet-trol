@@ -5,7 +5,7 @@ function Layout(props: { children: ReactNode }) {
   return (
     <Fragment>
       <MainHeader />
-      <main>{props.children}</main>
+      <main style={{height:'calc(100vh - 64px)'}}>{props.children}</main>
     </Fragment>
   )
 }
