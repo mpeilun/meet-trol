@@ -4,10 +4,12 @@ import ReactPlayer from 'react-player/youtube'
 import Slide from '@mui/material/Slide';
 
 import { CourseDataType, getCourseById } from '../../dummy-data'
-import { Box, Button, ButtonBase, Card, Chip, Fab } from '@mui/material';
+import { Box, Button, ButtonBase, Fab, Tooltip} from '@mui/material';
+import Slider, { SliderValueLabelProps } from '@mui/material/Slider';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import Choice from '../../components/question/choice';
+import PauseIcon from '@mui/icons-material/Pause';
 
 interface ReactPlayerOnProgressProps {
   played: number,
@@ -31,6 +33,7 @@ function CourseInnerPage() {
   const [playing, setPlaying] = React.useState(false)
   const play = () => setPlaying(true)
   const pause = () => setPlaying(false)
+  const [videoDuration, setVideoDuration] = React.useState(0)
 
   //Question
   const [question, setQuestion] = React.useState(<></>)
@@ -52,20 +55,22 @@ function CourseInnerPage() {
         height: playerRef.current.props.height,
       }
     )
+    console.log(playerRef.current)
+    setVideoDuration(playerRef.current.getDuration())
   }
 
   let handlePlayerStatus = (props: ReactPlayerOnProgressProps) => {
     if (props.playedSeconds > 14.0 && props.playedSeconds < 18.0) {
-      if (!questionHadClosed&&!displayQuestion) {
+      if (!questionHadClosed && !displayQuestion) {
         pause()
         setDisplayQuesiton(true)
         console.log(`${questionHadClosed} 第一次開 + ${props.playedSeconds}`)
       }
-      else if (questionHadClosed){
+      else if (questionHadClosed) {
         setDisplayFab(true)
       }
     }
-    else{
+    else {
       setDisplayFab(false)
     }
     setProgress(
@@ -86,11 +91,15 @@ function CourseInnerPage() {
         <Box sx={{ position: 'relative', width: '100%' }}
           onMouseOver={() => { setMouseEnter(true) }}
           onMouseOut={() => { setMouseEnter(false) }}>
+
+
+
+          {/* 自訂播放bar */}
           <Box
             sx={{
               height: 50,
               width: '100%',
-              display: 'flex',
+              // display: 'flex',
               // padding: 2,
               // borderRadius: 1,
               overflow: 'hidden',
@@ -100,20 +109,39 @@ function CourseInnerPage() {
             position={'absolute'}
           >
             <Slide direction="up" in={mouseEnter} container={containerRef.current}>
-              <div style={{ width: playerControllerProps.width, height: `calc(${playerControllerProps.height} * 0.15)`, backgroundColor: 'gray' }}>
+              <div style={{ width: playerControllerProps.width, height: `calc(${playerControllerProps.height} * 0.15)`, backgroundColor: 'gray', opacity: '80%'}}>
                 {/* {player bar} */}
-                <ButtonBase sx={{height: '100%', width:50}}><PlayArrowIcon/></ButtonBase>
+                {/* <Slider
+                  valueLabelDisplay="auto"
+                  slots={{
+                    valueLabel: ValueLabelComponent,
+                  }}
+                  aria-label="custom thumb label"
+                  defaultValue={20}
+                  sx={{
+                    // position: 'absolute',
+                    // top:-17,
+                  }}
+                  min={0}
+                  max={videoDuration}
+                /> */}
+                <ButtonBase sx={{ height: 50, width: 50 }} onClick={() => { playing ? pause() : play() }}>
+                  {playing ? <PauseIcon /> : <PlayArrowIcon />}
+                </ButtonBase>
               </div>
             </Slide>
-
           </Box>
+
+
           <Choice displayQuestion={displayQuestion} handleQuestionClose={handleQuestionClose}></Choice>
-          <Fab 
-          color="primary" 
-          sx={{ position: 'absolute', bottom: mouseEnter ? 70 : 20, left: 20, display: displayFab ? 'flex' : 'none', justifyContent:'center'}}
-          onClick={()=>setDisplayQuesiton(true)}
+
+
+          <Fab
+            color="primary"
+            sx={{ position: 'absolute', bottom: mouseEnter ? 70 : 20, left: 20, display: displayFab ? 'flex' : 'none', justifyContent: 'center' }}
+            onClick={() => setDisplayQuesiton(true)}
           >
-            <QuestionMarkIcon/>
+            <QuestionMarkIcon />
           </Fab>
           <ReactPlayer
             url={url}
@@ -125,9 +153,10 @@ function CourseInnerPage() {
             onReady={onPlayerReady}
             width={'100%'}
             height={600}
-            // config={{
-            //     playerVars: { modestbranding: 0 }
-            // }}
+            progressInterval={200}
+          // config={{
+          //     playerVars: { modestbranding: 0 }
+          // }}
           />
 
         </Box>
@@ -149,3 +178,13 @@ function CourseInnerPage() {
 }
 
 export default CourseInnerPage
+
+function ValueLabelComponent(props: SliderValueLabelProps) {
+  const { children, value } = props;
+
+  return (
+    <Tooltip enterTouchDelay={0} placement="top" title={value}>
+      {children}
+    </Tooltip>
+  );
+}
