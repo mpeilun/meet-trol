@@ -24,7 +24,7 @@ function CourseInnerPage() {
 
 export async function getStaticPaths() {
   return {
-    paths: [{ params: { id: 'e1' } }],
+    paths: [{ params: { id: 'e1' } }, { params: { id: 'e2' } }, { params: { id: 'e3' } }, { params: { id: 'e4' } }],
     fallback: true,
     //true(找無pre-render時，render, 此時還沒有資料, 需要有fallback) false blocking
   }
