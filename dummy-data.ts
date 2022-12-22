@@ -14,7 +14,7 @@ const courseData: Array<CourseDataType> = [
   { id: 'e4', title: 'Python', description: 'Course for Starting Python', date: '2021/12/19', image: '/images/image-2.jpg', isFeatured: false },
 ]
 
-function getFeatredCourses() {
+function getFeaturedCourses() {
   return courseData.filter((course) => course.isFeatured)
 }
 
@@ -26,11 +26,11 @@ function getCourseById(id: string) {
   return courseData.find((course) => course.id === id)
 }
 
-function getFilterdEvents(dateFillter: Date) {
+function getFilteredEvents(dateFilleter: Date) {
   return courseData.filter((course) => {
     let courseDate = new Date(course.date)
-    return courseDate.toDateString() === dateFillter.toDateString()
+    return courseDate.toDateString() === dateFilleter.toDateString()
   })
 }
 
-export { courseData, getFeatredCourses, getAllCourses, getCourseById, getFilterdEvents }
+export { courseData, getFeaturedCourses, getAllCourses, getCourseById, getFilteredEvents }

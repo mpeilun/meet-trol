@@ -9,12 +9,12 @@ import { CourseDataType } from '../../dummy-data'
 
 function CourseItem(props: { course: CourseDataType }) {
   const { course } = props
-  const humanReeadableDate = new Date(course.date).toLocaleDateString('zh-TW', {
+  const humanReadableDate = new Date(course.date).toLocaleDateString('zh-TW', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
   })
-  const exploeeLink = `/courses/${course.id}`
+  const exploreLink = `/courses/${course.id}`
 
   return (
     <li className={styles.item}>
@@ -23,9 +23,9 @@ function CourseItem(props: { course: CourseDataType }) {
         <div>
           <h2>{course.title}</h2>
         </div>
-        <div>{humanReeadableDate}</div>
+        <div>{humanReadableDate}</div>
         <div>
-          <Button href={exploeeLink} variant="outlined" LinkComponent={Link} size="small" sx={{ marginTop: 1 }}>
+          <Button href={exploreLink} variant="outlined" LinkComponent={Link} size="small" sx={{ marginTop: 1 }}>
             <span>Explore Course</span>
             <ArrowRightAltOutlinedIcon className={styles.icon} />
           </Button>
