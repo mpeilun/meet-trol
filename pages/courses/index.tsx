@@ -2,21 +2,34 @@ import { useRouter } from 'next/router'
 
 import CourseList from '../../components/courses/course-list'
 import { getAllCourses } from '../../lib/dummy-data'
-import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, Button, Tooltip, MenuItem } from '@mui/material'
+import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, Button, Tooltip, MenuItem, TextField } from '@mui/material'
+import Grid from '@mui/material/Unstable_Grid2' // Grid version 2
 import { grey } from '@mui/material/colors'
 
 function AllCoursesPage() {
   return (
     <>
-      <Box display="flex" flexDirection="row-reverse" width={'80%'} height={'100%'} maxWidth={'xl'} m={'4rem auto'} sx={{ backgroundColor: '#fff' }}>
-        <Box>加入課程</Box>
-        <Box display="flex" flexDirection="column" p={10}>
-          <Typography variant="h5">我的課程</Typography>
-          <Box width={'500px'} height={'250px'} bgcolor={'#000'}>
-            {' '}
+      <Grid container flexDirection="row-reverse" justifyContent="space-between" spacing={2} width={'80%'} height={'100%'} maxWidth={'xl'} m={'5rem auto'} p={'2rem'} sx={{ backgroundColor: '#fff' }}>
+        <Grid md={12} xs={12} display="flex" justifyContent="center" alignContent="center" m={2}>
+          <TextField sx={{ width: '50%', minWidth: '100px' }}></TextField>
+          {/*TODO 考慮使用ICON Button */}
+          <Button variant="contained" sx={{ ml: '5%' }}>
+            <Typography>加入課程</Typography>
+          </Button>
+        </Grid>
+        <Grid md={12} xs={12}>
+          <Box display="flex" flexDirection="column" m={2}>
+            <Typography variant="h5">我的課程</Typography>
+            {(function () {
+              let elements = []
+              for (let i = 0; i < 10; i++) {
+                elements.push(<Box key={i} mt={1} width={'100%'} height={'8rem'} bgcolor={'#000'}></Box>)
+              }
+              return elements
+            })()}
           </Box>
-        </Box>
-      </Box>
+        </Grid>
+      </Grid>
     </>
   )
 }
