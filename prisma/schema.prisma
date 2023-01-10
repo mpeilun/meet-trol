@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @db.Date
+  updatedAt DateTime @db.Date
+  email     String
+  googleId  String
+  name      String
+}
+
+// type ClassesEvent {
+//   id          String                    @map("_id") @db.ObjectId
+//   active      Boolean
+//   endTime     DateTime                  @db.Date
+//   participant ClassesEventParticipant[]
+//   question    String[]                  @db.ObjectId
+//   startTime   DateTime?                 @db.Date
+//   title       String
+// }
+
+// type ClassesEventParticipant {
+//   id       String   @map("_id") @db.ObjectId
+//   joinTime DateTime @db.Date
+//   userId   String   @db.ObjectId
+// }
+
+// type OrderansItems {
+//   id    String @map("_id") @db.ObjectId
+//   title String
+// }
+
+// type OrdersItems {
+//   id    String @map("_id") @db.ObjectId
+//   title String
+// }
+
+// type QuestionsFeedback {
+//   anser  QuestionsFeedbackAnser?
+//   answer String[]
+//   userId String                  @db.ObjectId
+// }
+
+// type QuestionsFeedbackAnser {
+//   score Int
+//   title String
+// }
+
+// type QuestionsOption {
+//   id      String   @map("_id") @db.ObjectId
+//   correct Boolean?
+//   title   String
+// }
+
+// type QuestionsTimmer {
+//   enable Boolean
+//   time   Int
+// }
+
+// model classes {
+//   id        String         @id @default(auto()) @map("_id") @db.ObjectId
+//   v         Int            @map("__v")
+//   code      String
+//   createdAt DateTime       @db.Date
+//   event     ClassesEvent[]
+//   member    String[]       @db.ObjectId
+//   owner     String[]       @db.ObjectId
+//   updatedAt DateTime       @db.Date
+// }
+
+// model orderans {
+//   id         String          @id @default(auto()) @map("_id") @db.ObjectId
+//   v          Int             @map("__v")
+//   items      OrderansItems[]
+//   qTitle     String
+//   questionId String
+//   studentId  String
+// }
+
+// model orders {
+//   id            String        @id @default(auto()) @map("_id") @db.ObjectId
+//   v             Int           @map("__v")
+//   items         OrdersItems[]
+//   questionTitle String
+// }
+
+// model questions {
+//   id           String            @id @default(auto()) @map("_id") @db.ObjectId
+//   Question     String
+//   v            Int               @map("__v")
+//   active       Boolean?
+//   canEdit      Boolean?
+//   canSeeResult Boolean?
+//   createdAt    DateTime          @db.Date
+//   /// Multiple data types found: Json: 33.3%, Array(QuestionsFeedback): 66.7% out of 46 sampled entries
+//   feedback     Json?
+//   option       QuestionsOption[]
+//   timmer       QuestionsTimmer?
+//   title        String?
+//   type         String
+//   updatedAt    DateTime          @db.Date
+// }
+
+// model rankings {
+//   id       String @id @default(auto()) @map("_id") @db.ObjectId
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   feedback Json?
+// }
+
+// model ratings {
+//   id String @id @default(auto()) @map("_id") @db.ObjectId
+// }
+
+// model users {
+//   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+//   v         Int      @map("__v")
+//   /// Could not determine type: the field only had null or empty values in the sample set.
+//   class     Json?
+//   createdAt DateTime @db.Date
+//   email     String
+//   googleId  String
+//   name      String
+//   updatedAt DateTime @db.Date
+// }

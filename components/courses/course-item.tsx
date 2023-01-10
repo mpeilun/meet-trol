@@ -5,7 +5,7 @@ import ArrowRightAltOutlinedIcon from '@mui/icons-material/ArrowRightAltOutlined
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
 
 import styles from './course-item.module.css'
-import { CourseDataType } from '../../dummy-data'
+import { CourseDataType } from '../../lib/dummy-data'
 
 function CourseItem(props: { course: CourseDataType }) {
   const { course } = props

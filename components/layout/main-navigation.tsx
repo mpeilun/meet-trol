@@ -6,11 +6,12 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
 
 const pages = [
   { displayName: '我的課程', path: '/courses' },
-  { displayName: '搜尋', path: '/courses/search' },
+  { displayName: '課程管理', path: '/courses' },
+  { displayName: '關於我們', path: '/courses/search' },
 ]
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout']
 
-function MainHeader() {
+function MainNavigation() {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null)
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null)
 
@@ -29,7 +30,7 @@ function MainHeader() {
   }
 
   return (
-    <AppBar position="static">
+    <AppBar component="nav" position="sticky">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* 手機尺寸 */}
@@ -143,4 +144,4 @@ function MainHeader() {
   )
 }
 
-export default MainHeader
+export default MainNavigation

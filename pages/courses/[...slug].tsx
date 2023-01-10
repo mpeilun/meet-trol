@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import CircularProgress from '@mui/material/CircularProgress'
 
-import { CourseDataType, getFilteredEvents, getAllCourses } from '../../dummy-data'
+import { CourseDataType, getFilteredEvents, getAllCourses } from '../../lib/dummy-data'
 import CourseList from '../../components/courses/course-list'
 
 function FilteredCoursesPage() {

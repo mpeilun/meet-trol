@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { CourseDataType, getCourseById } from '../../dummy-data'
+import { CourseDataType, getCourseById } from '../../lib/dummy-data'
 
 function CourseInnerPage() {
   const router = useRouter()

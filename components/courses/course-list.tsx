@@ -1,5 +1,5 @@
 import CourseItem from './course-item'
-import { CourseDataType } from '../../dummy-data'
+import { CourseDataType } from '../../lib/dummy-data'
 
 function CourseList(props: { items: Array<CourseDataType> }) {
   return (
