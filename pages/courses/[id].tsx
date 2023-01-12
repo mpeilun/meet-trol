@@ -4,12 +4,20 @@ import ReactPlayer from 'react-player/youtube'
 import Slide from '@mui/material/Slide';
 
 import { CourseDataType, getCourseById } from '../../dummy-data'
-import { Box, Button, ButtonBase, Fab, Tooltip} from '@mui/material';
+import { Box, Button, ButtonBase, Fab, Tooltip, Typography } from '@mui/material';
 import Slider, { SliderValueLabelProps } from '@mui/material/Slider';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import Choice from '../../components/question/choice';
 import PauseIcon from '@mui/icons-material/Pause';
+
+import { pdfjs, Document, Page } from 'react-pdf'
+
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
+import 'react-pdf/dist/esm/Page/TextLayer.css'
+import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
 
 interface ReactPlayerOnProgressProps {
   played: number,
@@ -18,6 +26,9 @@ interface ReactPlayerOnProgressProps {
   loadedSeconds: number
 }
 let questionHadClosed = false
+let loadedNumPage = false
+
+const path = '/assets/test.pdf'
 
 function CourseInnerPage() {
   const router = useRouter()
@@ -39,6 +50,15 @@ function CourseInnerPage() {
   const [question, setQuestion] = React.useState(<></>)
   const [displayQuestion, setDisplayQuesiton] = React.useState(false)
   const [displayFab, setDisplayFab] = React.useState(false)
+
+  //PDF
+  const [page, setPage] = React.useState(1)
+  const [numPages, setNumPages] = React.useState(null)
+  const [hoverPDF, setHoverPDF] = React.useState(false)
+
+  function onDocumentLoadSuccess({ numPages: nextNumPages }: any) {
+      setNumPages(nextNumPages);
+  }
 
   let course: CourseDataType | undefined
   if (typeof courseId === 'string') {
@@ -87,7 +107,7 @@ function CourseInnerPage() {
 
   return (
     <Box display='flex' height={'100%'}>
-      <Box width={'100%'}>
+      <Box width={'100%'} className='lesson-content' overflow='scroll'>
         <Box sx={{ position: 'relative', width: '100%' }}
           onMouseOver={() => { setMouseEnter(true) }}
           onMouseOut={() => { setMouseEnter(false) }}>
@@ -109,7 +129,7 @@ function CourseInnerPage() {
             position={'absolute'}
           >
             <Slide direction="up" in={mouseEnter} container={containerRef.current}>
-              <div style={{ width: playerControllerProps.width, height: `calc(${playerControllerProps.height} * 0.15)`, backgroundColor: 'gray', opacity: '80%'}}>
+              <div style={{ width: playerControllerProps.width, height: `calc(${playerControllerProps.height} * 0.15)`, backgroundColor: 'gray', opacity: '80%' }}>
                 {/* {player bar} */}
                 {/* <Slider
                   valueLabelDisplay="auto"
@@ -166,8 +186,41 @@ function CourseInnerPage() {
           <li>{course.description}</li>
           <li>{course.image}</li>
         </ul>
+
+        <div className='pdf-controller-div'
+        style={{ position: 'relative', height: 800}} onMouseEnter={()=>setHoverPDF(true)} onMouseLeave={()=>setHoverPDF(false)}>
+          {/* <embed src={path} type='application/pdf' width={'100%'} height={1000}></embed> */}
+          <Document file={path} onLoadSuccess={onDocumentLoadSuccess}>
+            {/* {Array.from({ length: numPages! }, (_, index) => (
+              <Page
+                key={`page_${index + 1}`}
+                pageNumber={index + 1}
+                renderAnnotationLayer={true}
+                renderTextLayer={true}
+              />
+            ))} */}
+            <Page key={`page_${page + 1}`} pageNumber={page} renderAnnotationLayer={true} renderTextLayer={true} />
+          </Document>
+          <Box
+          className='pdf-controller-box'
+            position='absolute'
+            left={'50%'}
+            bottom='5%'
+            bgcolor='white'
+            mx={'auto'}
+            display='flex'
+            alignItems='center'
+            sx={{ transform: 'translateX(-50%)',
+             transition: 'opacity ease-in-out 0.2s',
+             opacity: hoverPDF?100:0,
+             }}>
+            <Button sx={{ width: 50, height: 50 }} onClick={()=>setPage(page-1)} disabled={page==1}><KeyboardArrowLeft /></Button>
+            <Typography color='black'>第{page}頁</Typography>
+            <Button sx={{ width: 50, height: 50 }} onClick={()=>setPage(page+1)} disabled={page==numPages}><KeyboardArrowRight /></Button>
+          </Box>
+        </div>
       </Box>
-      <Box width={300} bgcolor='#FEFFFF' display='flex' flex={{ alignItems: 'center' }} flexDirection='column'>
+      <Box className='lesson-bar' width={300} bgcolor='#FEFFFF' display='flex' sx={{ alignItems: 'center' }} flexDirection='column'>
         <Button variant='outlined' sx={{ height: 50, width: 275, m: 1 }}>章節一</Button>
         <Button variant='outlined' sx={{ height: 50, width: 275, m: 1 }}>章節二</Button>
         <Button variant='outlined' sx={{ height: 50, width: 275, m: 1 }}>章節三</Button>
@@ -188,3 +241,21 @@ function ValueLabelComponent(props: SliderValueLabelProps) {
     </Tooltip>
   );
 }
+
+// function PageController() {
+//   return (
+//     <Box
+//       position='absolute'
+//       left={'50%'}
+//       bottom='5%'
+//       bgcolor='white'
+//       mx={'auto'}
+//       display='flex'
+//       alignItems='center'
+//       sx={{ transform: 'translateX(-50%)' }}>
+//       <ButtonBase sx={{ width: 50, height: 50 }}><KeyboardArrowLeft /></ButtonBase>
+//       <Typography>第1頁</Typography>
+//       <ButtonBase sx={{ width: 50, height: 50 }}><KeyboardArrowRight /></ButtonBase>
+//     </Box>
+//   )
+// }
