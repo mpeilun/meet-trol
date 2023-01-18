@@ -6,49 +6,49 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 import 'react-pdf/dist/esm/Page/TextLayer.css'
 import { Box, Button, Typography } from '@mui/material'
-import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material'
+import { KeyboardArrowLeft, KeyboardArrowRight, ZoomIn, ZoomOut } from '@mui/icons-material'
 
+const pdfControllerButtonSx = {
+  width: 50,
+  height: 50
+}
+
+interface PageSize {
+  width: number,
+  height: number,
+}
 function PDF() {
-  const router = useRouter()
   const path = '/assets/test.pdf'
-  //PDF
-  const [page, setPage] = React.useState(1)
-  const [numPages, setNumPages] = React.useState(null)
-  const [hoverPDF, setHoverPDF] = React.useState(false)
+  //PDF  
+  const [numPages, setNumPages] = React.useState(null)//PDF的總頁數
+  const [page, setPage] = React.useState(1)//當前PDF頁面編號
+  const [pageHeight, setPageHeight] = React.useState(100) //取得PDF當頁的高度
+  const [hoverPDF, setHoverPDF] = React.useState(false) //滑鼠是否懸浮在PDF上
+  const [scale, setScale] = React.useState(1)
 
-  function onDocumentLoadSuccess({ numPages: nextNumPages }: any) {
-    setNumPages(nextNumPages);
+  //文件載入成功
+  const onDocumentLoadSuccess = ({ numPages }: { numPages: any }) => {
+    setNumPages(numPages)
+    console.log("我執行了")
   }
+  const onRenderSuccess = (page: any) => {
+    setPageHeight(page.height + 100);
+    console.log('hello')
+  };
   return (
-    // <Document file={path} onLoadSuccess={onDocumentLoadSuccess}>
-    //     {Array.from({ length: numPages! }, (_, index) => (
-    //         <Page
-    //           key={`page_${index + 1}`}
-    //           pageNumber={index + 1}
-    //           renderAnnotationLayer={true}
-    //           renderTextLayer={true}
-    //         />
-    //       ))}
-    // </Document>
-    // <Box width='500px' height='300px' sx={{backgroundColor: 'green'}} position='relative'>
-    //     <Box position='absolute' left={'50%'} bottom='5%' bgcolor='blue' mx={'auto'} sx={{transform: 'translateX(-50%)'}} display='flex' alignItems='center'>
-    //         <ButtonBase sx={{width: 50, height: 50}}><KeyboardArrowLeft/></ButtonBase>
-    //         <Typography>第1頁</Typography>
-    //         <ButtonBase sx={{width: 50, height: 50}}><KeyboardArrowRight/></ButtonBase>
-    //     </Box>
-    // </Box>
-    <div className='pdf-controller-div'
-      style={{ position: 'relative' }} onMouseEnter={() => setHoverPDF(true)} onMouseLeave={() => setHoverPDF(false)}>
+    <Box className='pdf-controller-div'
+      sx={{
+        position: 'relative',
+        height: pageHeight
+      }} onMouseEnter={() => setHoverPDF(true)} onMouseLeave={() => setHoverPDF(false)}>
       <Document file={path} onLoadSuccess={onDocumentLoadSuccess}>
-        {/* {Array.from({ length: numPages! }, (_, index) => (
-              <Page
-                key={`page_${index + 1}`}
-                pageNumber={index + 1}
-                renderAnnotationLayer={true}
-                renderTextLayer={true}
-              />
-            ))} */}
-        <Page key={`page_${page + 1}`} pageNumber={page} renderAnnotationLayer={true} renderTextLayer={true} />
+        <Page key={`page_${page + 1}`}
+          pageNumber={page}
+          renderAnnotationLayer={true}
+          renderTextLayer={true}
+          onRenderSuccess={onRenderSuccess}
+          scale={scale}
+        />
       </Document>
       <Box
         className='pdf-controller-box'
@@ -64,11 +64,13 @@ function PDF() {
           transition: 'opacity ease-in-out 0.2s',
           opacity: hoverPDF ? 100 : 0,
         }}>
-        <Button sx={{ width: 50, height: 50 }} onClick={() => setPage(page - 1)} disabled={page == 1}><KeyboardArrowLeft /></Button>
-        <Typography color='black'>第{page}頁</Typography>
-        <Button sx={{ width: 50, height: 50 }} onClick={() => setPage(page + 1)} disabled={page == numPages}><KeyboardArrowRight /></Button>
+        <Button sx={pdfControllerButtonSx} onClick={() => setScale(scale-0.2)} disabled={scale == 0.6}><ZoomOut/></Button>
+        <Button sx={pdfControllerButtonSx} onClick={() => setPage(page - 1)} disabled={page == 1}><KeyboardArrowLeft /></Button>
+        <Typography color='black'>{page} / {numPages}</Typography>
+        <Button sx={pdfControllerButtonSx} onClick={() => setPage(page + 1)} disabled={page == numPages}><KeyboardArrowRight /></Button>
+        <Button sx={pdfControllerButtonSx} onClick={() => setScale(scale+0.2)} disabled={scale == 2}><ZoomIn/></Button>
       </Box>
-    </div>
+    </Box>
   )
 }
 

@@ -1,4 +1,7 @@
-import React from 'react';
+import * as React from 'react';
+// import dynamic from 'next/dynamic';
+import {YouTubePlayerProps} from 'react-player/youtube'
+// const ReactPlayer = dynamic(() => import('react-player/youtube'), { ssr: false });
 import ReactPlayer from 'react-player/youtube'
 import Slide from '@mui/material/Slide';
 
@@ -27,14 +30,15 @@ function CoursePlayer() {
   const [videoDuration, setVideoDuration] = React.useState(0)
 
   let onPlayerReady = () => {
-    setPlayerControllerProps(
+    if(playerRef.current!=null){
+      console.log(playerRef.current)
+      setPlayerControllerProps(
       {
         width: playerRef.current.props.width,
         height: playerRef.current.props.height,
-      }
-    )
-    console.log(playerRef.current)
+      })
     setVideoDuration(playerRef.current.getDuration())
+    }
   }
 
   let handlePlayerStatus = (props: ReactPlayerOnProgressProps) => {
@@ -47,6 +51,7 @@ function CoursePlayer() {
 
   return (
     <Box sx={{ position: 'relative', width: '100%' }}
+          className='course-player-div'
           onMouseOver={() => { setMouseEnter(true) }}
           onMouseOut={() => { setMouseEnter(false) }}>
 
