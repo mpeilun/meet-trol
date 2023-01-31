@@ -16,7 +16,7 @@ export default function Choice(props: { displayQuestion: boolean, handleQuestion
       boxShadow:10
     }}>
       <Box minHeight={50} display='flex' alignItems='center'>
-        <Typography variant='h5' sx={{ml:3, width: '100%'}}>問題</Typography>
+        <Typography variant='h5' sx={{mt:2, ml:3, width: '100%'}}>問題</Typography>
         <IconButton sx={{mr:2}} onClick={()=>props.handleQuestionClose()}>
           <CloseIcon/>
         </IconButton>
