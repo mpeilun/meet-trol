@@ -9,11 +9,25 @@ import { Box, ButtonBase } from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import PauseIcon from '@mui/icons-material/Pause'
 
+import PopupModal from '../popup/popupModel'
+import PopupFab from '../popup/popupFab'
+import { Truculenta } from '@next/font/google'
+
 interface ReactPlayerOnProgressProps {
   played: number
   playedSeconds: number
   loaded: number
   loadedSeconds: number
+}
+
+// DATA
+interface questionList {
+  startTime: number
+  endTime: number
+  questionType: number
+  questionTitles: string
+  questionChoice?: Array<string>
+  isAnswer: boolean
 }
 
 function CoursePlayer() {
@@ -31,6 +45,21 @@ function CoursePlayer() {
   const play = () => setPlaying(true)
   const pause = () => setPlaying(false)
   const [videoDuration, setVideoDuration] = React.useState(0)
+  const [questionType, setQuestionType] = React.useState(0)
+
+  // 控制彈跳互動視窗
+  const [openPopupModal, setOpenPopupModal] = React.useState(false)
+  const handleOpenPopupModal = () => {
+    setOpenPopupModal(true)
+    pause()
+  }
+  const handleClosePopupModal = () => {
+    setOpenPopupModal(false)
+    play()
+  }
+
+  // 是否顯示 Fab
+  const [showComponent, setShowComponent] = React.useState(false)
 
   let onPlayerReady = () => {
     if (playerRef.current != null) {
@@ -45,6 +74,22 @@ function CoursePlayer() {
 
   let handlePlayerStatus = (props: ReactPlayerOnProgressProps) => {
     setProgress(`playedSeconds: ${props.playedSeconds}`)
+
+    if (props.playedSeconds >= 10 && props.playedSeconds <= 20) {
+      setQuestionType(1)
+      setShowComponent(true)
+      
+    } else if (props.playedSeconds >= 30 && props.playedSeconds <= 40) {
+      setQuestionType(0)
+      
+      setShowComponent(true)
+    } else if (props.playedSeconds >= 50 && props.playedSeconds <= 60) {
+      setQuestionType(3)
+      setShowComponent(true)
+    } else {
+      setShowComponent(false)
+    }
+    // console.log(props.playedSeconds)
     // console.log(playerRef.current.props.height)
     // console.log(playerRef.current.props.width)
   }
@@ -98,7 +143,14 @@ function CoursePlayer() {
               </div>
             </Slide>
           </Box> */}
-
+      {showComponent && (
+        <PopupFab
+          setClose={handleClosePopupModal}
+          setOpen={handleOpenPopupModal}
+          open={openPopupModal}
+          questionType={questionType}
+        ></PopupFab>
+      )}
       <ReactPlayer
         url={url}
         playing={playing}

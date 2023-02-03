@@ -21,6 +21,7 @@
     "@prisma/client": "^4.8.1",
     "@types/node": "18.11.16",
     "@types/react": "18.0.26",
+    "@types/react-beautiful-dnd": "^13.1.2",
     "@types/react-dom": "18.0.9",
     "dayjs": "^1.11.7",
     "eslint": "8.30.0",
@@ -34,10 +35,9 @@
     "react-pdf": "^6.2.2",
     "react-player": "^2.11.0",
     "swr": "^2.0.0",
-    "typescript": "4.9.4",
-    "@types/react-beautiful-dnd": "^13.1.2"
+    "typescript": "4.9.4"
   },
   "devDependencies": {
-    
+    "@types/react-pdf": "^6.2.0"
   }
 }

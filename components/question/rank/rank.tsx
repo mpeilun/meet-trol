@@ -10,6 +10,9 @@ import {
   ListItem,
   ListItemText,
   Button,
+  AlertColor,
+  Collapse,
+  Alert,
 } from '@mui/material'
 import {
   DragDropContext,
@@ -19,13 +22,16 @@ import {
 } from 'react-beautiful-dnd'
 import CloseIcon from '@mui/icons-material/Close'
 import MenuIcon from '@mui/icons-material/Menu'
-import { resetServerContext } from "react-beautiful-dnd"
+import { resetServerContext } from 'react-beautiful-dnd'
 
-
+interface alert {
+  isShow: boolean
+  text: string
+  severity: AlertColor
+}
 
 export default function RankQuestion(props: {
-  displayQuestion: boolean
-  handleQuestionClose: Function
+  handleQuestionClose: () => void
 }) {
   //   React.useEffect(() => {
   //     chrome.runtime.sendMessage(
@@ -54,9 +60,14 @@ export default function RankQuestion(props: {
   //   }
 
   const initialItems: Array<{ title: string }> = [
-    { title: 'aa' },
-    { title: 'bb' },
-    { title: 'cc' },
+    { title: 'findViewById 綁定物件' },
+    { title: '建立物件變數' },
+    { title: '完成component介面' },
+  ]
+  const ans: Array<{ title: string }> = [
+    { title: '完成component介面' },
+    { title: '建立物件變數' },
+    { title: 'findViewById 綁定物件' },
   ]
   const [items, setItems] = useState(initialItems)
 
@@ -64,7 +75,6 @@ export default function RankQuestion(props: {
   const [questionTitle, setQuestionTitle] = useState('')
 
   const handleOnDragEnd = (result: DropResult): void => {
-    console.log(result)
     if (!result.destination) return
     let newItems = Array.from(items)
     const [reorderedItem] = newItems.splice(result.source.index, 1)
@@ -72,7 +82,41 @@ export default function RankQuestion(props: {
     setItems(newItems)
   }
 
-  const checkAns = () => {}
+  const areArraysEqual = (
+    array1: Array<{ title: string }>,
+    array2: Array<{ title: string }>
+  ) => {
+    for (let i = 0; i < array1.length; i++) {
+      if (array1[i].title !== array2[i].title) {
+        return false
+      }
+    }
+    return true
+  }
+
+  const checkAns = () => {
+    if (areArraysEqual(items, ans)) {
+      console.log('correct')
+      setIsAnsError({
+        isShow: true,
+        text: '正確',
+        severity: 'success',
+      })
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve(true)
+        }, 750)
+      }).then(() => {
+        props.handleQuestionClose()
+      })
+    } else {
+      setIsAnsError({
+        isShow: true,
+        text: '錯誤',
+        severity: 'error',
+      })
+    }
+  }
 
   //   const pushQ = () => {
   //     chrome.runtime.sendMessage(
@@ -96,24 +140,41 @@ export default function RankQuestion(props: {
   //   }
 
   resetServerContext()
+
+  const [isAnsError, setIsAnsError] = useState<alert>({
+    isShow: false,
+    text: '',
+    severity: 'error',
+  })
+
   return (
-    <Card
-      sx={{
-        width: '600px',
-        height: '400px',
-        position: 'absolute',
-        display: props.displayQuestion ? 'block' : 'none',
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        m: 'auto',
-        boxShadow: 10,
-      }}
-    >
+    // <Box
+    //   sx={{
+    //     display: 'flex',
+    //     justifyContent: 'center',
+    //     alignItems: 'center',
+    //     height: '100%',
+    //   }}
+    // >
+    //   <Card
+    //     sx={{
+    //       width: '600px',
+
+    //       // minHeight: '0',
+    //       // position: 'absolute',
+    //       // display: props.displayQuestion ? 'block' : 'none',
+    //       // left: 0,
+    //       // right: 0,
+    //       // top: 0,
+    //       // bottom: 0,
+    //       // m: 'auto',
+    //       // boxShadow: 10,
+    //     }}
+    //   >
+    <Box>
       <Box minHeight={50} display="flex" alignItems="center">
         <Typography variant="h5" sx={{ mt: 2, ml: 3, width: '100%' }}>
-          排序問題
+          排出建立component的順序
         </Typography>
         <IconButton sx={{ mr: 2 }} onClick={() => props.handleQuestionClose()}>
           <CloseIcon />
@@ -124,22 +185,25 @@ export default function RankQuestion(props: {
       {/* 拖曳 */}
       <Box
         sx={{
-          borderRadius: 2,
-          p: 4,
+          overflow: 'hidden',
+          overflowY: 'auto',
+          p: 2,
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         {/* <Typography textAlign="center" variant="h5">
-          排序問題
-        </Typography>
-        <Typography variant="h6" color="#9e9e9e">
-          題目
-        </Typography>
-        <Typography variant="h4" color="black">
-          {questionTitle}
-        </Typography>
-        <Typography variant="h6" color="#9e9e9e">
-          選項
-        </Typography> */}
+    排序問題
+  </Typography>
+  <Typography variant="h6" color="#9e9e9e">
+    題目
+  </Typography>
+  <Typography variant="h4" color="black">
+    {questionTitle}
+  </Typography>
+  <Typography variant="h6" color="#9e9e9e">
+    選項
+  </Typography> */}
 
         <DragDropContext onDragEnd={handleOnDragEnd}>
           <Droppable droppableId="items">
@@ -211,7 +275,11 @@ export default function RankQuestion(props: {
             )}
           </Droppable>
         </DragDropContext>
-
+        <Collapse in={isAnsError.isShow}>
+          <Alert severity={isAnsError.severity} sx={{ mb: 2 }}>
+            {isAnsError.text}
+          </Alert>
+        </Collapse>
         <Button
           size="medium"
           variant="contained"
@@ -223,6 +291,8 @@ export default function RankQuestion(props: {
           送出
         </Button>
       </Box>
-    </Card>
+    </Box>
+    //   </Card>
+    // </Box>
   )
 }
