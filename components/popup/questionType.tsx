@@ -1,6 +1,8 @@
 import { Modal, Box, Card, Typography } from '@mui/material'
 import Choice from '../question/choice/choice'
 import RankQuestion from '../question/rank/rank'
+import Info from '../question/info/info'
+import FillIn from '../question/fillIn/fillIn'
 
 const QuestionType = (props: {
   setClose: () => void
@@ -8,31 +10,31 @@ const QuestionType = (props: {
   open: boolean
   questionType: number
 }) => {
-  console.log(props.questionType)
+  // console.log(props.questionType)
   switch (props.questionType) {
     // info
     case 0:
-      return <></>
+      return (
+        <>
+          <Info handleQuestionClose={props.setClose}></Info>
+        </>
+      )
 
     // choice
     case 1:
-      return (
-        <Choice
-          handleQuestionClose={props.setClose}
-        ></Choice>
-      )
+      return <Choice handleQuestionClose={props.setClose}></Choice>
 
-    // input
+    // FillIn
     case 2:
-      return <></>
+      return (
+        <>
+          <FillIn handleQuestionClose={props.setClose}></FillIn>
+        </>
+      )
 
     // rank
     case 3:
-      return (
-        <RankQuestion
-          handleQuestionClose={props.setClose}
-        ></RankQuestion>
-      )
+      return <RankQuestion handleQuestionClose={props.setClose}></RankQuestion>
 
     // drag
     case 4:

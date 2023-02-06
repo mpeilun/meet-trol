@@ -173,21 +173,21 @@ export default function RankQuestion(props: {
     //   >
     <Box>
       <Box minHeight={50} display="flex" alignItems="center">
-        <Typography variant="h5" sx={{ mt: 2, ml: 3, width: '100%' }}>
+        <Typography variant="h5" sx={{ width: '100%' }}>
           排出建立component的順序
         </Typography>
-        <IconButton sx={{ mr: 2 }} onClick={() => props.handleQuestionClose()}>
+        <IconButton sx={{}} onClick={() => props.handleQuestionClose()}>
           <CloseIcon />
         </IconButton>
       </Box>
-      <Divider variant="middle" />
+      <Divider />
 
       {/* 拖曳 */}
       <Box
         sx={{
           overflow: 'hidden',
           overflowY: 'auto',
-          p: 2,
+
           display: 'flex',
           flexDirection: 'column',
         }}

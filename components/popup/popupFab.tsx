@@ -19,8 +19,8 @@ const PopupFab = (props: {
             // width: '50%',
             // height: '50%',
             position: 'absolute',
-            top: '25%',
-            left: '15%',
+            top: '20%',
+            left: '10%',
             right: 'auto',
             bottom: 'auto',
           }}
@@ -48,8 +48,8 @@ const PopupFab = (props: {
             // width: '50%',
             // height: '50%',
             position: 'absolute',
-            top: '25%',
-            left: '15%',
+            top: '20%',
+            left: '10%',
             right: 'auto',
             bottom: 'auto',
           }}
@@ -77,8 +77,8 @@ const PopupFab = (props: {
             // width: '50%',
             // height: '50%',
             position: 'absolute',
-            top: '25%',
-            left: '15%',
+            top: '20%',
+            left: '10%',
             right: 'auto',
             bottom: 'auto',
           }}

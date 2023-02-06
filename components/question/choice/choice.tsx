@@ -1,9 +1,7 @@
 import { Box, Card, Divider, IconButton, Typography } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import SingleChoice from './singleChoice'
-export default function Choice(props: {
-  handleQuestionClose: () => void
-}) {
+export default function Choice(props: { handleQuestionClose: () => void }) {
   return (
     // <Card
     //   sx={{
@@ -21,14 +19,14 @@ export default function Choice(props: {
     // >
     <Box>
       <Box minHeight={50} display="flex" alignItems="center">
-        <Typography variant="h5" sx={{ mt: 2, ml: 3, width: '100%' }}>
+        <Typography variant="h5" sx={{ width: '100%' }}>
           問題
         </Typography>
-        <IconButton sx={{ mr: 2 }} onClick={() => props.handleQuestionClose()}>
+        <IconButton onClick={() => props.handleQuestionClose()}>
           <CloseIcon />
         </IconButton>
       </Box>
-      <Divider variant="middle" />
+      <Divider />
       <SingleChoice handleClose={props.handleQuestionClose} />
     </Box>
     // </Card>

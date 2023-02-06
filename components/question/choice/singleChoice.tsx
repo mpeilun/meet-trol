@@ -42,7 +42,7 @@ export default function SingleChoice(props: { handleClose: () => void }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <FormControl sx={{ m: 3 }} error={error} variant="standard">
+      <FormControl sx={{ pt: 1 }} error={error} variant="standard">
         <FormLabel id="demo-error-radios">
           請問 string.xml 是放在哪個資料夾？
         </FormLabel>

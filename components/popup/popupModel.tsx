@@ -34,14 +34,23 @@ const PopupModal = (props: {
             justifyContent: 'center',
             alignItems: 'center',
             height: '100%',
+            width: '100%',
           }}
         >
           <Card
             sx={{
-              width: '600px',
+              display: 'inline-block',
             }}
           >
-            <Box>
+            <Box
+              sx={{
+                overflow: 'hidden',
+                overflowY: 'auto',
+                p: 2,
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
               <QuestionType
                 setClose={props.setClose}
                 setOpen={props.setOpen}

@@ -86,7 +86,12 @@ function CoursePlayer() {
     } else if (props.playedSeconds >= 50 && props.playedSeconds <= 60) {
       setQuestionType(3)
       setShowComponent(true)
-    } else {
+    } else if (props.playedSeconds >= 70 && props.playedSeconds <= 80) {
+      setQuestionType(2)
+      setShowComponent(true)
+    } 
+    
+    else {
       setShowComponent(false)
     }
     // console.log(props.playedSeconds)
