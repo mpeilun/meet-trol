@@ -3,6 +3,7 @@ import Choice from '../question/choice/choice'
 import RankQuestion from '../question/rank/rank'
 import Info from '../question/info/info'
 import FillIn from '../question/fillIn/fillIn'
+import Drag from '../question/drag/drag'
 
 const QuestionType = (props: {
   setClose: () => void
@@ -38,7 +39,7 @@ const QuestionType = (props: {
 
     // drag
     case 4:
-      return <></>
+      return <Drag handleQuestionClose={props.setClose}></Drag>
 
     default:
       return <Typography>題目顯示失敗</Typography>

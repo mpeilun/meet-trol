@@ -40,6 +40,8 @@ const PopupModal = (props: {
           <Card
             sx={{
               display: 'inline-block',
+              maxWidth: 700,
+              maxHeight: 450,
             }}
           >
             <Box
@@ -49,6 +51,8 @@ const PopupModal = (props: {
                 p: 2,
                 display: 'flex',
                 flexDirection: 'column',
+                maxWidth: 700,
+                maxHeight: 450,
               }}
             >
               <QuestionType

@@ -17,10 +17,11 @@ const Info = (props: { handleQuestionClose: () => void }) => {
       <Divider />
       <Box sx={{ pt: 1 }}>
         <Typography>Alert Dialog 記得加上「.show」</Typography>
+        {/* 顯示圖片 */}
         <Box sx={{ width: '600px' }}>
           <Box
             component="img"
-            src="/images/info.PNG"
+            src="/images/info.PNG" // 變數替換 是否有圖片有則是網址
             alt="Failt to load"
             sx={{ borderRadius: 2, mt: 1, width: '100%' }}
           ></Box>

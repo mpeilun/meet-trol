@@ -29,73 +29,75 @@ const ansArray: Array<items> = [
 const DragDrop = () => {
   return (
     <>
-      
-          {/* questions */}
-          <Box
-            sx={{
-              border: 2,
-              px: 2,
-              mr: 2,
-              borderRadius: 2,
-              display:'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-around'
-            }}
-          >
-            {questionArray.map(({ id, title }, index) => {
-              if (index + 1 == questionArray.length) {
-                return (
-                  <>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        height: '70px',
-                      }}
-                    >
-                      <Typography
-                        variant="body1"
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                        }}
-                      >
-                        {title}
-                      </Typography>
-                    </Box>
-                  </>
-                )
-              } else
-                return (
-                  <>
-                    <AnsItem id={id} title={title} index={index} ans={ansArray[index].title}></AnsItem>
-                  </>
-                )
-            })}
-          </Box>
-        
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-around',
-              alignItems: 'center',
-              height: '100%',
-              border: 2,
-              px: 1,
+      {/* questions */}
+      <Box
+        sx={{
+          border: 2,
+          px: 2,
+          mr: 2,
+          borderRadius: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-around',
+        }}
+      >
+        {questionArray.map(({ id, title }, index) => {
+          if (index + 1 == questionArray.length) {
+            return (
+              <>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    height: '70px',
+                  }}
+                >
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    {title}
+                  </Typography>
+                </Box>
+              </>
+            )
+          } else
+            return (
+              <>
+                <AnsItem
+                  id={id}
+                  title={title}
+                  index={index}
+                  ans={ansArray[index].title}
+                ></AnsItem>
+              </>
+            )
+        })}
+      </Box>
 
-              borderRadius: 2,
-            }}
-          >
-            {ansArray.map(({ id, title }, index) => {
-              return (
-                <>
-                  <FillItem id={id} title={title} index={index}></FillItem>
-                </>
-              )
-            })}
-          </Box>
-      
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+          height: '100%',
+          border: 2,
+          px: 1,
+          borderRadius: 2,
+        }}
+      >
+        {ansArray.map(({ id, title }, index) => {
+          return (
+            <>
+              <FillItem id={id} title={title} index={index}></FillItem>
+            </>
+          )
+        })}
+      </Box>
 
       {/* answer items */}
     </>

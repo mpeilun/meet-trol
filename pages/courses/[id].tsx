@@ -27,7 +27,7 @@ function CourseInnerPage() {
         <CoursePlayer></CoursePlayer>
         <CourseTab course={course}></CourseTab>
       </Box>
-      <Box className='course-nav-div' minWidth='400px' display={{ xs: 'none', md: 'flex' }}>
+      <Box className='course-nav-div'  display={{ width: '20vw', xs: 'none', md: 'flex' }}>
         <Card sx={{ width: '100%' }}>
           <Box p={3} display='flex' justifyContent='space-between'>
             <Typography sx={{ fontWeight: 'bold' }}>章節1</Typography>
