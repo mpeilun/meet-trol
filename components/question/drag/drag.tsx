@@ -31,7 +31,7 @@ const Drag = (props: { handleQuestionClose: () => void }) => {
     const button = buttonRef.current
 
     const check = (x: number, y: number) => {
-      if (x > 30 && x < 210 && y > 140 && y < 170) {
+      if (x > 30 && x < 215 && y > 145 && y < 175) {
         setIsCorrect(true)
       } else {
         setIsCorrect(false)
@@ -54,8 +54,8 @@ const Drag = (props: { handleQuestionClose: () => void }) => {
       coords.current.lastY = button.offsetTop
       check(coords.current.lastX, coords.current.lastY) // 當前版面最後 XY
 
-      //   console.log(`結束X: ${coords.current.lastX}`)
-      //   console.log(`結束Y: ${coords.current.lastY}`)
+        console.log(`結束X: ${coords.current.lastX}`)
+        console.log(`結束Y: ${coords.current.lastY}`)
     }
 
     const onMouseMove = (e: MouseEvent) => {
@@ -148,7 +148,7 @@ const Drag = (props: { handleQuestionClose: () => void }) => {
             width: 35,
             height: 35,
             borderRadius: '50%',
-            bgcolor: isCorrect ? '#00BB00' : '#EA7500',
+            bgcolor: isCorrect ? '#00A600 ' : '#EA7500',
           }}
         >
           <AddCircleOutlineIcon
