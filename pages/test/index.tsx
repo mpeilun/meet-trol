@@ -1,13 +1,10 @@
-import PopupFab from '../../components/popup/popupFAB'
 import RankQuestion from '../../components/question/rank/rank'
-export default function Rank() {
+export default function Page() {
   const testFunction = () => {}
-  
+
   return (
     <>
-      <div>
-       
-      </div>
+      <div></div>
     </>
   )
 }

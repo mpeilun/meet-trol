@@ -85,7 +85,7 @@ export default function CourseTabs(props: CourseTabsProps) {
         <PDF></PDF>
       </TabPanel>
       <TabPanel value={value} index={2}>
-        <EyesTracking />
+        {/* <EyesTracking /> */}
       </TabPanel>
       <TabPanel value={value} index={3}>
         <Box p={3} display="flex" justifyContent="space-between">

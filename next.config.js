@@ -7,8 +7,8 @@ const nextConfig = {
       use: [
         {
           loader: 'file-loader',
-        } 
-      ]
+        },
+      ],
     })
     return config
   },
