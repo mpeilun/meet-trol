@@ -6,8 +6,7 @@ const CoursePlayer = dynamic(() => import('../../components/courses/course-playe
 const CourseTab = dynamic(() => import('../../components/courses/course-tab'), { ssr: false });
 // import CourseTab from '../../components/courses/course-tab'
 import { CourseDataType, getCourseById } from '../../lib/dummy-data'
-import useAppBarHeight from '../../components/layout/appbar-tool';
-import { ArrowDownward, ArrowDropDown, KeyboardArrowDown } from '@mui/icons-material';
+import { ArrowDownward, ArrowDropDown, KeyboardArrowDown } from '@mui/icons-material'
 
 function CourseInnerPage() {
   const router = useRouter()
