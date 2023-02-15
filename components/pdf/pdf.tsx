@@ -17,7 +17,7 @@ interface PageSize {
   width: number,
   height: number,
 }
-function PDF() {
+function PDF(props: { path: string }) {
   const path = '/assets/test.pdf'
   //PDF  
   const [numPages, setNumPages] = React.useState(null)//PDF的總頁數

@@ -5,6 +5,7 @@ export interface CourseDataType {
   date: string
   image: string
   isFeatured: boolean
+  pdfPath?: string
 }
 
 const courseData: Array<CourseDataType> = [
@@ -15,6 +16,7 @@ const courseData: Array<CourseDataType> = [
     date: '2022/12/21',
     image: '/images/image-1.jpg',
     isFeatured: true,
+    pdfPath: '/assets/test.pdf',
   },
   {
     id: 'e2',
