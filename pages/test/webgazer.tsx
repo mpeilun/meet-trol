@@ -1,11 +1,12 @@
 import Script from 'next/script'
+import { useEffect } from 'react'
 declare var webgazer: any
 
 function Page() {
   return (
     <>
       <Script
-        src="../webgazer.js"
+        src="../external-lib/webgazer.js"
         onLoad={() => {
           webgazer
             .setGazeListener(function (data: { x: any; y: any } | null, elapsedTime: any) {
@@ -17,6 +18,8 @@ function Page() {
               console.log(xPrediction, yPrediction, elapsedTime) //elapsed time is based on time since begin was called
             })
             .begin()
+
+          webgazer.showVideoPreview(true).showPredictionPoints(true)
         }}
       />
       <p>Test Page for Webgazer</p>
