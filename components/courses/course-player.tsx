@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useAppSelector, useAppDispatch } from '../../lib/hooks'
+import { useAppSelector, useAppDispatch } from '../../hooks/redux'
 import { setPlayedSecond } from '../../store/player-slice'
 // import dynamic from 'next/dynamic';
 import { YouTubePlayerProps } from 'react-player/youtube'
