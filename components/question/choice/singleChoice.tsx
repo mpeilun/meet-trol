@@ -29,7 +29,7 @@ export default function SingleChoice(props: { handleClose: () => void }) {
           resolve(true)
         }, 1000)
       }).then(() => {
-        props.handleClose()
+        // props.handleClose()
       })
     } else if (value === 'worst') {
       setHelperText('你答錯囉！')

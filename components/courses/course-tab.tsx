@@ -56,8 +56,7 @@ export default function CourseTabs(props: CourseTabsProps) {
     }
   }, [])
   const course = props.course
-  // const pdf_path = props.pdf
-  const pdf_path = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
+  const pdfPath = course.pdfPath
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
@@ -75,7 +74,7 @@ export default function CourseTabs(props: CourseTabsProps) {
       </Box>
       <TabPanel value={value} index={0}>
         <ul>
-          <li>{course.id}</li>
+          <li>{`TQC+ 101`}</li>
           <li>{course.description}</li>
           <li>{course.image}</li>
         </ul>
@@ -84,16 +83,16 @@ export default function CourseTabs(props: CourseTabsProps) {
 
       <TabPanel value={value} index={1}>
         {
-          course.pdfPath &&
+          pdfPath &&
           <>
-            <Button sx={{ height: '40px', width: 'auto' }} onClick={() => { window.open(course.pdfPath) }}>
-              <OpenInNew /> <Typography sx={{ mx: 1 }}>在新分頁開啟</Typography>
+            <Button sx={{ height: '40px', width: 'auto' }} onClick={() => { window.open(pdfPath) }}>
+              <OpenInNew /> <Typography sx={{ mx: 1 }}>新分頁</Typography>
             </Button>
             <Button sx={{ height: '40px', width: 'auto' }} onClick={() => { document.getElementById('course-pdf-downlaod-path')?.click() }}>
               <FileDownload /> <Typography sx={{ mx: 1 }}>下載</Typography>
             </Button>
-            <a id='course-pdf-downlaod-path' href={course.pdfPath} download style={{display: 'none'}}>下载</a>
-            <PDF path={pdf_path}></PDF>
+            <a id='course-pdf-downlaod-path' href={course.pdfPath} download style={{display: 'none'}}>下載</a>
+            <PDF path={pdfPath}></PDF>
           </>
         }
       </TabPanel>
