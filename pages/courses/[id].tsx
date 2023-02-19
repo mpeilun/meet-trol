@@ -11,6 +11,7 @@ const CourseTab = dynamic(() => import('../../components/courses/course-tab'), {
 })
 // import CourseTab from '../../components/courses/course-tab'
 import { CourseDataType, getCourseById } from '../../lib/dummy-data'
+import { ArrowDownward, ArrowDropDown, KeyboardArrowDown } from '@mui/icons-material'
 import useAppBarHeight from '../../components/layout/appbar-tool'
 import {
   ArrowDownward,

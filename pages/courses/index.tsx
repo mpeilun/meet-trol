@@ -6,6 +6,7 @@ import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, 
 import Grid from '@mui/material/Unstable_Grid2' // Grid version 2
 import { grey } from '@mui/material/colors'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import Link from 'next/link'
 
 function AllCoursesPage() {
   return (
@@ -30,7 +31,11 @@ function AllCoursesPage() {
                   elements.push(
                     <Grid md={4} xs={12} key={i}>
                       <Box m={'auto'} width={'100%'} maxWidth="200px" height={'200px'}>
-                        <Typography bgcolor={grey[400]}>課程名稱</Typography>
+                        <Link href={'/courses/e1'}>
+                          <Typography textAlign={'center'} bgcolor={grey[400]}>
+                            Android TQC+
+                          </Typography>
+                        </Link>
                       </Box>
                     </Grid>
                   )
