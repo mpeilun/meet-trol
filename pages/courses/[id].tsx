@@ -11,20 +11,6 @@ const CourseTab = dynamic(() => import('../../components/courses/course-tab'), {
 })
 // import CourseTab from '../../components/courses/course-tab'
 import { CourseDataType, getCourseById } from '../../lib/dummy-data'
-import { ArrowDownward, ArrowDropDown, KeyboardArrowDown } from '@mui/icons-material'
-import useAppBarHeight from '../../components/layout/appbar-tool'
-import {
-  ArrowDownward,
-  ArrowDropDown,
-  KeyboardArrowDown,
-} from '@mui/icons-material'
-
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp'
-import MuiAccordion, { AccordionProps } from '@mui/material/Accordion'
-import MuiAccordionSummary, {
-  AccordionSummaryProps,
-} from '@mui/material/AccordionSummary'
-import MuiAccordionDetails from '@mui/material/AccordionDetails'
 import CustomizedAccordions from '../../components/chapter/chapter'
 
 function CourseInnerPage() {
@@ -53,7 +39,6 @@ function CourseInnerPage() {
       >
         <Card sx={{ width: '100%' }}>
           <CustomizedAccordions></CustomizedAccordions>
-          
           <Divider />
         </Card>
       </Box>
