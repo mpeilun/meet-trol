@@ -1,4 +1,6 @@
 import * as React from 'react'
+import { useAppSelector, useAppDispatch } from '../../lib/hooks'
+import { setPlayedSecond } from '../../store/player-slice'
 // import dynamic from 'next/dynamic';
 import { YouTubePlayerProps } from 'react-player/youtube'
 // const ReactPlayer = dynamic(() => import('react-player/youtube'), { ssr: false });
@@ -72,16 +74,20 @@ function CoursePlayer() {
     }
   }
 
+  //redux
+  const player = useAppSelector((state) => state.player.playedSecond)
+  const dispatch = useAppDispatch()
+
   let handlePlayerStatus = (props: ReactPlayerOnProgressProps) => {
-    setProgress(`playedSeconds: ${props.playedSeconds}`)
+    dispatch(setPlayedSecond(props.playedSeconds))
+    console.log('redux playedSeconds: ' + player)
 
     if (props.playedSeconds >= 10 && props.playedSeconds <= 20) {
       setQuestionType(1)
       setShowComponent(true)
-      
     } else if (props.playedSeconds >= 30 && props.playedSeconds <= 40) {
       setQuestionType(0)
-      
+
       setShowComponent(true)
     } else if (props.playedSeconds >= 50 && props.playedSeconds <= 60) {
       setQuestionType(3)
@@ -92,9 +98,7 @@ function CoursePlayer() {
     } else if (props.playedSeconds >= 90 && props.playedSeconds <= 100) {
       setQuestionType(4)
       setShowComponent(true)
-    } 
-    
-    else {
+    } else {
       setShowComponent(false)
     }
     // console.log(props.playedSeconds)
@@ -151,14 +155,7 @@ function CoursePlayer() {
               </div>
             </Slide>
           </Box> */}
-      {showComponent && (
-        <PopupFab
-          setClose={handleClosePopupModal}
-          setOpen={handleOpenPopupModal}
-          open={openPopupModal}
-          questionType={questionType}
-        ></PopupFab>
-      )}
+      {showComponent && <PopupFab setClose={handleClosePopupModal} setOpen={handleOpenPopupModal} open={openPopupModal} questionType={questionType}></PopupFab>}
       <ReactPlayer
         url={url}
         playing={playing}
