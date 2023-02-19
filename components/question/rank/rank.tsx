@@ -107,7 +107,7 @@ export default function RankQuestion(props: {
           resolve(true)
         }, 750)
       }).then(() => {
-        props.handleQuestionClose()
+        // props.handleQuestionClose()
       })
     } else {
       setIsAnsError({

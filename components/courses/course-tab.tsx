@@ -85,7 +85,7 @@ export default function CourseTabs(props: CourseTabsProps) {
       </Box>
       <TabPanel value={value} index={0}>
         <ul>
-          <li>{course.id}</li>
+          <li>{`TQC+ 101`}</li>
           <li>{course.description}</li>
           <li>{course.image}</li>
         </ul>

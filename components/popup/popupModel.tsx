@@ -17,9 +17,9 @@ const PopupModal = (props: {
           // width: '50%',
           // height: '50%',
           position: 'absolute',
-          top: '25%',
-          left: '15%',
-          right: 'auto',
+          top: '20%',
+          right: '20%',
+          left: 'auto',
           bottom: 'auto',
         }}
         open={props.open}

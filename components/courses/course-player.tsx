@@ -78,10 +78,9 @@ function CoursePlayer() {
     if (props.playedSeconds >= 10 && props.playedSeconds <= 20) {
       setQuestionType(1)
       setShowComponent(true)
-      
     } else if (props.playedSeconds >= 30 && props.playedSeconds <= 40) {
       setQuestionType(0)
-      
+
       setShowComponent(true)
     } else if (props.playedSeconds >= 50 && props.playedSeconds <= 60) {
       setQuestionType(3)
@@ -92,9 +91,7 @@ function CoursePlayer() {
     } else if (props.playedSeconds >= 90 && props.playedSeconds <= 100) {
       setQuestionType(4)
       setShowComponent(true)
-    } 
-    
-    else {
+    } else {
       setShowComponent(false)
     }
     // console.log(props.playedSeconds)
@@ -173,7 +170,7 @@ function CoursePlayer() {
         config={{
           playerVars: { controls: 1 },
         }}
-      />
+      ></ReactPlayer>
     </Box>
   )
 }
