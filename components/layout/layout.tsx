@@ -6,6 +6,7 @@ import { ThemeProvider, GlobalStyles, CssBaseline } from '@mui/material'
 import theme, { themeFont } from '../../styles/material-theme'
 import Head from 'next/head'
 import { grey } from '@mui/material/colors'
+import useAppBarHeight from './appbar-tool'
 
 function Layout(props: { children: ReactNode }) {
   const notificationCtx = useContext(NotificationContext)
@@ -27,7 +28,7 @@ function Layout(props: { children: ReactNode }) {
           }}
         />
         <MainNavigation />
-        <main>{props.children}</main>
+        <main style={{height: `calc(100% - ${useAppBarHeight()}px)`}}>{props.children}</main>
         {activeNotification && <Notification type={activeNotification.status} title={activeNotification.title} message={activeNotification.message} />}
       </ThemeProvider>
     </>

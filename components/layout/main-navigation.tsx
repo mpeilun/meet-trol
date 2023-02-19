@@ -30,7 +30,7 @@ function MainNavigation() {
   }
 
   return (
-    <AppBar component="nav" position="sticky">
+    <AppBar component="nav" position="sticky" sx={{maxHeight: 64}}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* 手機尺寸 */}

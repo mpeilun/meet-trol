@@ -105,3 +105,16 @@ a {
     color-scheme: dark;
   }
 } */
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+}
+
+div#__next {
+  height: 100%;
+  /* background-color: indigo; */
+}
