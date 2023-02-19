@@ -19,7 +19,7 @@ function CourseInnerPage() {
   if (!course) {
     return <p>Not Course Found!</p>
   }
-
+  //test
   return (
     <Box className='course-main-div' display='flex' width='100%' height={'100vh'} maxHeight={'calc(100vh - 68.5px)'}>
       <Box className='course-material-div' flexGrow={1} overflow='scroll'>
