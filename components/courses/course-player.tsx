@@ -112,10 +112,19 @@ function CoursePlayer() {
 
   return (
     <FullScreen handle={handle}>
-      <Box sx={{ position: 'relative', width: '100%', height: '100%' }} className="course-player-div">
+      <Box sx={{ position: 'relative', width: '100%', height: '100%' }} className="course-player-div"
+      onMouseOver={() => {
+        setShowPlayerBar(true)
+        setMouseEnter(true)
+      }}
+      onMouseLeave={() => {
+        setMouseEnter(false)
+        setShowPlayerBar(false)
+      }}
+      >
         {/* 自訂播放bar */}
 
-        {/* <Box
+        <Box
           className="course-player-bar"
           sx={{
             height: 50,
@@ -156,7 +165,7 @@ function CoursePlayer() {
               </ButtonBase>
             </div>
           </Slide>
-        </Box> */}
+        </Box>
         {showComponent && <PopupFab setClose={handleClosePopupModal} setOpen={handleOpenPopupModal} open={openPopupModal} questionType={questionType}></PopupFab>}
         <ReactPlayer
           url={url}
@@ -167,10 +176,10 @@ function CoursePlayer() {
           ref={playerRef}
           onReady={onPlayerReady}
           width={'100%'}
-          height={600}
+          height={handle.active?'100%':600}
           progressInterval={200}
           config={{
-            playerVars: { controls: 1 },
+            // playerVars: { controls: 1 },
           }}
         ></ReactPlayer>
       </Box>
