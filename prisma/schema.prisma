@@ -53,78 +53,71 @@ model Video {
 }
 
 model Info {
-  id      String  @id @default(auto()) @map("_id") @db.ObjectId
-  title   String
-  content String?
-  url     String?
-  start   String
-  end     String
-  video   Video   @relation(fields: [videoId], references: [id])
-  videoId String  @db.ObjectId
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  title      String
+  content    String?
+  url        String?
+  start      String
+  end        String
+  firstJumps Boolean
+  video      Video   @relation(fields: [videoId], references: [id])
+  videoId    String  @db.ObjectId
 }
 
-model YourAnswer {
-  id             String  @id @default(auto()) @map("_id") @db.ObjectId
-  studentId      String  @db.ObjectId
-  answerChoice   Choice? @relation(fields: [answerChoiceId], references: [id])
-  answerChoiceId String? @db.ObjectId
-  answerRank     Rank?   @relation(fields: [answerRankId], references: [id])
-  answerRankId   String? @db.ObjectId
-  answerFill     Fill?   @relation(fields: [answerFillId], references: [id])
-  answerFillId   String? @db.ObjectId
-  answerDrag     Drag?   @relation(fields: [answerDragId], references: [id])
-  answerDragId   String? @db.ObjectId
+type Answers {
+  answers   Int[]
+  studentId String @db.ObjectId
 }
 
 model Choice {
-  id         String       @id @default(auto()) @map("_id") @db.ObjectId
-  title      String
-  option     String[]
-  answer     Int[]
-  yourAnswer YourAnswer[]
-  start      String
-  end        String
-  ivideo     Video        @relation(fields: [videoId], references: [id])
-  videoId    String       @db.ObjectId
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  quesiton     String
+  option       String[]
+  answer       Int[]
+  yourAnswer   Answers[] // 第一層List放回答次數，第二次放答案index index有兩個以上則為複選
+  start        String
+  end          String
+  isReapeatted Boolean
+  firstJumps   Boolean
+  ivideo       Video     @relation(fields: [videoId], references: [id])
+  videoId      String    @db.ObjectId
 }
 
 model Rank {
-  id         String       @id @default(auto()) @map("_id") @db.ObjectId
-  title      String
-  content    String?
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  question   String
   option     String[]
   answer     String[]
-  yourAnswer YourAnswer[]
+  yourAnswer Answers[] // 第一層List放回答次數，第二次放答案index順序
   start      String
   end        String
-  video      Video        @relation(fields: [videoId], references: [id])
-  videoId    String       @db.ObjectId
+  video      Video     @relation(fields: [videoId], references: [id])
+  videoId    String    @db.ObjectId
 }
 
 model Fill {
-  id         String       @id @default(auto()) @map("_id") @db.ObjectId
-  title      String
-  content    String?
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  question   String
   option     String[]
   answer     String[]
-  yourAnswer YourAnswer[]
+  yourAnswer Answers[]
   start      String
   end        String
-  video      Video        @relation(fields: [videoId], references: [id])
-  videoId    String       @db.ObjectId
+  video      Video     @relation(fields: [videoId], references: [id])
+  videoId    String    @db.ObjectId
 }
 
 model Drag {
-  id         String       @id @default(auto()) @map("_id") @db.ObjectId
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
   title      String
   content    String?
   url        String?
   answer     String[]
-  yourAnswer YourAnswer[]
+  yourAnswer Answers[]
   start      String
   end        String
-  video      Video        @relation(fields: [videoId], references: [id])
-  videoId    String       @db.ObjectId
+  video      Video     @relation(fields: [videoId], references: [id])
+  videoId    String    @db.ObjectId
 }
 
 // type ClassesEvent {

@@ -21,6 +21,7 @@ const PopupModal = (props: {
           right: '20%',
           left: 'auto',
           bottom: 'auto',
+
         }}
         open={props.open}
         onClose={props.setClose}
@@ -40,8 +41,9 @@ const PopupModal = (props: {
           <Card
             sx={{
               display: 'inline-block',
+              // minWidth: 600,
               maxWidth: 700,
-              maxHeight: 450,
+              maxHeight:500,
             }}
           >
             <Box

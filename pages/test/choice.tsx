@@ -5,10 +5,12 @@ import {
   TextField,
   FormGroup,
   FormControlLabel,
+  Fab,
 } from '@mui/material'
 import * as React from 'react'
 import pisma from '../../prisma/prisma'
 import { Info } from '@prisma/client'
+import Choice from '../../components/question/choice/choice'
 
 // 還需引入 description 圖片 src 變數
 const Test = (props: { handleQuestionClose: () => void }) => {
@@ -122,17 +124,9 @@ const Test = (props: { handleQuestionClose: () => void }) => {
           </Button>
         </Box>
         <Box>
-          {infoData.map((info, index) => {
-            return (
-              <>
-                <p key={info.title}>{info.title}</p>
-                <p key={info.content}>{info.content}</p>
-                <p key={info.url}>{info.url}</p>
-                <p key={`${index}${info.firstJumps}`}>`${info.firstJumps}`</p>
-                <p key={info.videoId}>{info.videoId}</p>
-              </>
-            )
-          })}
+          <>
+            <Choice handleQuestionClose={() => {}}></Choice>
+          </>
         </Box>
       </Box>
     </>

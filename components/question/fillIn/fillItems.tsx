@@ -3,7 +3,7 @@ import { useDrag } from 'react-dnd'
 import { Box, Typography, Grid } from '@mui/material'
 
 
-function FillItem(props: { id: number; title: string; index: number}) {
+function FillItem(props: {  title: string; index: number}) {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'text',
     item: {ans: props.title} ,
@@ -20,8 +20,8 @@ function FillItem(props: { id: number; title: string; index: number}) {
         ref={drag}
         sx={{
           border: 3,
-          my: 1,
-          p: 1,
+          // my: 1,
+          px: 1,
           borderRadius: 2,
           bgcolor: 'primary.light',
         }}

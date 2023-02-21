@@ -9,20 +9,18 @@ interface items {
   title: string
   url?: string
 }
-
 // 問題 list
-const questionArray: Array<items> = [
-  { id: 0, title: '欲新增按鈕要使用' },
-  { id: 0, title: '並新增' },
-  { id: 0, title: '監聽點擊事件' },
-]
+
+const question = '欲新增按鈕要使用"Button"，並新增"OnClickListener"監聽事件。'
+const questionArray = question.split('"')
+// const questionArray: Array<items> = [
+//   { id: 0, title: '欲新增按鈕要使用' },
+//   { id: 0, title: '並新增' },
+//   { id: 0, title: '監聽點擊事件' },
+// ]
 
 // 答案 list
-const ansArray: Array<items> = [
-  { id: 0, title: 'Button' },
-  { id: 0, title: 'OnClickListener' },
-  { id: 0, title: 'AlerDialog' },
-]
+const ansArray = ['Button', 'OnClickListener', 'AlertDialog', 'Paper']
 
 // BUG 英文不會自動換行
 
@@ -39,45 +37,35 @@ const DragDrop = () => {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-around',
+          minWidth: 300,
+          minHeight: 300,
         }}
       >
-        {questionArray.map(({ id, title }, index) => {
-          if (index + 1 == questionArray.length) {
+        {questionArray.map((title, index) => {
+          if (ansArray.indexOf(title) == -1) {
             return (
               <>
-                <Box
+                <Typography
+                  variant="body1"
                   sx={{
                     display: 'flex',
-                    flexDirection: 'row',
-                    height: '70px',
+                    alignItems: 'center',
                   }}
                 >
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    {title}
-                  </Typography>
-                </Box>
+                  {title}
+                </Typography>
               </>
             )
-          } else
+          } else {
             return (
               <>
-                <AnsItem
-                  id={id}
-                  title={title}
-                  index={index}
-                  ans={ansArray[index].title}
-                ></AnsItem>
+                <AnsItem index={index} ans={title}></AnsItem>
               </>
             )
+          }
         })}
       </Box>
-
+      {/* answer items */}
       <Box
         sx={{
           display: 'flex',
@@ -88,18 +76,18 @@ const DragDrop = () => {
           border: 2,
           px: 1,
           borderRadius: 2,
+          minWidth: 300,
+          minHeight: 300,
         }}
       >
-        {ansArray.map(({ id, title }, index) => {
+        {ansArray.map((title, index) => {
           return (
             <>
-              <FillItem id={id} title={title} index={index}></FillItem>
+              <FillItem title={title} index={index}></FillItem>
             </>
           )
         })}
       </Box>
-
-      {/* answer items */}
     </>
   )
 }

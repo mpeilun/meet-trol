@@ -11,7 +11,6 @@ import PauseIcon from '@mui/icons-material/Pause'
 
 import PopupModal from '../popup/popupModel'
 import PopupFab from '../popup/popupFab'
-import { Truculenta } from '@next/font/google'
 
 interface ReactPlayerOnProgressProps {
   played: number
@@ -80,7 +79,6 @@ function CoursePlayer() {
       setShowComponent(true)
     } else if (props.playedSeconds >= 30 && props.playedSeconds <= 40) {
       setQuestionType(0)
-
       setShowComponent(true)
     } else if (props.playedSeconds >= 50 && props.playedSeconds <= 60) {
       setQuestionType(3)

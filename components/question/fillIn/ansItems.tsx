@@ -3,17 +3,15 @@ import { useDrop } from 'react-dnd'
 import { Box, Typography, Grid } from '@mui/material'
 
 function AnsItem(props: {
-  id: number
-  title: string
-  index: number
   ans: string
+  index: number
 }) {
   const [ansUser, setAns] = useState('答案拖曳至此')
   const [color, setColor] = useState('grey')
 
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'text',
-    drop: (item) => setAnswer(item.ans),
+    drop: (item: { ans: string }) => setAnswer(item.ans),
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
     }),
@@ -43,7 +41,7 @@ function AnsItem(props: {
         sx={{
           display: 'flex',
           flexDirection: 'row',
-          height: '70px',
+          height: '50px',
           // border: 3,
           // my: 2,
           // p: 1,
@@ -55,18 +53,9 @@ function AnsItem(props: {
         //   borderColor: isDragging ? 'red' : 'black',
         // }}
       >
-        <Typography
-          variant="body1"
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          {props.title}
-        </Typography>
         <Box
           sx={{
-            pl: 1,
+            // pl: 1,
             display: 'flex',
             alignItems: 'center',
             // border: 3,

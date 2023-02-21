@@ -6,8 +6,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import { height } from '@mui/system'
 
 const Drag = (props: { handleQuestionClose: () => void }) => {
-  const boxRef = useRef(null)
-  const buttonRef = useRef(null)
+  const boxRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLDivElement>(null)
   const isClicked = useRef<boolean>(false)
 
   const coords = useRef<{
@@ -31,7 +31,7 @@ const Drag = (props: { handleQuestionClose: () => void }) => {
     const button = buttonRef.current
 
     const check = (x: number, y: number) => {
-      if (x > 30 && x < 215 && y > 145 && y < 175) {
+      if (x > 60 && x < 255 && y > 145 && y < 175) {
         setIsCorrect(true)
       } else {
         setIsCorrect(false)
@@ -112,21 +112,20 @@ const Drag = (props: { handleQuestionClose: () => void }) => {
           mt: 1.5,
           position: 'relative',
           border: 1.5,
-          bordercolor: 'black',
+          borderColor: 'black',
           borderRadius: 1.5,
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          p: 1.5,
         }}
       >
         {/* 顯示圖片 */}
         <Box
           component="img"
           src="/images/question.svg" // 變數替換 是否有圖片有則是網址
-          alt="Failt to load"
+          alt="Fail to load"
           sx={{
             backgroundSize: 'contain',
             backgroundRepeat: 'no-repeat',

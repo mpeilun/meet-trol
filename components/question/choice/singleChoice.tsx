@@ -5,7 +5,7 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
 import FormLabel from '@mui/material/FormLabel'
-import Button from '@mui/material/Button'
+import { Button, Box } from '@mui/material'
 
 export default function SingleChoice(props: { handleClose: () => void }) {
   const [value, setValue] = React.useState('')
@@ -46,6 +46,7 @@ export default function SingleChoice(props: { handleClose: () => void }) {
         <FormLabel id="demo-error-radios">
           請問 string.xml 是放在哪個資料夾？
         </FormLabel>
+        <Box sx={{ height: 20 }}></Box>
         <RadioGroup
           aria-labelledby="demo-error-radios"
           name="quiz"
