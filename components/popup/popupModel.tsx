@@ -42,7 +42,20 @@ const PopupModal = (props: { setClose: () => void; setOpen: Function; open: bool
     <>
       {/* BUG: 全螢幕不會顯示、位置不會自適應 */}
       {/* For testing */}
-      <Modal
+      <Box
+        sx={{
+          // width: '50%',
+          // height: '50%',
+          visibility: isRender ? 'visible' : 'hidden',
+          position: 'absolute',
+          top: '20%',
+          right: '20%',
+          left: 'auto',
+          bottom: 'auto',
+          display: props.open?'block':'none',
+        }}
+      >
+      {/* <Modal
         ref={modalRef}
         sx={{
           // width: '50%',
@@ -53,22 +66,24 @@ const PopupModal = (props: { setClose: () => void; setOpen: Function; open: bool
           right: '20%',
           left: 'auto',
           bottom: 'auto',
-
         }}
         open={props.open || !isRender}
         onClose={props.setClose}
         closeAfterTransition
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-      >
+      > */}
         <Box
           ref={questionRef}
+          className="question-div"
           sx={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             height: '100%',
             width: '100%',
+
+            zIndex: 1050,
           }}
         >
           <Card
@@ -95,7 +110,8 @@ const PopupModal = (props: { setClose: () => void; setOpen: Function; open: bool
             </Box>
           </Card>
         </Box>
-      </Modal>
+      {/* </Modal> */}
+      </Box>
     </>
   )
 }
