@@ -1,9 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit'
-import playerReducer from './player-slice'
+import courseReducer from './course-data'
 
 export const store = configureStore({
   reducer: {
-    player: playerReducer,
+    course: courseReducer,
   },
 })
 

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useAppSelector, useAppDispatch } from '../../hooks/redux'
-import { setPlayedSecond } from '../../store/player-slice'
+import { setPlayedSecond } from '../../store/course-data'
 // import dynamic from 'next/dynamic';
 import { YouTubePlayerProps } from 'react-player/youtube'
 // const ReactPlayer = dynamic(() => import('react-player/youtube'), { ssr: false });
@@ -13,7 +13,6 @@ import { PlayArrow, Pause, Fullscreen, FullscreenExit } from '@mui/icons-materia
 
 import PopupModal from '../popup/popupModel'
 import PopupFab from '../popup/popupFab'
-import { Truculenta } from '@next/font/google'
 
 import { FullScreen, useFullScreenHandle } from 'react-full-screen'
 
@@ -81,12 +80,12 @@ function CoursePlayer() {
   }
 
   //redux
-  const player = useAppSelector((state) => state.player.playedSecond)
+  const playerSeconds = useAppSelector((state) => state.course.playedSecond)
   const dispatch = useAppDispatch()
 
   let handlePlayerStatus = (props: ReactPlayerOnProgressProps) => {
     dispatch(setPlayedSecond(props.playedSeconds))
-    console.log('redux playedSeconds: ' + player)
+    // console.log('redux playedSeconds: ' + playerSeconds)
 
     if (props.playedSeconds >= 10 && props.playedSeconds <= 20) {
       setQuestionType(1)
@@ -117,7 +116,7 @@ function CoursePlayer() {
       <Box sx={{ position: 'relative', width: '100%', height: '100%' }} className="course-player-div">
         {/* 自訂播放bar */}
 
-        <Box
+        {/* <Box
           className="course-player-bar"
           sx={{
             height: 50,
@@ -144,7 +143,7 @@ function CoursePlayer() {
                 justifyContent: 'space-between',
               }}
             >
-              {/* player bar */}
+              
               <ButtonBase
                 sx={{ height: 50, width: 50 }}
                 onClick={() => {
@@ -158,46 +157,23 @@ function CoursePlayer() {
               </ButtonBase>
             </div>
           </Slide>
-        </Box>
+        </Box> */}
         {showComponent && <PopupFab setClose={handleClosePopupModal} setOpen={handleOpenPopupModal} open={openPopupModal} questionType={questionType}></PopupFab>}
         <ReactPlayer
           url={url}
           playing={playing}
-          onMouseOver={() => {
-            console.log('mouse over')
-            setMouseEnter(true)
-            setShowPlayerBar(true)
-            //下行等待三秒後將showPlayerBar設為false
-            if (timer) {
-              clearTimeout(timer)
-            }
-            var newTimer = setTimeout(() => {
-              setShowPlayerBar(false)
-              clearTimeout(newTimer)
-            }, 3000)
-            setTimer(newTimer)
-            console.log(timer)
-          }}
-          onMouseOut={() => {
-            console.log('mouse out')
-            if (timer) {
-              clearTimeout(timer)
-              setTimer(null)
-            }
-            setMouseEnter(false)
-          }}
           onPlay={play}
           onPause={pause}
           onProgress={handlePlayerStatus}
           ref={playerRef}
           onReady={onPlayerReady}
           width={'100%'}
-          height={handle.active ? '100%' : '600px'}
+          height={600}
           progressInterval={200}
           config={{
-            playerVars: { controls: 0 },
+            playerVars: { controls: 1 },
           }}
-        />
+        ></ReactPlayer>
       </Box>
     </FullScreen>
   )
