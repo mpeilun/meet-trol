@@ -1,7 +1,15 @@
 import { Box, Card, Divider, Icon, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
+
 // import CoursePlayer from '../../components/courses/course-player'
+// import CourseTab from '../../components/courses/course-tab'
+
+import { CourseDataType, getCourseById } from '../../lib/dummy-data'
+import CustomizedAccordions from '../../components/chapter/chapter'
 import dynamic from 'next/dynamic'
+import * as React from 'react'
+import { Chapter } from '@prisma/client'
+
 const CoursePlayer = dynamic(
   () => import('../../components/courses/course-player'),
   { ssr: false }
@@ -9,21 +17,32 @@ const CoursePlayer = dynamic(
 const CourseTab = dynamic(() => import('../../components/courses/course-tab'), {
   ssr: false,
 })
-// import CourseTab from '../../components/courses/course-tab'
-import { CourseDataType, getCourseById } from '../../lib/dummy-data'
-import CustomizedAccordions from '../../components/chapter/chapter'
 
 function CourseInnerPage() {
   const router = useRouter()
   const courseId = router.query.id
-
   let course: CourseDataType | undefined
+  const [chapterData, setChapterData] = React.useState<Array<Chapter>>([])
+  React.useEffect(() => {
+    async function fetchData() {
+      const response = await fetch(`/api/chapter`)
+      const json: Array<Chapter> = await response.json()
+      setChapterData(json)
+      console.log(json[0].id)
+    }
+    fetchData()
+  }, [])
+
+
   if (typeof courseId === 'string') {
     course = getCourseById(courseId)
   }
+
   if (!course) {
     return <p>Not Course Found!</p>
   }
+
+  
 
   return (
     <Box
@@ -51,6 +70,7 @@ function CourseInnerPage() {
 }
 
 export async function getStaticPaths() {
+
   return {
     paths: [
       { params: { id: 'e1' } },

@@ -8,24 +8,22 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt    DateTime @db.Date
-  updatedAt    DateTime @db.Date
-  email        String
-  googleId     String
-  name         String
-  myClasses    Classe   @relation("student", fields: [myClassesId], references: [id])
-  myClassesId  String[] @db.ObjectId
-  ownClasses   Classe   @relation("teacher", fields: [myClassesId], references: [id])
-  ownClassesId String[] @db.ObjectId
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  email      String
+  googleId   String
+  name       String
+  myClasses  String[]
+  ownClasses String[]
 }
 
-model Classe {
+model Course {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
   title       String    @unique
   description String?
-  students    User[]    @relation("student")
-  owners      User[]    @relation("teacher")
+  students    String[]  @db.ObjectId
+  owners      String[]  @db.ObjectId
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   chapters    Chapter[]
@@ -35,21 +33,23 @@ model Chapter {
   id        String  @id @default(auto()) @map("_id") @db.ObjectId
   title     String
   videos    Video[]
-  classes   Classe  @relation(fields: [classesId], references: [id])
+  classes   Course  @relation(fields: [classesId], references: [id])
   classesId String  @db.ObjectId
 }
 
 model Video {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  url       String
-  title     String
-  info      Info[]
-  choice    Choice[]
-  rank      Rank[]
-  fill      Fill[]
-  drag      Drag[]
-  chapter   Chapter  @relation(fields: [chapterId], references: [id])
-  chapterId String   @db.ObjectId
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  url         String
+  title       String
+  description String?
+  material    String?
+  info        Info[]
+  choice      Choice[]
+  rank        Rank[]
+  fill        Fill[]
+  drag        Drag[]
+  chapter     Chapter  @relation(fields: [chapterId], references: [id])
+  chapterId   String   @db.ObjectId
 }
 
 model Info {
@@ -66,7 +66,7 @@ model Info {
 
 type Answers {
   answers   Int[]
-  studentId String @db.ObjectId
+  studentId String
 }
 
 model Choice {
@@ -79,7 +79,7 @@ model Choice {
   end          String
   isReapeatted Boolean
   firstJumps   Boolean
-  ivideo       Video     @relation(fields: [videoId], references: [id])
+  video        Video     @relation(fields: [videoId], references: [id])
   videoId      String    @db.ObjectId
 }
 
