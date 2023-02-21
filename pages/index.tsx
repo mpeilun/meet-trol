@@ -3,20 +3,11 @@
 import { CourseDataType, getAllCourses } from '../lib/dummy-data'
 import CourseList from '../components/courses/course-list'
 import { useContext } from 'react'
-import NotificationContext from '../store/notification-context'
 
 function HomePage(props: { items: string }) {
-  const notificationCtx = useContext(NotificationContext)
-
   return (
     <>
       <p>{props.items}</p>
-      <button
-        style={{ width: '100px', height: '50px' }}
-        onClick={() => {
-          notificationCtx?.showNotificationHandler({ title: 'Info', message: 'hello!!!', status: 'info' })
-        }}
-      ></button>
     </>
   )
 }

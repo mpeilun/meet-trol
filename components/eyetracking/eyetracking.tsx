@@ -1,12 +1,34 @@
 import Script from 'next/script'
 declare var webgazer: any
 import { Modal, Fab, Button, Box } from '@mui/material'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import styled from '@emotion/styled/types/base'
+import { useAppSelector, useAppDispatch } from '../../hooks/redux'
+import { updateEyeTracking } from '../../store/course-data'
+import { isLooking } from '../../store/course-data'
 
 function EyesTracking() {
   const [gazer, setGazer] = useState(false)
   const [correction, setCorrection] = useState(false)
+
+  const eyeTracking = useAppSelector((state) => state.course.eyeTracking)
+  const eyeTrackingRef = useRef<{ x: number; y: number }>()
+  const questionLocate = useAppSelector((state) => state.course.questionLocate)
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    eyeTrackingRef.current = eyeTracking
+  }, [eyeTracking])
+  //initial render
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     console.log('----EyeTracking----')
+  // console.log(eyeTracking)
+  //     // console.log('----QuestionLocate----')
+  //     // console.log(questionLocate)
+  //   }, 3000)
+  //   return () => clearInterval(interval)
+  // }, [])x`
 
   return (
     <>
@@ -19,7 +41,14 @@ function EyesTracking() {
             }
             var xPrediction = data.x //these x coordinates are relative to the viewport
             var yPrediction = data.y //these y coordinates are relative to the viewport
-            console.log(xPrediction, yPrediction, elapsedTime) //elapsed time is based on time since begin was called
+            //redux
+            dispatch(updateEyeTracking({ x: xPrediction, y: yPrediction }))
+            console.log(eyeTrackingRef.current)
+            if (xPrediction >= questionLocate.xStart && xPrediction <= questionLocate.xEnd && yPrediction >= questionLocate.yStart && yPrediction <= questionLocate.yEnd) {
+              dispatch(isLooking(true))
+            } else {
+              dispatch(isLooking(false))
+            }
           })
         }}
       />
@@ -51,20 +80,37 @@ function EyesTracking() {
       >
         校正
       </Button>
-      {correction ? <Ball /> : null}
+      {correction ? <Ball open={correction} setOpen={setCorrection} /> : null}
+      {/* For testing */}
+      {/* <Box
+        width={questionLocate.w}
+        height={questionLocate.h}
+        sx={{
+          backgroundColor: 'green',
+          position: 'absolute',
+          right: questionLocate.xStart,
+          top: questionLocate.yStart,
+        }}
+      /> */}
     </>
   )
 }
 
 export default EyesTracking
 
-function Ball() {
+function Ball(props: { open: boolean; setOpen: Function }) {
   const COLORS = ['red', 'blue', 'green', 'orange', 'yellow', 'white', 'black']
   const [coords, setCoords] = useState({ x: 0, y: 0, color: 'red' })
   const [mousePos, setMousePos] = useState({})
   const [clickCount, setClickCount] = useState(0)
-  const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
-  const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
+  const [count, setCount] = useState(9)
+
+  const modalRef = useRef<HTMLDivElement>(null)
+  const eyeTracking = useAppSelector((state) => state.course.eyeTracking)
+
+  const vw = modalRef.current?.clientWidth
+  const vh = modalRef.current?.clientHeight
+
   useEffect(() => {
     const handleMouseMove = (event: { clientX: number; clientY: number }) => {
       setMousePos({ x: event.clientX, y: event.clientY })
@@ -78,7 +124,7 @@ function Ball() {
   }, [])
   return (
     <>
-      <Modal open={true}>
+      <Modal ref={modalRef} open={props.open}>
         <Box>
           <Fab
             id="ball"
@@ -86,18 +132,22 @@ function Ball() {
             sx={{
               backgroundColor: 'red',
               position: 'absolute',
-              zIndex: 2 ^ 53,
               left: coords.x,
               top: coords.y,
             }}
             onClick={() => {
+              if (count == 0) {
+                props.setOpen(false)
+                return
+              }
               if (clickCount == 3) {
                 setCoords({
-                  x: Math.floor(Math.random() * (vw - 40)),
-                  y: Math.floor(Math.random() * (vh - 40)),
+                  x: Math.floor(Math.random() * (vw! - 40)),
+                  y: Math.floor(Math.random() * (vh! - 40)),
                   color: COLORS[Math.floor(Math.random() * COLORS.length)],
                 })
                 setClickCount(0)
+                setCount((prev) => prev - 1)
               } else {
                 setClickCount((prev) => prev + 1)
               }

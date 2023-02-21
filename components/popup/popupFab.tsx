@@ -5,19 +5,14 @@ import CameraIcon from '@mui/icons-material/Camera'
 import { Typography } from '@mui/material'
 import PopupModal from './popupModel'
 
-const PopupFab = (props: {
-  setClose: () => void
-  setOpen: Function
-  open: boolean
-  questionType: number
-}) => {
+const PopupFab = (props: { setClose: () => void; setOpen: Function; open: boolean; questionType: number }) => {
   if (props.questionType == 0) {
     return (
       <>
         <Fab
           sx={{
             // width: '50%',
-            // height: '50%',
+            // height: '50%',z
             position: 'absolute',
             top: '20%',
             left: '10%',
@@ -32,12 +27,7 @@ const PopupFab = (props: {
         >
           <InfoIcon />
         </Fab>
-        <PopupModal
-          setClose={props.setClose}
-          setOpen={props.setOpen}
-          open={props.open}
-          questionType={props.questionType}
-        ></PopupModal>
+        <PopupModal setClose={props.setClose} setOpen={props.setOpen} open={props.open} questionType={props.questionType}></PopupModal>
       </>
     )
   } else if (0 < props.questionType && props.questionType < 4) {
@@ -61,12 +51,7 @@ const PopupFab = (props: {
         >
           <MenuIcon />
         </Fab>
-        <PopupModal
-          setClose={props.setClose}
-          setOpen={props.setOpen}
-          open={props.open}
-          questionType={props.questionType}
-        ></PopupModal>
+        <PopupModal setClose={props.setClose} setOpen={props.setOpen} open={props.open} questionType={props.questionType}></PopupModal>
       </>
     )
   } else if (props.questionType == 4) {
@@ -90,12 +75,7 @@ const PopupFab = (props: {
         >
           <CameraIcon />
         </Fab>
-        <PopupModal
-          setClose={props.setClose}
-          setOpen={props.setOpen}
-          open={props.open}
-          questionType={props.questionType}
-        ></PopupModal>
+        <PopupModal setClose={props.setClose} setOpen={props.setOpen} open={props.open} questionType={props.questionType}></PopupModal>
       </>
     )
   } else {
