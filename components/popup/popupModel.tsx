@@ -18,16 +18,16 @@ const PopupModal = (props: { setClose: () => void; setOpen: Function; open: bool
 
   //redux
   const look = useAppSelector((state) => state.course.lookingQuestion)
-  const questionLocate = useAppSelector((state) => state.course.questionLocate)
-  const eyeTracking = useAppSelector((state) => state.course.eyeTracking)
+  // const questionLocate = useAppSelector((state) => state.course.questionLocate)
+  // const eyeTracking = useAppSelector((state) => state.course.eyeTracking)
   const dispatch = useAppDispatch()
 
   useEffect(() => {
     if (questionRef.current) {
       const questionWidth = questionRef.current.clientWidth
       const questionHeight = questionRef.current.clientHeight
-      const xStart = viewPort.width * 0.2
-      const xEnd = xStart + questionWidth
+      const xEnd = viewPort.width - viewPort.width * 0.2
+      const xStart = xEnd - questionWidth
       const yStart = viewPort.height * 0.2
       const yEnd = yStart + questionHeight
       console.log(xStart, yStart)
@@ -41,7 +41,6 @@ const PopupModal = (props: { setClose: () => void; setOpen: Function; open: bool
   return (
     <>
       {/* BUG: 全螢幕不會顯示、位置不會自適應 */}
-      {/* For testing */}
       <Modal
         ref={modalRef}
         sx={{
