@@ -3,24 +3,17 @@
 import { CourseDataType, getAllCourses } from '../lib/dummy-data'
 import CourseList from '../components/courses/course-list'
 import { useContext } from 'react'
+import Image from 'next/image'
+import { Box } from '@mui/material'
 
-function HomePage(props: { items: string }) {
+function HomePage() {
   return (
     <>
-      <p>{props.items}</p>
+      <Box width={'100%'} height={'100%'} sx={{ bgcolor: '#9ac5cf' }}>
+        <Image fill style={{ display: 'block', margin: 'auto auto', objectFit: 'contain' }} alt={'Meet-Trol LOGO'} src={'/images/logo.png'} />
+      </Box>
     </>
   )
-}
-
-export async function getStaticProps() {
-  const time = new Date()
-
-  return {
-    props: {
-      items: `Now time ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`,
-    },
-    revalidate: 1,
-  }
 }
 
 export default HomePage

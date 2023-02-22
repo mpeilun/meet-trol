@@ -10,51 +10,69 @@ import { isLooking } from '../../store/course-data'
 function EyesTracking() {
   const [gazer, setGazer] = useState(false)
   const [correction, setCorrection] = useState(false)
+  const [webgazerScript, setWebgazerScript] = useState(false)
 
   const eyeTracking = useAppSelector((state) => state.course.eyeTracking)
   const eyeTrackingRef = useRef<{ x: number; y: number }>()
   const questionLocate = useAppSelector((state) => state.course.questionLocate)
+  const questionLocateRef = useRef<{ xStart: number; xEnd: number; yStart: number; yEnd: number }>()
   const dispatch = useAppDispatch()
 
   useEffect(() => {
     eyeTrackingRef.current = eyeTracking
   }, [eyeTracking])
-  //initial render
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     console.log('----EyeTracking----')
-  // console.log(eyeTracking)
-  //     // console.log('----QuestionLocate----')
-  //     // console.log(questionLocate)
-  //   }, 3000)
-  //   return () => clearInterval(interval)
-  // }, [])x`
+
+  useEffect(() => {
+    questionLocateRef.current = questionLocate
+  }, [questionLocate])
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        var prediction = await webgazer.getCurrentPrediction()
+        //redux
+        dispatch(updateEyeTracking({ x: prediction.x, y: prediction.y }))
+        console.log(eyeTrackingRef.current)
+        const questionLocateCurrent = questionLocateRef.current!
+        if (prediction.x >= questionLocateCurrent.xStart && prediction.x <= questionLocateCurrent.xEnd && prediction.y >= questionLocateCurrent.yStart && prediction.y <= questionLocateCurrent.yEnd) {
+          dispatch(isLooking(true))
+        } else {
+          dispatch(isLooking(false))
+        }
+      } catch {
+        //webgazer is not ready yet
+      }
+    }, 100)
+    return () => clearInterval(interval)
+  }, [webgazerScript])
 
   return (
     <>
       <Script
         src="../external-lib/webgazer.js"
         onLoad={() => {
-          webgazer.setGazeListener(function (data: { x: any; y: any } | null, elapsedTime: any) {
-            if (data == null) {
-              return
-            }
-            var xPrediction = data.x //these x coordinates are relative to the viewport
-            var yPrediction = data.y //these y coordinates are relative to the viewport
-            //redux
-            dispatch(updateEyeTracking({ x: xPrediction, y: yPrediction }))
-            console.log(eyeTrackingRef.current)
-            if (xPrediction >= questionLocate.xStart && xPrediction <= questionLocate.xEnd && yPrediction >= questionLocate.yStart && yPrediction <= questionLocate.yEnd) {
-              dispatch(isLooking(true))
-            } else {
-              dispatch(isLooking(false))
-            }
-          })
+          setWebgazerScript(true)
+          // webgazer.setGazeListener(function (data: { x: any; y: any } | null, elapsedTime: any) {
+          //   if (data == null) {
+          //     return
+          //   }
+          //   var xPrediction = data.x //these x coordinates are relative to the viewport
+          //   var yPrediction = data.y //these y coordinates are relative to the viewport
+          //   //redux
+          //   dispatch(updateEyeTracking({ x: xPrediction, y: yPrediction }))
+          //   console.log(eyeTrackingRef.current)
+          //   if (xPrediction >= questionLocate.xStart && xPrediction <= questionLocate.xEnd && yPrediction >= questionLocate.yStart && yPrediction <= questionLocate.yEnd) {
+          //     dispatch(isLooking(true))
+          //   } else {
+          //     dispatch(isLooking(false))
+          //   }
+          // })
         }}
       />
       <Button
         onClick={() => {
           webgazer.begin()
+          // webgazer.showVideo(false)
         }}
       >
         START
@@ -81,17 +99,6 @@ function EyesTracking() {
         校正
       </Button>
       {correction ? <Ball open={correction} setOpen={setCorrection} /> : null}
-      {/* For testing */}
-      {/* <Box
-        width={questionLocate.w}
-        height={questionLocate.h}
-        sx={{
-          backgroundColor: 'green',
-          position: 'absolute',
-          right: questionLocate.xStart,
-          top: questionLocate.yStart,
-        }}
-      /> */}
     </>
   )
 }
