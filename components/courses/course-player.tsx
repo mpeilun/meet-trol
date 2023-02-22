@@ -181,6 +181,15 @@ function CoursePlayer() {
           config={{
             // playerVars: { controls: 1 },
           }}
+=======
+          height={handle.active ? '100%' : 600}
+          progressInterval={200}
+          config={
+            {
+              // playerVars: { controls: 1 },
+            }
+          }
+>>>>>>> Stashed changes
         ></ReactPlayer>
       </Box>
     </FullScreen>
