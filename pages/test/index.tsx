@@ -16,6 +16,9 @@ const Test = (props: { handleQuestionClose: () => void }) => {
   const [content, setContent] = React.useState('')
   const [url, setUrl] = React.useState('')
   const [checked, setChecked] = React.useState(false)
+
+  const videoId: string = '63f4a703808afbe0d1dc370e'
+
   const submitInfo = async () => {
     const response = await fetch('/api/interactiveData/info', {
       method: 'POST',
@@ -27,7 +30,7 @@ const Test = (props: { handleQuestionClose: () => void }) => {
         start: 'test',
         end: 'test',
         firstJumps: checked,
-        videoId: '63f45bc582f16bcec3a6381b', // video id
+        videoId: videoId, // video id
       }),
     })
     const data = await response.json()
@@ -47,7 +50,6 @@ const Test = (props: { handleQuestionClose: () => void }) => {
 
   const [infoData, setInfoData] = React.useState<Array<Info>>([])
 
-  const videoId: string = '63f45bc582f16bcec3a6381b'
   React.useEffect(() => {
     async function fetchData() {
       const response = await fetch(`/api/interactiveData/info/${videoId}`)
@@ -128,7 +130,6 @@ const Test = (props: { handleQuestionClose: () => void }) => {
                 <p key={info.title}>{info.title}</p>
                 <p key={info.content}>{info.content}</p>
                 <p key={info.url}>{info.url}</p>
-                <p key={`${index}${info.firstJumps}`}>`${info.firstJumps}`</p>
                 <p key={info.videoId}>{info.videoId}</p>
               </>
             )

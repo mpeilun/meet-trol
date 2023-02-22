@@ -8,7 +8,7 @@ import { CourseDataType, getCourseById } from '../../lib/dummy-data'
 import CustomizedAccordions from '../../components/chapter/chapter'
 import dynamic from 'next/dynamic'
 import * as React from 'react'
-import { Chapter } from '@prisma/client'
+import { Chapter, Video } from '@prisma/client'
 
 const CoursePlayer = dynamic(
   () => import('../../components/courses/course-player'),
@@ -20,19 +20,28 @@ const CourseTab = dynamic(() => import('../../components/courses/course-tab'), {
 
 function CourseInnerPage() {
   const router = useRouter()
-  const courseId = router.query.id
+  const query = router.query as { id: string }
+  const courseId = query.id
+
   let course: CourseDataType | undefined
   const [chapterData, setChapterData] = React.useState<Array<Chapter>>([])
+  const [videoData, setVideoData] = React.useState<Array<Video>>([])
+
   React.useEffect(() => {
     async function fetchData() {
-      const response = await fetch(`/api/chapter`)
-      const json: Array<Chapter> = await response.json()
-      setChapterData(json)
-      console.log(json[0].id)
+      const chapterResponse = await fetch(`/api/chapter`)
+      const chapterJson: Array<Chapter> = await chapterResponse.json()
+      setChapterData(chapterJson)
+      const index = chapterJson.findIndex(item => item.classesId === courseId)
+      // console.log(chapterJson.findIndex(item => item.classesId === courseId))
+
+      const videoResponse = await fetch(`/api/video/${chapterJson[index].id}`)
+      const videoJson: Array<Video> = await videoResponse.json()
+      setVideoData(videoJson)
+      console.log(videoJson)
     }
     fetchData()
   }, [])
-
 
   if (typeof courseId === 'string') {
     course = getCourseById(courseId)
@@ -41,8 +50,6 @@ function CourseInnerPage() {
   if (!course) {
     return <p>Not Course Found!</p>
   }
-
-  
 
   return (
     <Box
@@ -70,14 +77,14 @@ function CourseInnerPage() {
 }
 
 export async function getStaticPaths() {
+  const response = await fetch(`http://localhost:3000/api/chapter`)
+  const json: Array<Chapter> = await response.json()
 
+  const paths = json.map((item) => ({
+    params: { id: item.classesId },
+  }))
   return {
-    paths: [
-      { params: { id: 'e1' } },
-      { params: { id: 'e2' } },
-      { params: { id: 'e3' } },
-      { params: { id: 'e4' } },
-    ],
+    paths,
     fallback: true,
     //true(找無pre-render時，render, 此時還沒有資料, 需要有fallback) false blocking
   }
@@ -85,7 +92,6 @@ export async function getStaticPaths() {
 
 export async function getStaticProps(content: any) {
   console.log(content.params)
-
   return {
     props: {
       items: '',

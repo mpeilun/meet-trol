@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router'
 
 import CourseList from '../../components/courses/course-list'
-import { getAllCourses } from '../../lib/dummy-data'
 import {
   AppBar,
   Box,

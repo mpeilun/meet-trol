@@ -53,6 +53,7 @@ const PopupModal = (props: { setClose: () => void; setOpen: Function; open: bool
           right: '20%',
           left: 'auto',
           bottom: 'auto',
+          zIndex: 1000,
 
         }}
         open={props.open || !isRender}
