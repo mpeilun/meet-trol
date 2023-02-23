@@ -92,7 +92,7 @@ const PopupModal = (props: { setClose: () => void; setOpen: Function; open: bool
               // minWidth: 600,
               maxWidth: 700,
               maxHeight: 450,
-              border: look ? '0.5rem outset green' : '0.5rem outset red',
+              border: look ? '0.3rem outset green' : '0.3rem outset red',
             }}
           >
             <Box

@@ -94,7 +94,7 @@ function AllCoursesPage() {
                 ) => {
                   return (
                     <>
-                      <Grid md={4} key={id}>
+                      <Grid md={4} key={index}>
                         <Box
                           m={'auto'}
                           width={'100%'}
