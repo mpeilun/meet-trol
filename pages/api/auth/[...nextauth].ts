@@ -22,6 +22,10 @@ export const authOptions = {
     },
     async session({ session, token, user }: { session: Session; token: JWT; user: User }): Promise<Session> {
       // session.account = token.account
+      console.log(token)
+      console.log('-----------')
+      console.log(user)
+      session.user = user
       return session
     },
   },

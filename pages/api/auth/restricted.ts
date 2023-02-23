@@ -7,7 +7,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (session) {
     res.status(200).json({
       content: 'This is protected content. You can access this content because you are signed in.',
-      session: session,
+      session: session.user,
     })
   } else {
     res.status(403).json({

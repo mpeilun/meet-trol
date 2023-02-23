@@ -1,14 +1,11 @@
 import NextAuth from 'next-auth'
 import { JWT } from 'next-auth/jwt'
+import type { User as PrismaUserType } from '@prisma/client'
 
 declare module 'next-auth' {
+  interface User extends PrismaUserType {}
   interface Session {
-    account: Account
-    user: {
-      email: string
-      image: string
-      name: string
-    }
+    user: User
   }
 }
 
