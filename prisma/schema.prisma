@@ -33,8 +33,8 @@ model Chapter {
   id        String  @id @default(auto()) @map("_id") @db.ObjectId
   title     String
   videos    Video[]
-  classes   Course  @relation(fields: [classesId], references: [id])
-  classesId String  @db.ObjectId
+  course   Course  @relation(fields: [courseId], references: [id])
+  courseId String  @db.ObjectId
 }
 
 model Video {
