@@ -10,10 +10,7 @@ import dynamic from 'next/dynamic'
 import * as React from 'react'
 import { Chapter, Video } from '@prisma/client'
 
-const CoursePlayer = dynamic(
-  () => import('../../components/courses/course-player'),
-  { ssr: false }
-)
+const CoursePlayer = dynamic(() => import('../../components/courses/course-player'), { ssr: false })
 const CourseTab = dynamic(() => import('../../components/courses/course-tab'), {
   ssr: false,
 })
@@ -32,7 +29,7 @@ function CourseInnerPage() {
       const chapterResponse = await fetch(`/api/chapter`)
       const chapterJson: Array<Chapter> = await chapterResponse.json()
       setChapterData(chapterJson)
-      const index = chapterJson.findIndex(item => item.classesId === courseId)
+      const index = chapterJson.findIndex((item) => item.classesId === courseId)
       // console.log(chapterJson.findIndex(item => item.classesId === courseId))
 
       const videoResponse = await fetch(`/api/video/${chapterJson[index].id}`)
@@ -52,17 +49,8 @@ function CourseInnerPage() {
   }
 
   return (
-    <Box
-      className="course-main-div"
-      display="flex"
-      width="100%"
-      height={'100vh'}
-      maxHeight={'calc(100vh - 68.5px)'}
-    >
-      <Box
-        className="course-nav-div"
-        display={{ width: '20vw', xs: 'none', md: 'flex' }}
-      >
+    <Box className="course-main-div" display="flex" width="100%" height={'100vh'} maxHeight={'calc(100vh - 68.5px)'}>
+      <Box className="course-nav-div" display={{ width: '20vw', xs: 'none', md: 'flex' }}>
         <Card sx={{ width: '100%' }}>
           <CustomizedAccordions></CustomizedAccordions>
           <Divider />
@@ -81,7 +69,7 @@ export async function getStaticPaths() {
   const json: Array<Chapter> = await response.json()
 
   const paths = json.map((item) => ({
-    params: { id: item.classesId },
+    params: { id: item.courseId },
   }))
   return {
     paths,

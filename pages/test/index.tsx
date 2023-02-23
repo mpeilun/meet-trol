@@ -1,13 +1,5 @@
-import {
-  Box,
-  Checkbox,
-  Button,
-  TextField,
-  FormGroup,
-  FormControlLabel,
-} from '@mui/material'
+import { Box, Checkbox, Button, TextField, FormGroup, FormControlLabel } from '@mui/material'
 import * as React from 'react'
-import pisma from '../../prisma/prisma'
 import { Info } from '@prisma/client'
 
 // 還需引入 description 圖片 src 變數
@@ -61,9 +53,7 @@ const Test = (props: { handleQuestionClose: () => void }) => {
   }, [])
   return (
     <>
-      <Box
-        sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}
-      >
+      <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
         <Box
           sx={{
             display: 'flex',
@@ -109,11 +99,7 @@ const Test = (props: { handleQuestionClose: () => void }) => {
               }
               label="Label"
             />
-            <FormControlLabel
-              disabled
-              control={<Checkbox />}
-              label="Disabled"
-            />
+            <FormControlLabel disabled control={<Checkbox />} label="Disabled" />
           </FormGroup>
 
           <Button variant="contained" onClick={submitInfo}>
