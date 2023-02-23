@@ -25,7 +25,7 @@ export const authOptions = {
       console.log(token)
       console.log('-----------')
       console.log(user)
-      session.user = user
+      session.user = { id: user.id, name: user.name, email: user.email, image: user.image }
       return session
     },
   },
