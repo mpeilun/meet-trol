@@ -5,7 +5,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
   } else if (req.method === 'GET') {
     const query = req.query as { id: string }
-    const isValidObjectId = /^[0-9a-fA-F]{24}$/.test(query.id)
+    const isValidObjectId = typeof query.id === 'string' && query.id.length === 24 && /^[a-f0-9]+$/i.test(query.id)
 
     if (isValidObjectId) {
       const data = await prisma.chapter.findMany({
@@ -26,7 +26,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       })
       res.status(200).json(data)
     } else {
-      res.status(500).json({ message: '404 Not Found' })
+      res.status(400).json({ message: 'Error' })
     }
   } else {
     res.status(405).json({ message: 'Method not allowed' })
