@@ -4,8 +4,11 @@ import { ThemeProvider, GlobalStyles, CssBaseline } from '@mui/material'
 import theme, { themeFont } from '../../styles/material-theme'
 import Head from 'next/head'
 import { grey } from '@mui/material/colors'
+import { useRouter } from 'next/router'
 
 function Layout(props: { children: ReactNode }) {
+  const { asPath } = useRouter()
+
   return (
     <>
       <Head>
@@ -20,7 +23,7 @@ function Layout(props: { children: ReactNode }) {
             body: { margin: 0, backgroundColor: grey[200] },
           }}
         />
-        <MainNavigation />
+        {asPath !== '/auth/signin' && <MainNavigation />}
         <main>{props.children}</main>
       </ThemeProvider>
     </>

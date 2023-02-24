@@ -13,7 +13,7 @@ export const authOptions = {
     }),
   ],
   pages: {
-    signIn: '/signin',
+    signIn: '/auth/signin',
   },
   callbacks: {
     async jwt({ token, account }: { token: JWT; account: Account }): Promise<JWT> {
