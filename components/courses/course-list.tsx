@@ -1,13 +1,14 @@
 import CourseItem from './course-item'
-import { CourseDataType } from '../../lib/dummy-data'
+// import { CourseDataType } from '../../lib/dummy-data'
 
-function CourseList(props: { items: Array<CourseDataType> }) {
+function CourseList(/*props: { items: Array<CourseDataType> }*/) {
   return (
-    <ul>
-      {props.items.map((course) => (
-        <CourseItem key={course.id} course={course}></CourseItem>
-      ))}
-    </ul>
+    <></>
+    // <ul>
+    //   {props.items.map((course) => (
+    //     <CourseItem key={course.id} course={course}></CourseItem>
+    //   ))}
+    // </ul>
   )
 }
 
