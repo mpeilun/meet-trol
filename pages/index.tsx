@@ -1,6 +1,6 @@
 // import Link from 'next/link'
 // import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, Button, Tooltip, MenuItem } from '@mui/material'
-import { CourseDataType, getAllCourses } from '../lib/dummy-data'
+// import { CourseDataType, getAllCourses } from '../lib/dummy-data'
 import CourseList from '../components/courses/course-list'
 import { useContext } from 'react'
 import Image from 'next/image'

@@ -10,14 +10,22 @@ import dynamic from 'next/dynamic'
 import * as React from 'react'
 import { Chapter, Video } from '@prisma/client'
 
-const CoursePlayer = dynamic(() => import('../../components/courses/course-player'), { ssr: false })
+const CoursePlayer = dynamic(
+  () => import('../../components/courses/course-player'),
+  { ssr: false }
+)
 const CourseTab = dynamic(() => import('../../components/courses/course-tab'), {
   ssr: false,
 })
 
-function CourseInnerPage(props: { chapter: Chapter[] | null }) {
-  const [chapterData, setChapterData] = React.useState<Array<Chapter> | null>(props.chapter)
-  console.log(chapterData)
+interface ChapterData extends Chapter {
+  videos: Video[]
+}
+
+function CourseInnerPage(props: { chapter: ChapterData[] | null }) {
+  const [chapterData, setChapterData] =
+    React.useState<Array<ChapterData> | null>(props.chapter)
+  // console.log(chapterData)
 
   if (props.chapter == undefined) {
     console.log('ID not found')
@@ -37,9 +45,26 @@ function CourseInnerPage(props: { chapter: Chapter[] | null }) {
   //   fetchData()
   // }, [])
   else {
+    const chapterList = chapterData.map((chapter) => {
+      return {
+        title: chapter.title,
+        videoUrl: chapter.videos.map((video) => video.url),
+      }
+    })
+
+    // console.log(chapterList)
     return (
-      <Box className="course-main-div" display="flex" width="100%" height={'100vh'} maxHeight={'calc(100vh - 68.5px)'}>
-        <Box className="course-nav-div" display={{ width: '20vw', xs: 'none', md: 'flex' }}>
+      <Box
+        className="course-main-div"
+        display="flex"
+        width="100%"
+        height={'100vh'}
+        maxHeight={'calc(100vh - 68.5px)'}
+      >
+        <Box
+          className="course-nav-div"
+          display={{ width: '20vw', xs: 'none', md: 'flex' }}
+        >
           <Card sx={{ width: '100%' }}>
             <CustomizedAccordions></CustomizedAccordions>
             <Divider />
@@ -71,7 +96,9 @@ export async function getStaticPaths() {
 export const getStaticProps = async (context: GetStaticPropsContext) => {
   console.log('fetch chapter data')
   const courseId = context.params?.id as string
-  const chapterResponse = await fetch(`http://localhost:3000/api/chapter/${courseId}`)
+  const chapterResponse = await fetch(
+    `http://localhost:3000/api/chapter/${courseId}`
+  )
   if (chapterResponse.status === 200) {
     const chapter: Array<Chapter> = await chapterResponse.json()
     return { props: { chapter } }
