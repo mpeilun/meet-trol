@@ -18,7 +18,9 @@ function SignInPage({ providers }: InferGetServerSidePropsType<typeof getServerS
 
   return (
     <>
-      <CircularProgress />
+      <Box height={'100vh'} display="flex" sx={{ justifyContent: 'center', alignItems: 'center' }}>
+        <CircularProgress sx={{ width: '200px', height: '200px' }} />
+      </Box>
     </>
   )
 }

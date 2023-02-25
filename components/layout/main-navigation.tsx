@@ -3,17 +3,33 @@ import Link from 'next/link'
 import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, Button, Tooltip, MenuItem } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
+import { useSession } from 'next-auth/react'
+import Image from 'next/image'
+import { signOut } from 'next-auth/react'
+import LoginIcon from '@mui/icons-material/Login'
+import { color } from '@mui/system'
 
 const pages = [
   { displayName: '我的課程', path: '/courses' },
   { displayName: '課程管理', path: '/courses' },
   { displayName: '關於我們', path: '/courses/search' },
 ]
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout']
+const settings = [
+  { title: '帳號管理', fn: () => {} },
+  { title: '修課紀錄', fn: () => {} },
+  {
+    title: '登出',
+    fn: () => {
+      signOut()
+    },
+  },
+]
 
 function MainNavigation() {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null)
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null)
+
+  const { data: session } = useSession()
 
   const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget)
@@ -110,11 +126,28 @@ function MainNavigation() {
           </Box>
           {/* 帳號頭像 */}
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar>P</Avatar>
-              </IconButton>
-            </Tooltip>
+            {session ? (
+              <Tooltip title={session.user.name}>
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar sx={{ width: '40px', height: '40px' }} src={session.user.image} alt="ProfilePhoto">
+                    <Image src={session.user.image} alt="ProfilePhoto" width={200} height={200}></Image>
+                  </Avatar>
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Tooltip title={'登入'}>
+                <IconButton
+                  onClick={() => {
+                    window.open('auth/signin')
+                  }}
+                  sx={{ p: 0 }}
+                >
+                  <Avatar sx={{ bgcolor: 'primary.main' }}>
+                    <LoginIcon />
+                  </Avatar>
+                </IconButton>
+              </Tooltip>
+            )}
             <Menu
               sx={{ mt: '45px' }}
               id="menu-appbar"
@@ -132,8 +165,8 @@ function MainNavigation() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                <MenuItem key={setting.title} onClick={setting.fn}>
+                  <Typography textAlign="center">{setting.title}</Typography>
                 </MenuItem>
               ))}
             </Menu>
