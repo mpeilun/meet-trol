@@ -11,17 +11,24 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         where: {
           id: session.user.id,
         },
-        include: {
-          courses: true,
+        select: {
+          name: true,
+          email: true,
+          courses: {
+            select: {
+              title: true,
+              updatedAt: true,
+            },
+          },
         },
       })
       res.status(200).json(data)
     } else {
       res.status(403).json({ message: 'forbidden' })
     }
+  } else {
+    res.status(400).json({ message: 'bad request' })
   }
-
-  res.status(400).json({ message: 'bad request' })
 }
 
 export default handler

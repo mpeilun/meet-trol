@@ -8,27 +8,13 @@ import Image from 'next/image'
 import { signOut } from 'next-auth/react'
 import LoginIcon from '@mui/icons-material/Login'
 import { color } from '@mui/system'
-
-const pages = [
-  { displayName: '我的課程', path: '/courses' },
-  { displayName: '課程管理', path: '/courses' },
-  { displayName: '關於我們', path: '/courses/search' },
-]
-const settings = [
-  { title: '帳號管理', fn: () => {} },
-  { title: '修課紀錄', fn: () => {} },
-  {
-    title: '登出',
-    fn: () => {
-      signOut()
-    },
-  },
-]
+import { useRouter } from 'next/router'
 
 function MainNavigation() {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null)
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null)
 
+  const router = useRouter()
   const { data: session } = useSession()
 
   const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
@@ -44,6 +30,27 @@ function MainNavigation() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null)
   }
+
+  const pages = [
+    { displayName: '我的課程', path: '/courses' },
+    { displayName: '課程管理', path: '/courses' },
+    { displayName: '關於我們', path: '/courses/search' },
+  ]
+  const settings = [
+    {
+      title: '帳號管理',
+      fn: () => {
+        router.push('/account')
+      },
+    },
+    { title: '修課紀錄', fn: () => {} },
+    {
+      title: '登出',
+      fn: () => {
+        signOut()
+      },
+    },
+  ]
 
   return (
     <AppBar component="nav" position="sticky">
