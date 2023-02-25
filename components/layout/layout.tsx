@@ -5,6 +5,7 @@ import theme, { themeFont } from '../../styles/material-theme'
 import Head from 'next/head'
 import { grey } from '@mui/material/colors'
 import { useRouter } from 'next/router'
+import { Box } from '@mui/material'
 
 function Layout(props: { children: ReactNode }) {
   const { asPath } = useRouter()
@@ -23,8 +24,10 @@ function Layout(props: { children: ReactNode }) {
             body: { margin: 0, backgroundColor: grey[200] },
           }}
         />
-        {asPath !== '/auth/signin' && <MainNavigation />}
-        <main>{props.children}</main>
+        <Box display="flex" width="100vw" height="100vh" sx={{ flexDirection: 'column' }}>
+          {asPath !== '/auth/signin' && <MainNavigation />}
+          <main style={{ height: '100%' }}>{props.children}</main>
+        </Box>
       </ThemeProvider>
     </>
   )

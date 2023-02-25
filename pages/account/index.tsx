@@ -26,7 +26,13 @@ function AccountPage() {
   }, [profile])
 
   if (!session) {
-    return <p>請登入後再嘗試操作！</p>
+    return (
+      <>
+        <Typography variant="h6" textAlign="center" sx={{ p: 2 }}>
+          請登入後再嘗試操作！
+        </Typography>
+      </>
+    )
   }
 
   return (
