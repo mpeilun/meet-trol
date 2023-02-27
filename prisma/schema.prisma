@@ -42,10 +42,28 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  records       Record[]
   accounts      Account[]
   sessions      Session[]
   courses       Course[]  @relation("meber", fields: [coursesId], references: [id])
   coursesId     String[]  @db.ObjectId
+}
+
+model Record {
+  id       String     @id @default(auto()) @map("_id") @db.ObjectId
+  courseId String     @db.ObjectId
+  lastView LastView[]
+  user     User       @relation(fields: [userId], references: [id])
+  userId   String     @db.ObjectId
+}
+
+model LastView {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  videoId   String   @db.ObjectId
+  videoTime Float
+  viewTime  DateTime @default(now())
+  record    Record?  @relation(fields: [recordId], references: [id])
+  recordId  String?  @db.ObjectId
 }
 
 model VerificationToken {

@@ -22,6 +22,35 @@ import PopupFab from '../popup/popupFab'
 import { FullScreen, useFullScreenHandle } from 'react-full-screen'
 import { OnProgressProps } from 'react-player/base'
 
+
+import { Video, Info, Choice, Rank, Fill, Drag, AnswersChoice, AnswersFill, AnswersRank, AnswersDrag } from '@prisma/client'
+interface VideoData extends Video {
+  info: Info[],
+  choice: ChoiceData[],
+  rank: RankData[],
+  fill: FillData[],
+  drag: DragData[],
+}
+interface ChoiceData extends Choice {
+  yourAnswer: AnswersChoice[]
+}
+interface RankData extends Rank {
+  yourAnswer: AnswersRank[]
+}
+interface FillData extends Fill {
+  yourAnswer: AnswersFill[]
+}
+interface DragData extends Drag {
+  yourAnswer: AnswersDrag[]
+}
+
+interface ReactPlayerOnProgressProps {
+  played: number
+  playedSeconds: number
+  loaded: number
+  loadedSeconds: number
+}
+
 // DATA
 interface questionList {
   startTime: number
@@ -53,11 +82,30 @@ function CoursePlayer() {
 
   const handle = useFullScreenHandle()
 
+  //redux
+  const videoId = useAppSelector((state) => state.course.videoId)
+  const dispatch = useAppDispatch()
+  const [videoData, setVideoData] = React.useState();
+
+
+  React.useEffect(() => {
+    console.log(videoId)
+    const fetchData = async () => {
+      const response = await fetch(
+        `http://localhost:3000/api/video/${videoId}`)
+      const data: Array<VideoData> = await response.json()
+      console.log(data)
+
+    }
+    fetchData()
+
+  }, [videoId])
+
   // 控制彈跳互動視窗
   const [openPopupModal, setOpenPopupModal] = React.useState(false)
   const handleOpenPopupModal = () => {
     setOpenPopupModal(true)
-    pause()
+    pause() 
   }
   const handleClosePopupModal = () => {
     setOpenPopupModal(false)
@@ -78,9 +126,7 @@ function CoursePlayer() {
     }
   }
 
-  //redux
-  const videoUrl = useAppSelector((state) => state.course.videoId)
-  const dispatch = useAppDispatch()
+
 
   let handlePlayerStatus = (props: OnProgressProps) => {
     dispatch(setPlayedSecond(props.playedSeconds))

@@ -15,12 +15,12 @@ import {
   CardContent,
   Card,
 } from '@mui/material'
-import { Chapter, Video } from '@prisma/client'
+import { Chapter, Video, LastView } from '@prisma/client'
 import { useAppSelector, useAppDispatch } from '../../hooks/redux'
 import { setVideoId } from '../../store/course-data'
 
 interface ChapterData extends Chapter {
-  videos: Video[]
+  videos: Video[],
 }
 
 const Accordion = styled((props: AccordionProps) => (
@@ -64,10 +64,12 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 
 export default function CustomizedAccordions(props: {
   chapterData: ChapterData[]
+  record: LastView[]
 }) {
   const data = props.chapterData
-  const [chapterData, setChapterData] = React.useState<ChapterData[]>(data)
+  const record = props.record
 
+  console.log(record)
   const dispatch = useAppDispatch()
 
   const setSelected = (
@@ -75,12 +77,13 @@ export default function CustomizedAccordions(props: {
     indexTwo: number = -1
   ): boolean[][] => {
     let isSelectedOne: Array<Array<boolean>> = []
-    for (let i = 0; i < chapterData.length; i++) {
+    for (let i = 0; i < data.length; i++) {
       let isSelectedTwo: Array<boolean> = []
-      for (let j = 0; j < chapterData[i].videos.length; j++) {
+      for (let j = 0; j < data[i].videos.length; j++) {
         if (indexOne == i && indexTwo == j) {
           isSelectedTwo.push(true)
-        } else {
+        } 
+        else {
           isSelectedTwo.push(false)
         }
       }
@@ -93,22 +96,35 @@ export default function CustomizedAccordions(props: {
     setSelected()
   )
 
-  React.useEffect(() => {}, [])
+
+  React.useEffect(() => {
+
+    setVideoSelect(setSelected())
+    if (record.length != 0 && data.length != 0) {
+      console.log('initial last video')
+      dispatch(setVideoId(record[record.length - 1].videoId))
+    } else if (record.length == 0 && data.length != 0) {
+      dispatch(setVideoId(data[0].videos[0].id))
+    }
+  }, [])
+
+
 
   if (data == undefined) {
     return <></>
   } else if (data.length == 0) {
     return (
       <>
-        <Typography align='center' sx={{fontWeight: 'bold' }}>
+        <Typography align='center' sx={{ py: 2, fontWeight: 'bold' }}>
           課程尚未新增影片和章節
         </Typography>
       </>
     )
   } else {
+    console.log(videoSelect)
     return (
       <div>
-        {chapterData.map(({ title, videos }, indexOne) => {
+        {data.map(({ title, videos }, indexOne) => {
           return (
             <>
               <Accordion>
@@ -143,7 +159,7 @@ export default function CustomizedAccordions(props: {
                         >
                           <CardActionArea
                             onClick={() => {
-                              console.log(id)
+                              // console.log(id)
                               setVideoSelect(setSelected(indexOne, indexTwo))
                               dispatch(setVideoId(id))
                             }}

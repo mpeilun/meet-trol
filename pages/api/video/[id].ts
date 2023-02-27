@@ -7,7 +7,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     const query = req.query as { id: string }
     const data = await prisma.video.findMany({
       where: {
-        chapterId: query.id,
+        id: query.id,
       },
       include: {
         info: true,

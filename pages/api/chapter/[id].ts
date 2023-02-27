@@ -16,7 +16,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           courseId: query.id,
         },
         include: {
-          videos: true
+          videos: true,
         },
       })
       res.status(200).json(data)
