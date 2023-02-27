@@ -17,7 +17,7 @@ import {
 } from '@mui/material'
 import { Chapter, Video } from '@prisma/client'
 import { useAppSelector, useAppDispatch } from '../../hooks/redux'
-import { setVideoUrl } from '../../store/course-data'
+import { setVideoId } from '../../store/course-data'
 
 interface ChapterData extends Chapter {
   videos: Video[]
@@ -86,7 +86,6 @@ export default function CustomizedAccordions(props: {
       }
       isSelectedOne.push(isSelectedTwo)
     }
-    console.log(isSelectedOne)
     return isSelectedOne
   }
 
@@ -98,9 +97,15 @@ export default function CustomizedAccordions(props: {
 
   if (data == undefined) {
     return <></>
+  } else if (data.length == 0) {
+    return (
+      <>
+        <Typography align='center' sx={{fontWeight: 'bold' }}>
+          課程尚未新增影片和章節
+        </Typography>
+      </>
+    )
   } else {
-    console.log(chapterData)
-    // console.log(videoSelect)
     return (
       <div>
         {chapterData.map(({ title, videos }, indexOne) => {
@@ -120,7 +125,7 @@ export default function CustomizedAccordions(props: {
                   </Box>
                 </AccordionSummary>
                 <AccordionDetails>
-                  {videos.map(({ title, url }, indexTwo) => {
+                  {videos.map(({ title, id }, indexTwo) => {
                     let isLast = true
                     if (videos.length == indexTwo + 1) {
                       isLast = false
@@ -138,9 +143,9 @@ export default function CustomizedAccordions(props: {
                         >
                           <CardActionArea
                             onClick={() => {
-                              console.log(url)
+                              console.log(id)
                               setVideoSelect(setSelected(indexOne, indexTwo))
-                              dispatch(setVideoUrl(url))
+                              dispatch(setVideoId(id))
                             }}
                           >
                             <CardContent

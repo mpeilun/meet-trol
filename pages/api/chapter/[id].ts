@@ -5,7 +5,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
   } else if (req.method === 'GET') {
     const query = req.query as { id: string }
-    const isValidObjectId = typeof query.id === 'string' && query.id.length === 24 && /^[a-f0-9]+$/i.test(query.id)
+    const isValidObjectId =
+      typeof query.id === 'string' &&
+      query.id.length === 24 &&
+      /^[a-f0-9]+$/i.test(query.id)
 
     if (isValidObjectId) {
       const data = await prisma.chapter.findMany({
@@ -13,15 +16,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           courseId: query.id,
         },
         include: {
-          videos: {
-            include: {
-              info: true,
-              choice: true,
-              rank: true,
-              fill: true,
-              drag: true,
-            },
-          },
+          videos: true
         },
       })
       res.status(200).json(data)

@@ -85,7 +85,7 @@ function CoursePlayer() {
   }
 
   //redux
-  const videoUrl = useAppSelector((state) => state.course.videoUrl)
+  const videoUrl = useAppSelector((state) => state.course.videoId)
   const dispatch = useAppDispatch()
 
   let handlePlayerStatus = (props: ReactPlayerOnProgressProps) => {
@@ -120,18 +120,18 @@ function CoursePlayer() {
       <Box
         sx={{ position: 'relative', width: '100%', height: '100%' }}
         className="course-player-div"
-        // onMouseOver={() => {
-        //   setShowPlayerBar(true)
-        //   setMouseEnter(true)
-        // }}
-        // onMouseLeave={() => {
-        //   setMouseEnter(false)
-        //   setShowPlayerBar(false)
-        // }}
+        onMouseOver={() => {
+          setShowPlayerBar(true)
+          setMouseEnter(true)
+        }}
+        onMouseLeave={() => {
+          setMouseEnter(false)
+          setShowPlayerBar(false)
+        }}
       >
         {/* 自訂播放bar */}
 
-        {/* <Box
+         <Box
           className="course-player-bar"
           sx={{
             height: 50,
@@ -171,7 +171,7 @@ function CoursePlayer() {
               </ButtonBase>
             </div>
           </Slide>
-        </Box> */}
+        </Box> 
 
         {showComponent && (
           <PopupFab
