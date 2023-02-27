@@ -22,37 +22,20 @@ interface ChapterData extends Chapter {
   videos: Video[]
 }
 
-function CourseInnerPage(props: { chapter: ChapterData[] | null }) {
-  const [chapterData, setChapterData] =
-    React.useState<Array<ChapterData> | null>(props.chapter)
-  // console.log(chapterData)
+function CourseInnerPage(props: { chapter: ChapterData[] }) {
+  const data = props.chapter
+  const [chapterData, setChapterData] = React.useState<ChapterData[]>(data)
 
-  if (props.chapter == undefined) {
+  console.log(data)
+  if (chapterData == undefined) {
     console.log('ID not found')
     return (
       <>
         <p>Page not found. Check the course ID, please.</p>
       </>
     )
-  }
-  // React.useEffect(() => {
-  //   async function fetchData() {
-  //     const videoResponse = await fetch(`/api/video/`)
-  //     const videoJson: Array<Video> = await videoResponse.json()
-  //     setVideoData(videoJson)
-  //     console.log(videoJson)
-  //   }
-  //   fetchData()
-  // }, [])
-  else {
-    const chapterList = chapterData.map((chapter) => {
-      return {
-        title: chapter.title,
-        videoUrl: chapter.videos.map((video) => video.url),
-      }
-    })
-
-    // console.log(chapterList)
+  } else {
+    console.log(chapterData)
     return (
       <Box
         className="course-main-div"
@@ -66,7 +49,7 @@ function CourseInnerPage(props: { chapter: ChapterData[] | null }) {
           display={{ width: '20vw', xs: 'none', md: 'flex' }}
         >
           <Card sx={{ width: '100%' }}>
-            <CustomizedAccordions></CustomizedAccordions>
+            <CustomizedAccordions chapterData={data}></CustomizedAccordions>
             <Divider />
           </Card>
         </Box>
@@ -95,12 +78,16 @@ export async function getStaticPaths() {
 
 export const getStaticProps = async (context: GetStaticPropsContext) => {
   console.log('fetch chapter data')
+
+  // courseId 如果找不到會壞掉
+  // 目前判斷24字元才fetch
+  // 未判斷是否ObjectId
   const courseId = context.params?.id as string
   const chapterResponse = await fetch(
     `http://localhost:3000/api/chapter/${courseId}`
   )
   if (chapterResponse.status === 200) {
-    const chapter: Array<Chapter> = await chapterResponse.json()
+    const chapter: Array<ChapterData> = await chapterResponse.json()
     return { props: { chapter } }
   } else {
     return { props: { chapter: null } }

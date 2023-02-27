@@ -5,7 +5,12 @@ import CameraIcon from '@mui/icons-material/Camera'
 import { Typography } from '@mui/material'
 import PopupModal from './popupModel'
 
-const PopupFab = (props: { setClose: () => void; setOpen: Function; open: boolean; questionType: number }) => {
+const PopupFab = (props: {
+  setClose: () => void
+  setOpen: Function
+  open: boolean
+  questionType: number
+}) => {
   if (props.questionType == 0) {
     return (
       <>
@@ -18,6 +23,7 @@ const PopupFab = (props: { setClose: () => void; setOpen: Function; open: boolea
             left: '10%',
             right: 'auto',
             bottom: 'auto',
+            display: props.open ? 'none' : 'flex',
           }}
           color="warning"
           aria-label="info"
@@ -27,7 +33,12 @@ const PopupFab = (props: { setClose: () => void; setOpen: Function; open: boolea
         >
           <InfoIcon />
         </Fab>
-        <PopupModal setClose={props.setClose} setOpen={props.setOpen} open={props.open} questionType={props.questionType}></PopupModal>
+        <PopupModal
+          setClose={props.setClose}
+          setOpen={props.setOpen}
+          open={props.open}
+          questionType={props.questionType}
+        ></PopupModal>
       </>
     )
   } else if (0 < props.questionType && props.questionType < 4) {
@@ -42,6 +53,7 @@ const PopupFab = (props: { setClose: () => void; setOpen: Function; open: boolea
             left: '10%',
             right: 'auto',
             bottom: 'auto',
+            display: props.open ? 'none' : 'flex',
           }}
           color="primary"
           aria-label="choice"
@@ -51,7 +63,12 @@ const PopupFab = (props: { setClose: () => void; setOpen: Function; open: boolea
         >
           <MenuIcon />
         </Fab>
-        <PopupModal setClose={props.setClose} setOpen={props.setOpen} open={props.open} questionType={props.questionType}></PopupModal>
+        <PopupModal
+          setClose={props.setClose}
+          setOpen={props.setOpen}
+          open={props.open}
+          questionType={props.questionType}
+        ></PopupModal>
       </>
     )
   } else if (props.questionType == 4) {
@@ -66,6 +83,7 @@ const PopupFab = (props: { setClose: () => void; setOpen: Function; open: boolea
             left: '10%',
             right: 'auto',
             bottom: 'auto',
+            display: props.open ? 'none' : 'flex',
           }}
           color="secondary"
           aria-label="drag"
@@ -75,7 +93,12 @@ const PopupFab = (props: { setClose: () => void; setOpen: Function; open: boolea
         >
           <CameraIcon />
         </Fab>
-        <PopupModal setClose={props.setClose} setOpen={props.setOpen} open={props.open} questionType={props.questionType}></PopupModal>
+        <PopupModal
+          setClose={props.setClose}
+          setOpen={props.setOpen}
+          open={props.open}
+          questionType={props.questionType}
+        ></PopupModal>
       </>
     )
   } else {

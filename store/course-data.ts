@@ -7,6 +7,7 @@ const initialState = {
   eyeTracking: { x: 0, y: 0 },
   questionLocate: { w: 0, h: 0, xStart: 0, xEnd: 0, yStart: 0, yEnd: 0 },
   lookingQuestion: false,
+  videoId: '',
 }
 
 export const courseSlice = createSlice({
@@ -27,15 +28,19 @@ export const courseSlice = createSlice({
     isLooking: (state, action: PayloadAction<boolean>) => {
       state.lookingQuestion = action.payload
     },
+    setVideoId: (state, action: PayloadAction<string>) => {
+      state.videoId = action.payload
+    }
   },
 })
 
-export const { setPlayedSecond, updateEyeTracking, setQuestionLocate, isLooking } = courseSlice.actions
+export const { setPlayedSecond, updateEyeTracking, setQuestionLocate, isLooking, setVideoId } = courseSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectPlayerSecond = (state: RootState) => state.course.playedSecond
 export const selectEyeTracking = (state: RootState) => state.course.eyeTracking
 export const selectQuestionLocate = (state: RootState) => state.course.questionLocate
 export const selectLookingQuestion = (state: RootState) => state.course.lookingQuestion
+export const selectVideoId = (state: RootState) => state.course.videoId
 
 export default courseSlice.reducer

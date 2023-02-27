@@ -9,7 +9,12 @@ import Slide from '@mui/material/Slide'
 // import Slider from '@mui/material/Slider'
 
 import { Box, ButtonBase } from '@mui/material'
-import { PlayArrow, Pause, Fullscreen, FullscreenExit } from '@mui/icons-material'
+import {
+  PlayArrow,
+  Pause,
+  Fullscreen,
+  FullscreenExit,
+} from '@mui/icons-material'
 
 import PopupModal from '../popup/popupModel'
 import PopupFab from '../popup/popupFab'
@@ -74,6 +79,7 @@ function CoursePlayer() {
   }
 
   //redux
+  const videoUrl = useAppSelector((state) => state.course.videoId)
   const dispatch = useAppDispatch()
 
   let handlePlayerStatus = (props: OnProgressProps) => {
@@ -108,18 +114,18 @@ function CoursePlayer() {
       <Box
         sx={{ position: 'relative', width: '100%', height: '100%' }}
         className="course-player-div"
-        // onMouseOver={() => {
-        //   setShowPlayerBar(true)
-        //   setMouseEnter(true)
-        // }}
-        // onMouseLeave={() => {
-        //   setMouseEnter(false)
-        //   setShowPlayerBar(false)
-        // }}
+        onMouseOver={() => {
+          setShowPlayerBar(true)
+          setMouseEnter(true)
+        }}
+        onMouseLeave={() => {
+          setMouseEnter(false)
+          setShowPlayerBar(false)
+        }}
       >
         {/* 自訂播放bar */}
 
-        {/* <Box
+        <Box
           className="course-player-bar"
           sx={{
             height: 50,
@@ -133,7 +139,11 @@ function CoursePlayer() {
           ref={containerRef}
           position={'absolute'}
         >
-          <Slide direction="up" in={showPlayerBar} container={containerRef.current}>
+          <Slide
+            direction="up"
+            in={showPlayerBar}
+            container={containerRef.current}
+          >
             <div
               style={{
                 // width: playerControllerProps.width,
@@ -154,14 +164,24 @@ function CoursePlayer() {
               >
                 {playing ? <Pause /> : <PlayArrow />}
               </ButtonBase>
-              <ButtonBase sx={{ height: 50, width: 50 }} onClick={handle.active ? handle.exit : handle.enter}>
+              <ButtonBase
+                sx={{ height: 50, width: 50 }}
+                onClick={handle.active ? handle.exit : handle.enter}
+              >
                 {handle.active ? <FullscreenExit /> : <Fullscreen />}
               </ButtonBase>
             </div>
           </Slide>
-        </Box> */}
+        </Box>
 
-        {showComponent && <PopupFab setClose={handleClosePopupModal} setOpen={handleOpenPopupModal} open={openPopupModal} questionType={questionType}></PopupFab>}
+        {showComponent && (
+          <PopupFab
+            setClose={handleClosePopupModal}
+            setOpen={handleOpenPopupModal}
+            open={openPopupModal}
+            questionType={questionType}
+          ></PopupFab>
+        )}
         <ReactPlayer
           url={url}
           playing={playing}
