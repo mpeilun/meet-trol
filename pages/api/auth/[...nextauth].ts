@@ -12,7 +12,9 @@ export const authOptions = {
       clientSecret: process.env.GOOGLE_SECRET,
     }),
   ],
-
+  pages: {
+    signIn: '/auth/signin',
+  },
   callbacks: {
     async jwt({ token, account }: { token: JWT; account: Account }): Promise<JWT> {
       if (account) {
@@ -22,9 +24,6 @@ export const authOptions = {
     },
     async session({ session, token, user }: { session: Session; token: JWT; user: User }): Promise<Session> {
       // session.account = token.account
-      console.log(token)
-      console.log('-----------')
-      console.log(user)
       session.user = { id: user.id, name: user.name, email: user.email, image: user.image }
       return session
     },

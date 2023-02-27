@@ -9,8 +9,8 @@ import { Box } from '@mui/material'
 function HomePage() {
   return (
     <>
-      <Box width={'100%'} height={'100%'} sx={{ bgcolor: '#9ac5cf' }}>
-        <Image fill style={{ display: 'block', margin: 'auto auto', objectFit: 'contain' }} alt={'Meet-Trol LOGO'} src={'/images/logo.png'} />
+      <Box height="100%" display="flex" sx={{ bgcolor: '#9ac5cf', justifyContent: 'center' }}>
+        <Image fill style={{ display: 'block', margin: 'auto auto', objectFit: 'contain', maxWidth: 400 }} alt={'Meet-Trol LOGO'} src={'/images/logo.png'} />
       </Box>
     </>
   )

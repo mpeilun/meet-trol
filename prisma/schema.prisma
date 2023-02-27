@@ -44,8 +44,8 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  myClasses     String[]
-  ownClasses    String[]
+  courses       Course[]  @relation("meber", fields: [coursesId], references: [id])
+  coursesId     String[]  @db.ObjectId
 }
 
 model VerificationToken {
@@ -61,11 +61,12 @@ model Course {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
   title       String    @unique
   description String?
-  students    String[]  @db.ObjectId
-  owners      String[]  @db.ObjectId
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   chapters    Chapter[]
+  mebers      User[]    @relation("meber", fields: [mebersId], references: [id])
+  mebersId    String[]  @db.ObjectId
+  ownerId     String[]  @db.ObjectId
 }
 
 model Chapter {
