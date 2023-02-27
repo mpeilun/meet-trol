@@ -5,7 +5,6 @@ import theme, { themeFont } from '../../styles/material-theme'
 import Head from 'next/head'
 import { grey } from '@mui/material/colors'
 import { useRouter } from 'next/router'
-import { Box } from '@mui/material'
 
 function Layout(props: { children: ReactNode }) {
   const { asPath } = useRouter()
