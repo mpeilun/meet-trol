@@ -21,7 +21,7 @@ const Info = (props: { handleQuestionClose: () => void }) => {
         <Box sx={{ width: '600px' }}>
           <Box
             component="img"
-            src="/images/info.PNG" // 變數替換 是否有圖片有則是網址
+            src="https://1.bp.blogspot.com/-FKx0CXFgCh0/W5Ik7C3Y1zI/AAAAAAAAAcw/VFW-nQzEdckeEKpdFkeIyCioNMr7SoDgACLcBGAs/s640/java8_android.png" // 變數替換 是否有圖片有則是網址
             alt="Failt to load"
             sx={{ borderRadius: 2, mt: 1, width: '100%' }}
           ></Box>

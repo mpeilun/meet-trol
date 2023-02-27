@@ -42,10 +42,28 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  records       Record[]
   accounts      Account[]
   sessions      Session[]
   courses       Course[]  @relation("meber", fields: [coursesId], references: [id])
   coursesId     String[]  @db.ObjectId
+}
+
+model Record {
+  id       String     @id @default(auto()) @map("_id") @db.ObjectId
+  courseId String     @db.ObjectId
+  lastView LastView[]
+  user     User       @relation(fields: [userId], references: [id])
+  userId   String     @db.ObjectId
+}
+
+model LastView {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  videoId   String   @db.ObjectId
+  videoTime Float
+  viewTime  DateTime @default(now())
+  record    Record?  @relation(fields: [recordId], references: [id])
+  recordId  String?  @db.ObjectId
 }
 
 model VerificationToken {
@@ -119,7 +137,7 @@ model Choice {
 }
 
 model AnswersChoice {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
   answers   Int[]
   studentId String
   choice    Choice @relation(fields: [choiceId], references: [id])
@@ -174,19 +192,19 @@ type Position {
 }
 
 model Drag {
-  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  id         String        @id @default(auto()) @map("_id") @db.ObjectId
   title      String
   content    String?
   url        String?
   answer     Position[]
-  yourAnswer Answer[]
+  yourAnswer AnswersDrag[]
   start      String
   end        String
-  video      Video      @relation(fields: [videoId], references: [id])
-  videoId    String     @db.ObjectId
+  video      Video         @relation(fields: [videoId], references: [id])
+  videoId    String        @db.ObjectId
 }
 
-model Answer {
+model AnswersDrag {
   id        String @id @default(auto()) @map("_id") @db.ObjectId
   x         Int
   y         Int
