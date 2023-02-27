@@ -9,7 +9,12 @@ import Slide from '@mui/material/Slide'
 // import Slider from '@mui/material/Slider'
 
 import { Box, ButtonBase } from '@mui/material'
-import { PlayArrow, Pause, Fullscreen, FullscreenExit } from '@mui/icons-material'
+import {
+  PlayArrow,
+  Pause,
+  Fullscreen,
+  FullscreenExit,
+} from '@mui/icons-material'
 
 import PopupModal from '../popup/popupModel'
 import PopupFab from '../popup/popupFab'
@@ -80,7 +85,7 @@ function CoursePlayer() {
   }
 
   //redux
-  const playerSeconds = useAppSelector((state) => state.course.playedSecond)
+  const videoUrl = useAppSelector((state) => state.course.videoUrl)
   const dispatch = useAppDispatch()
 
   let handlePlayerStatus = (props: ReactPlayerOnProgressProps) => {
@@ -168,7 +173,14 @@ function CoursePlayer() {
           </Slide>
         </Box> */}
 
-        {showComponent && <PopupFab setClose={handleClosePopupModal} setOpen={handleOpenPopupModal} open={openPopupModal} questionType={questionType}></PopupFab>}
+        {showComponent && (
+          <PopupFab
+            setClose={handleClosePopupModal}
+            setOpen={handleOpenPopupModal}
+            open={openPopupModal}
+            questionType={questionType}
+          ></PopupFab>
+        )}
         <ReactPlayer
           url={url}
           playing={playing}

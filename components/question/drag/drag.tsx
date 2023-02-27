@@ -69,8 +69,8 @@ const Drag = (props: { handleQuestionClose: () => void }) => {
       //   console.log(`移動時滑鼠Y: ${e.clientY}`)
       //   console.log(`移動時初始X: ${coords.current.startX}`)
       //   console.log(`移動時初始Y: ${coords.current.startY}`)
-      //   console.log(`移動時最後X: ${coords.current.lastX}`)
-      //   console.log(`移動時最後Y: ${coords.current.lastY}`)
+        // console.log(`移動時最後X: ${coords.current.lastX}`)
+        // console.log(`移動時最後Y: ${coords.current.lastY}`)
 
       //   console.log(nextX)
       //   console.log(nextY)

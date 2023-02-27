@@ -7,7 +7,21 @@ import MuiAccordionSummary, {
 } from '@mui/material/AccordionSummary'
 import MuiAccordionDetails from '@mui/material/AccordionDetails'
 import Typography from '@mui/material/Typography'
-import { Box, Icon, Divider } from '@mui/material'
+import {
+  Box,
+  Icon,
+  Divider,
+  CardActionArea,
+  CardContent,
+  Card,
+} from '@mui/material'
+import { Chapter, Video } from '@prisma/client'
+import { useAppSelector, useAppDispatch } from '../../hooks/redux'
+import { setVideoUrl } from '../../store/course-data'
+
+interface ChapterData extends Chapter {
+  videos: Video[]
+}
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -41,73 +55,195 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
 }))
 
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-  paddingLeft: theme.spacing(2),
-  paddingRight: theme.spacing(2),
+  paddingLeft: theme.spacing(0),
+  paddingRight: theme.spacing(0),
   paddingTop: theme.spacing(0),
   paddingBottom: theme.spacing(0),
   borderTop: '1px solid rgba(0, 0, 0, .125)',
 }))
 
-export default function CustomizedAccordions() {
-  const [expanded, setExpanded] = React.useState<string | false>('')
+export default function CustomizedAccordions(props: {
+  chapterData: ChapterData[]
+}) {
+  const data = props.chapterData
+  const [chapterData, setChapterData] = React.useState<ChapterData[]>(data)
 
-  const handleChange =
-    (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
-      setExpanded(panel)
+  const dispatch = useAppDispatch()
+
+  const setSelected = (
+    indexOne: number = -1,
+    indexTwo: number = -1
+  ): boolean[][] => {
+    let isSelectedOne: Array<Array<boolean>> = []
+    for (let i = 0; i < chapterData.length; i++) {
+      let isSelectedTwo: Array<boolean> = []
+      for (let j = 0; j < chapterData[i].videos.length; j++) {
+        if (indexOne == i && indexTwo == j) {
+          isSelectedTwo.push(true)
+        } else {
+          isSelectedTwo.push(false)
+        }
+      }
+      isSelectedOne.push(isSelectedTwo)
     }
+    console.log(isSelectedOne)
+    return isSelectedOne
+  }
 
-
-    
-  return (
-    <div>
-      <Accordion
-        onChange={handleChange('panel1')}
-      >
-        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-          <Box sx={{ p: 1 }}>
-            <Typography sx={{ fontWeight: 'bold' }}>章節一</Typography>
-          </Box>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Box py={1.5} display="flex" justifyContent="space-between">
-            <Typography variant="body2">TQC+ 101</Typography>
-          </Box>
-          <Divider />
-          <Box py={1.6} display="flex" justifyContent="space-between">
-            <Typography variant="body2">TQC+ 102</Typography>
-          </Box>
-          <Divider />
-          <Box py={1.5} display="flex" justifyContent="space-between">
-            <Typography variant="body2">TQC+ 103</Typography>
-          </Box>
-        </AccordionDetails>
-      </Accordion>
-      <Accordion
-        expanded={expanded === 'panel2'}
-        onChange={handleChange('panel2')}
-      >
-        <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
-          <Box sx={{ p: 1 }}>
-            <Typography sx={{ fontWeight: 'bold' }}>章節二</Typography>
-          </Box>{' '}
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography>test</Typography>
-        </AccordionDetails>
-      </Accordion>
-      <Accordion
-        expanded={expanded === 'panel3'}
-        onChange={handleChange('panel3')}
-      >
-        <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
-          <Box sx={{ p: 1 }}>
-            <Typography sx={{ fontWeight: 'bold' }}>章節三</Typography>
-          </Box>{' '}
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography>test</Typography>
-        </AccordionDetails>
-      </Accordion>
-    </div>
+  const [videoSelect, setVideoSelect] = React.useState<boolean[][]>(
+    setSelected()
   )
+
+  React.useEffect(() => {}, [])
+
+  if (data == undefined) {
+    return <></>
+  } else {
+    console.log(chapterData)
+    // console.log(videoSelect)
+    return (
+      <div>
+        {chapterData.map(({ title, videos }, indexOne) => {
+          return (
+            <>
+              <Accordion>
+                <AccordionSummary
+                  aria-controls={`panel${indexOne + 1}d-content`}
+                  id={`panel${indexOne + 1}d-header`}
+                >
+                  <Box sx={{ pl: 1 }}>
+                    <Typography
+                      sx={{ fontSize: '0.95rem', fontWeight: 'bold' }}
+                    >
+                      {title}
+                    </Typography>
+                  </Box>
+                </AccordionSummary>
+                <AccordionDetails>
+                  {videos.map(({ title, url }, indexTwo) => {
+                    let isLast = true
+                    if (videos.length == indexTwo + 1) {
+                      isLast = false
+                    }
+                    // console.log(`index1:${indexOne}, index2:${indexTwo}`)
+                    return (
+                      <>
+                        <Card
+                          elevation={0}
+                          sx={{
+                            borderRadius: 0,
+                            borderColor: 'transparent',
+                            display: 'flex',
+                          }}
+                        >
+                          <CardActionArea
+                            onClick={() => {
+                              console.log(url)
+                              setVideoSelect(setSelected(indexOne, indexTwo))
+                              dispatch(setVideoUrl(url))
+                            }}
+                          >
+                            <CardContent
+                              sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <Box
+                                sx={{
+                                  backgroundColor: videoSelect[indexOne][
+                                    indexTwo
+                                  ]
+                                    ? '#67a1f3'
+                                    : 'white',
+                                  color: videoSelect[indexOne][indexTwo]
+                                    ? '#67a1f3'
+                                    : 'white',
+                                }}
+                              >
+                                {`.`}
+                              </Box>
+                              <Typography
+                                sx={{ ml: 1 }}
+                                variant="body2"
+                                component="div"
+                              >
+                                {title}
+                              </Typography>
+                            </CardContent>
+                          </CardActionArea>
+                        </Card>
+                        {isLast && <Divider variant="middle" />}
+
+                        {/* <Box
+                          py={1.5}
+                          display="flex"
+                          justifyContent="space-between"
+                        >
+                          <Typography variant="body2">{title}</Typography>
+                        </Box>
+                        <Divider /> */}
+                      </>
+                    )
+                  })}
+                  {/* <Box py={1.5} display="flex" justifyContent="space-between">
+                    <Typography variant="body2">TQC+ 101</Typography>
+                  </Box>
+                  <Divider />
+                  <Box py={1.6} display="flex" justifyContent="space-between">
+                    <Typography variant="body2">TQC+ 102</Typography>
+                  </Box>
+                  <Divider />
+                  <Box py={1.5} display="flex" justifyContent="space-between">
+                    <Typography variant="body2">TQC+ 103</Typography>
+                  </Box> */}
+                </AccordionDetails>
+              </Accordion>
+            </>
+          )
+        })}
+        {/* <Accordion>
+          <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+            <Box sx={{ pl: 1 }}>
+              <Typography sx={{ fontWeight: 'bold' }}>章節一</Typography>
+            </Box>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Box py={1.5} display="flex" justifyContent="space-between">
+              <Typography variant="body2">TQC+ 101</Typography>
+            </Box>
+            <Divider />
+            <Box py={1.6} display="flex" justifyContent="space-between">
+              <Typography variant="body2">TQC+ 102</Typography>
+            </Box>
+            <Divider />
+            <Box py={1.5} display="flex" justifyContent="space-between">
+              <Typography variant="body2">TQC+ 103</Typography>
+            </Box>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion>
+          <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
+            <Box sx={{ pl: 1 }}>
+              <Typography sx={{ fontWeight: 'bold' }}>章節二</Typography>
+            </Box>{' '}
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography>test</Typography>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion>
+          <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
+            <Box sx={{ pl: 1 }}>
+              <Typography sx={{ fontWeight: 'bold' }}>章節三</Typography>
+            </Box>{' '}
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography>test</Typography>
+          </AccordionDetails>
+        </Accordion> */}
+      </div>
+    )
+  }
 }

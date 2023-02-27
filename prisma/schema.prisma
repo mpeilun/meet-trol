@@ -103,60 +103,95 @@ model Info {
   videoId    String  @db.ObjectId
 }
 
-type Answers {
-  answers   Int[]
-  studentId String
-}
-
 model Choice {
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  id           String          @id @default(auto()) @map("_id") @db.ObjectId
   quesiton     String
   option       String[]
   answer       Int[]
-  yourAnswer   Answers[] // 第一層List放回答次數，第二次放答案index index有兩個以上則為複選
+  yourAnswer   AnswersChoice[] // 第一層List放回答次數，第二層放答案index index有兩個以上則為複選
   start        String
   end          String
   isReapeatted Boolean
   firstJumps   Boolean
-  video        Video     @relation(fields: [videoId], references: [id])
-  videoId      String    @db.ObjectId
+  video        Video           @relation(fields: [videoId], references: [id])
+  videoId      String          @db.ObjectId
+}
+
+model AnswersChoice {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  answers   Int[]
+  studentId String
+  choice    Choice @relation(fields: [choiceId], references: [id])
+  choiceId  String @db.ObjectId
 }
 
 model Rank {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  id         String        @id @default(auto()) @map("_id") @db.ObjectId
   question   String
   option     String[]
   answer     String[]
-  yourAnswer Answers[] // 第一層List放回答次數，第二次放答案index順序
+  yourAnswer AnswersRank[] // 第一層List放回答次數，第二層放答案順序
   start      String
   end        String
-  video      Video     @relation(fields: [videoId], references: [id])
-  videoId    String    @db.ObjectId
+  video      Video         @relation(fields: [videoId], references: [id])
+  videoId    String        @db.ObjectId
+}
+
+model AnswersRank {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  answers   String[]
+  studentId String
+  rank      Rank     @relation(fields: [rankId], references: [id])
+  rankId    String   @db.ObjectId
 }
 
 model Fill {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  id         String        @id @default(auto()) @map("_id") @db.ObjectId
   question   String
   option     String[]
   answer     String[]
-  yourAnswer Answers[]
+  yourAnswer AnswersFill[]
   start      String
   end        String
-  video      Video     @relation(fields: [videoId], references: [id])
-  videoId    String    @db.ObjectId
+  video      Video         @relation(fields: [videoId], references: [id])
+  videoId    String        @db.ObjectId
+}
+
+model AnswersFill {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  answers   String[]
+  studentId String
+  fill      Fill     @relation(fields: [fillId], references: [id])
+  fillId    String   @db.ObjectId
+}
+
+type Position {
+  x      Int
+  y      Int
+  width  Int
+  height Int
 }
 
 model Drag {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
   title      String
   content    String?
   url        String?
-  answer     String[]
-  yourAnswer Answers[]
+  answer     Position[]
+  yourAnswer Answer[]
   start      String
   end        String
-  video      Video     @relation(fields: [videoId], references: [id])
-  videoId    String    @db.ObjectId
+  video      Video      @relation(fields: [videoId], references: [id])
+  videoId    String     @db.ObjectId
+}
+
+model Answer {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  x         Int
+  y         Int
+  studentId String
+  drag      Drag   @relation(fields: [dragId], references: [id])
+  dragId    String @db.ObjectId
 }
 
 // type ClassesEvent {
