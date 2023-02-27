@@ -1,11 +1,18 @@
-import type { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
+import type {
+  GetServerSidePropsContext,
+  InferGetServerSidePropsType,
+} from 'next'
 import { getProviders, signIn, useSession } from 'next-auth/react'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../api/auth/[...nextauth]'
 import { useEffect } from 'react'
 import { CircularProgress, Box } from '@mui/material'
 
-function SignInPage({ providers }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+import { getSession } from 'next-auth/client'
+
+function SignInPage({
+  providers,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { data: session } = useSession()
 
   useEffect(() => {
@@ -18,7 +25,11 @@ function SignInPage({ providers }: InferGetServerSidePropsType<typeof getServerS
 
   return (
     <>
-      <Box height={'100vh'} display="flex" sx={{ justifyContent: 'center', alignItems: 'center' }}>
+      <Box
+        height={'100vh'}
+        display="flex"
+        sx={{ justifyContent: 'center', alignItems: 'center' }}
+      >
         <CircularProgress sx={{ width: '200px', height: '200px' }} />
       </Box>
     </>

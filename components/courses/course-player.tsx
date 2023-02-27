@@ -20,6 +20,7 @@ import PopupModal from '../popup/popupModel'
 import PopupFab from '../popup/popupFab'
 
 import { FullScreen, useFullScreenHandle } from 'react-full-screen'
+import { OnProgressProps } from 'react-player/base'
 
 
 import { Video, Info, Choice, Rank, Fill, Drag, AnswersChoice, AnswersFill, AnswersRank, AnswersDrag } from '@prisma/client'
@@ -127,7 +128,7 @@ function CoursePlayer() {
 
 
 
-  let handlePlayerStatus = (props: ReactPlayerOnProgressProps) => {
+  let handlePlayerStatus = (props: OnProgressProps) => {
     dispatch(setPlayedSecond(props.playedSeconds))
     // console.log('redux playedSeconds: ' + playerSeconds)
 
@@ -184,7 +185,11 @@ function CoursePlayer() {
           ref={containerRef}
           position={'absolute'}
         >
-          <Slide direction="up" in={showPlayerBar} container={containerRef.current}>
+          <Slide
+            direction="up"
+            in={showPlayerBar}
+            container={containerRef.current}
+          >
             <div
               style={{
                 // width: playerControllerProps.width,
@@ -205,7 +210,10 @@ function CoursePlayer() {
               >
                 {playing ? <Pause /> : <PlayArrow />}
               </ButtonBase>
-              <ButtonBase sx={{ height: 50, width: 50 }} onClick={handle.active ? handle.exit : handle.enter}>
+              <ButtonBase
+                sx={{ height: 50, width: 50 }}
+                onClick={handle.active ? handle.exit : handle.enter}
+              >
                 {handle.active ? <FullscreenExit /> : <Fullscreen />}
               </ButtonBase>
             </div>
