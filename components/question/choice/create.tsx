@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   Card,
   Box,
@@ -9,10 +10,14 @@ import {
   Checkbox,
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
-import React from 'react'
+
+interface CreateChoice {
+  question: string
+  op
+}
 
 const CreateChoice = () => {
-  const [question, setQuestion] = React.useState({
+  const [question, setQuestion] = useState({
     title: '',
     options: [''],
     checked: [false],
@@ -22,7 +27,7 @@ const CreateChoice = () => {
   const id = '636fc3b3226a145127e56cf7'
   //如果id不為undefined就向資料庫拿資料
 
-  const [submitQuestion, setSubmitQuestion] = React.useState({
+  const [submitQuestion, setSubmitQuestion] = useState({
     title: '',
     options: [''],
     checked: [false],
