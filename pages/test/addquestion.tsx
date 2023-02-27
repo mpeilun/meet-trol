@@ -98,49 +98,97 @@ function AddQuestionPage() {
         display="flex"
         flexDirection="column"
         sx={{
-          padding: '2rem 4rem 4rem 4rem',
-          width: '100%',
-          height: '100%',
+          padding: '2rem 4rem 2rem 4rem',
         }}
       >
         <Typography variant="h5">創建題目</Typography>
-        {/*網址輸入框*/}
-        <TextField
-          label="Youtube Link"
-          variant="outlined"
-          value={playerUrl}
-          size="small"
-          sx={{ m: 2 }}
-          onChange={(event) => {
-            setPlayerUrl(event.target.value)
-          }}
-        />
-
-        {/*播放器*/}
-        {hasWindow && ReactPlayer.canPlay(playerUrl) && (
-          <ReactPlayer
-            style={{ margin: '0 auto 0 auto' }}
-            url={playerUrl}
-            playing={playing}
-            onPlay={play}
-            onPause={pause}
-            onProgress={handlePlayerStatus}
-            onDuration={handelPlayerDuration}
-            ref={playerRef}
-            onReady={handPlayerReady}
-            width={'100%'}
-            height={'500px'}
-            progressInterval={200}
-            config={{
-              playerVars: {
-                showinfo: 0,
-                controls: 1,
-                modestbranding: 1,
-                rel: 0,
-              },
+        <Box
+          display="flex"
+          flexDirection="row"
+          justifyContent="space-between"
+          alignItems="flex-start"
+        >
+          <Box m={2}>
+            {/*播放器*/}
+            {hasWindow && ReactPlayer.canPlay(playerUrl) && (
+              <ReactPlayer
+                style={{ margin: '0 auto 0 auto' }}
+                url={playerUrl}
+                playing={playing}
+                onPlay={play}
+                onPause={pause}
+                onProgress={handlePlayerStatus}
+                onDuration={handelPlayerDuration}
+                ref={playerRef}
+                onReady={handPlayerReady}
+                height={'200px'}
+                width={'400px'}
+                progressInterval={200}
+                config={{
+                  playerVars: {
+                    showinfo: 0,
+                    controls: 1,
+                    modestbranding: 1,
+                    rel: 0,
+                  },
+                }}
+              />
+            )}
+            {/*網址輸入框*/}
+            <TextField
+              fullWidth
+              label="Youtube Link"
+              variant="outlined"
+              value={playerUrl}
+              size="small"
+              sx={{ m: '24px 0' }}
+              onChange={(event) => {
+                setPlayerUrl(event.target.value)
+              }}
+            />
+          </Box>
+          {/*出題區塊*/}
+          <Paper
+            sx={{
+              flex: '1',
+              minHeight: '400px',
+              display: 'flex',
+              flexDirection: 'column',
+              m: 2,
             }}
-          />
-        )}
+          >
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <Tabs
+                value={value}
+                onChange={handleChange}
+                aria-label="basic tabs example"
+              >
+                <Tab label="資訊" {...a11yProps(0)} />
+                <Tab label="選擇" {...a11yProps(1)} />
+                <Tab label="填空" {...a11yProps(2)} />
+                <Tab label="排序" {...a11yProps(3)} />
+                <Tab label="圖選" {...a11yProps(4)} />
+              </Tabs>
+            </Box>
+            <TabPanel value={value} index={0}>
+              #資訊卡
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+              #選擇題
+              <CreateChoice />
+            </TabPanel>
+            <TabPanel value={value} index={2}>
+              #填空題
+            </TabPanel>
+            <TabPanel value={value} index={3}>
+              #排序題
+            </TabPanel>
+            <TabPanel value={value} index={4}>
+              #圖片選答
+            </TabPanel>
+          </Paper>
+        </Box>
+
         {/*測試區塊*/}
         <Box
           display="flex"
@@ -166,46 +214,6 @@ function AddQuestionPage() {
             <Typography>影片時長 {playerProgress?.duration}</Typography>
           </Box>
         </Box>
-        {/*出題區塊*/}
-        <Paper
-          sx={{
-            minHeight: '400px',
-            display: 'flex',
-            flexDirection: 'column',
-            mb: 4,
-          }}
-        >
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              aria-label="basic tabs example"
-            >
-              <Tab label="資訊" {...a11yProps(0)} />
-              <Tab label="選擇" {...a11yProps(1)} />
-              <Tab label="填空" {...a11yProps(2)} />
-              <Tab label="排序" {...a11yProps(3)} />
-              <Tab label="圖選" {...a11yProps(4)} />
-            </Tabs>
-          </Box>
-          <TabPanel value={value} index={0}>
-            #資訊卡
-          </TabPanel>
-          <TabPanel value={value} index={1}>
-            #選擇題
-            <CreateChoice />
-          </TabPanel>
-          <TabPanel value={value} index={2}>
-            #填空題
-          </TabPanel>
-          <TabPanel value={value} index={3}>
-            #排序題
-          </TabPanel>
-          <TabPanel value={value} index={4}>
-            #圖片選答
-          </TabPanel>
-        </Paper>
-        <p>Test</p>
       </Box>
     </>
   )
