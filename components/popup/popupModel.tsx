@@ -31,7 +31,7 @@ const PopupModal = (props: { setClose: () => void; setOpen: Function; open: bool
       const yStart = viewPort.height * 0.2
       const yEnd = yStart + questionHeight
       console.log(xStart, yStart)
-
+      //TODO 測試獲取題目視窗大小，是否正常，疑似壞掉了
       dispatch(setQuestionLocate({ w: questionWidth, h: questionHeight, xStart: xStart, xEnd: xEnd, yStart: yStart, yEnd: yEnd }))
 
       setIsRender(true)
@@ -52,10 +52,10 @@ const PopupModal = (props: { setClose: () => void; setOpen: Function; open: bool
           right: '20%',
           left: 'auto',
           bottom: 'auto',
-          display: props.open?'block':'none',
+          display: props.open ? 'block' : 'none',
         }}
       >
-      {/* <Modal
+        {/* <Modal
         ref={modalRef}
         sx={{
           // width: '50%',
@@ -110,7 +110,7 @@ const PopupModal = (props: { setClose: () => void; setOpen: Function; open: bool
             </Box>
           </Card>
         </Box>
-      {/* </Modal> */}
+        {/* </Modal> */}
       </Box>
     </>
   )

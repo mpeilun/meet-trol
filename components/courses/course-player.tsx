@@ -15,13 +15,7 @@ import PopupModal from '../popup/popupModel'
 import PopupFab from '../popup/popupFab'
 
 import { FullScreen, useFullScreenHandle } from 'react-full-screen'
-
-interface ReactPlayerOnProgressProps {
-  played: number
-  playedSeconds: number
-  loaded: number
-  loadedSeconds: number
-}
+import { OnProgressProps } from 'react-player/base'
 
 // DATA
 interface questionList {
@@ -80,10 +74,9 @@ function CoursePlayer() {
   }
 
   //redux
-  const playerSeconds = useAppSelector((state) => state.course.playedSecond)
   const dispatch = useAppDispatch()
 
-  let handlePlayerStatus = (props: ReactPlayerOnProgressProps) => {
+  let handlePlayerStatus = (props: OnProgressProps) => {
     dispatch(setPlayedSecond(props.playedSeconds))
     // console.log('redux playedSeconds: ' + playerSeconds)
 
