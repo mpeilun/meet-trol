@@ -11,9 +11,9 @@ import {
 } from '@mui/material'
 import { useState, useEffect, useRef } from 'react'
 import { OnProgressProps } from 'react-player/base'
-import CreateChoice from '../../components/question/choice/create'
+import CreateChoice from '../../../components/question/choice/create'
 
-interface PlayerProgress extends OnProgressProps {
+export interface PlayerProgress extends OnProgressProps {
   duration: number
 }
 
@@ -34,11 +34,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   )
 }
@@ -50,7 +46,7 @@ function a11yProps(index: number) {
   }
 }
 
-function AddQuestionPage() {
+function EditQuestionPage() {
   const [value, setValue] = useState(0)
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -94,25 +90,27 @@ function AddQuestionPage() {
 
   return (
     <>
-      <Box
-        display="flex"
-        flexDirection="column"
-        sx={{
-          padding: '2rem 4rem 2rem 4rem',
-        }}
-      >
-        <Typography variant="h5">創建題目</Typography>
+      <Box display="flex" flexDirection="column">
+        <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
+          創建題目
+        </Typography>
         <Box
           display="flex"
           flexDirection="row"
-          justifyContent="space-between"
+          justifyContent="space-around"
           alignItems="flex-start"
+          // height="100%"
         >
-          <Box m={2}>
+          <Box
+            width="50%"
+            // sx={{ m: '1rem 1rem 1rem 2rem' }}
+          >
             {/*播放器*/}
             {hasWindow && ReactPlayer.canPlay(playerUrl) && (
               <ReactPlayer
-                style={{ margin: '0 auto 0 auto' }}
+                style={{
+                  display: 'flex',
+                }}
                 url={playerUrl}
                 playing={playing}
                 onPlay={play}
@@ -121,8 +119,7 @@ function AddQuestionPage() {
                 onDuration={handelPlayerDuration}
                 ref={playerRef}
                 onReady={handPlayerReady}
-                height={'200px'}
-                width={'400px'}
+                width={'100%'}
                 progressInterval={200}
                 config={{
                   playerVars: {
@@ -136,7 +133,6 @@ function AddQuestionPage() {
             )}
             {/*網址輸入框*/}
             <TextField
-              fullWidth
               label="Youtube Link"
               variant="outlined"
               value={playerUrl}
@@ -150,11 +146,10 @@ function AddQuestionPage() {
           {/*出題區塊*/}
           <Paper
             sx={{
-              flex: '1',
-              minHeight: '400px',
               display: 'flex',
               flexDirection: 'column',
-              m: 2,
+              width: '50%',
+              // m: '1rem 2rem 1rem 1rem',
             }}
           >
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -219,4 +214,4 @@ function AddQuestionPage() {
   )
 }
 
-export default AddQuestionPage
+export default EditQuestionPage
