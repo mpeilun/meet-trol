@@ -29,32 +29,9 @@ interface ChapterData extends Chapter {
 function CourseInnerPage(props: { chapter: ChapterData[] }) {
   const data = props.chapter
   const [chapter, setChapter] = React.useState<ChapterData[]>(data)
-  const [record, setRecord] = React.useState<LastView[]>([])
 
-
-  React.useEffect(() => {
-    const fetchData = async () => {
-      const [data] = await Promise.all([
-        fetchRecord()
-      ])
-      console.log(data)
-      setRecord(data)
-    }
-    fetchData()
-  }, [])
-
-  const fetchRecord = async () => {
-    if (data != undefined) {
-      const recordResponse = await fetch(
-        `http://localhost:3000/api/record/${data[0].courseId}`
-      )
-      const record = await recordResponse.json()
-      return record[0].lastView
-    }
-  }
 
   if (chapter == undefined) {
-    console.log(`undefuned ${chapter}`)
     console.log('ID not found')
     return (
       <>
@@ -62,7 +39,6 @@ function CourseInnerPage(props: { chapter: ChapterData[] }) {
       </>
     )
   } else {
-    console.log(chapter)
     return (
       <Box
         className="course-main-div"
@@ -76,7 +52,7 @@ function CourseInnerPage(props: { chapter: ChapterData[] }) {
           display={{ width: '20vw', xs: 'none', md: 'flex' }}
         >
           <Card sx={{ width: '100%' }}>
-            <CustomizedAccordions chapterData={chapter} record={record}></CustomizedAccordions>
+            <CustomizedAccordions chapterData={chapter}></CustomizedAccordions>
             <Divider />
           </Card>
         </Box>

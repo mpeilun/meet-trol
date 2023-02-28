@@ -8,13 +8,8 @@ import ReactPlayer from 'react-player/youtube'
 import Slide from '@mui/material/Slide'
 // import Slider from '@mui/material/Slider'
 
-import { Box, ButtonBase } from '@mui/material'
-import {
-  PlayArrow,
-  Pause,
-  Fullscreen,
-  FullscreenExit,
-} from '@mui/icons-material'
+import { Box, ButtonBase, Slider, SliderProps } from '@mui/material'
+import { PlayArrow, Pause, Fullscreen, FullscreenExit } from '@mui/icons-material'
 
 import PopupModal from '../popup/popupModel'
 import PopupFab from '../popup/popupFab'
@@ -22,27 +17,7 @@ import PopupFab from '../popup/popupFab'
 import { FullScreen, useFullScreenHandle } from 'react-full-screen'
 import { OnProgressProps } from 'react-player/base'
 
-
-import { Video, Info, Choice, Rank, Fill, Drag, AnswersChoice, AnswersFill, AnswersRank, AnswersDrag } from '@prisma/client'
-interface VideoData extends Video {
-  info: Info[],
-  choice: ChoiceData[],
-  rank: RankData[],
-  fill: FillData[],
-  drag: DragData[],
-}
-interface ChoiceData extends Choice {
-  yourAnswer: AnswersChoice[]
-}
-interface RankData extends Rank {
-  yourAnswer: AnswersRank[]
-}
-interface FillData extends Fill {
-  yourAnswer: AnswersFill[]
-}
-interface DragData extends Drag {
-  yourAnswer: AnswersDrag[]
-}
+import { Video, Info, Choice, Rank, Fill, Drag } from '@prisma/client'
 
 interface ReactPlayerOnProgressProps {
   played: number
@@ -85,27 +60,32 @@ function CoursePlayer() {
   //redux
   const videoId = useAppSelector((state) => state.course.videoId)
   const dispatch = useAppDispatch()
-  const [videoData, setVideoData] = React.useState();
-
+  const [videoData, setVideoData] = React.useState<Video>()
 
   React.useEffect(() => {
-    console.log(videoId)
     const fetchData = async () => {
-      const response = await fetch(
-        `http://localhost:3000/api/video/${videoId}`)
-      const data: Array<VideoData> = await response.json()
+      const response = await fetch(`http://localhost:3000/api/video/${videoId}`)
+      const data = await response.json()
       console.log(data)
-
+      setVideoData(data)
     }
     fetchData()
-
   }, [videoId])
+
+
+  //Slider
+
+  const [playedSeconds, setPlayedSeconds] = React.useState(0);
+  const handleSliderChange = (event:any, newValue:any) => {
+    setPlayedSeconds(newValue);
+    playerRef.current.seekTo(newValue, "seconds");
+  };
 
   // 控制彈跳互動視窗
   const [openPopupModal, setOpenPopupModal] = React.useState(false)
   const handleOpenPopupModal = () => {
     setOpenPopupModal(true)
-    pause() 
+    pause()
   }
   const handleClosePopupModal = () => {
     setOpenPopupModal(false)
@@ -126,9 +106,8 @@ function CoursePlayer() {
     }
   }
 
-
-
-  let handlePlayerStatus = (props: OnProgressProps) => {
+  let handlePlayerStatus = (props: ReactPlayerOnProgressProps) => {
+    setPlayedSeconds(props.playedSeconds);
     dispatch(setPlayedSecond(props.playedSeconds))
     // console.log('redux playedSeconds: ' + playerSeconds)
 
@@ -174,7 +153,7 @@ function CoursePlayer() {
         <Box
           className="course-player-bar"
           sx={{
-            height: 50,
+            height: 100,
             width: '100%',
             // display: 'flex',
             // padding: 2,
@@ -185,17 +164,25 @@ function CoursePlayer() {
           ref={containerRef}
           position={'absolute'}
         >
-          <Slide
-            direction="up"
-            in={showPlayerBar}
-            container={containerRef.current}
-          >
-            <div
+          <Slide direction="up" in={showPlayerBar} container={containerRef.current}>
+            <div style={
+              {height: '100%',width:'100%'}
+            }>
+              <div style={{height:50,position: 'relative'}}>
+                <Slider sx={{position: 'absolute', bottom: -15, zIndex: 1000}}
+                value={playedSeconds}
+                onChange={handleSliderChange}
+                min={0}
+                max={playerRef.current ? playerRef.current.getDuration() : 0}
+                step={0.1}
+                />
+              </div>
+              <div
               style={{
                 // width: playerControllerProps.width,
                 // height: `calc(${playerControllerProps.height} * 0.15)`,
                 width: '100%',
-                height: '100%',
+                height: 50,
                 backgroundColor: 'gray',
                 opacity: '80%',
                 display: 'flex',
@@ -205,7 +192,7 @@ function CoursePlayer() {
               <ButtonBase
                 sx={{ height: 50, width: 50 }}
                 onClick={() => {
-                  playing ? pause() : play()
+                  playing ? pause() : play() 
                 }}
               >
                 {playing ? <Pause /> : <PlayArrow />}
@@ -217,6 +204,8 @@ function CoursePlayer() {
                 {handle.active ? <FullscreenExit /> : <Fullscreen />}
               </ButtonBase>
             </div>
+            </div>
+            
           </Slide>
         </Box>
 
@@ -229,7 +218,7 @@ function CoursePlayer() {
           ></PopupFab>
         )}
         <ReactPlayer
-          url={url}
+          url={videoData == undefined ? '' : videoData.url}
           playing={playing}
           onPlay={play}
           onPause={pause}

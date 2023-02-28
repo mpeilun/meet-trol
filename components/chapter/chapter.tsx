@@ -20,7 +20,7 @@ import { useAppSelector, useAppDispatch } from '../../hooks/redux'
 import { setVideoId } from '../../store/course-data'
 
 interface ChapterData extends Chapter {
-  videos: Video[],
+  videos: Video[]
 }
 
 const Accordion = styled((props: AccordionProps) => (
@@ -64,17 +64,15 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 
 export default function CustomizedAccordions(props: {
   chapterData: ChapterData[]
-  record: LastView[]
 }) {
   const data = props.chapterData
-  const record = props.record
 
-  console.log(record)
   const dispatch = useAppDispatch()
 
   const setSelected = (
     indexOne: number = -1,
-    indexTwo: number = -1
+    indexTwo: number = -1,
+    videoId: string = ''
   ): boolean[][] => {
     let isSelectedOne: Array<Array<boolean>> = []
     for (let i = 0; i < data.length; i++) {
@@ -82,13 +80,15 @@ export default function CustomizedAccordions(props: {
       for (let j = 0; j < data[i].videos.length; j++) {
         if (indexOne == i && indexTwo == j) {
           isSelectedTwo.push(true)
-        } 
-        else {
+        } else if (videoId == data[i].videos[j].id) {
+          isSelectedTwo.push(true)
+        } else {
           isSelectedTwo.push(false)
         }
       }
       isSelectedOne.push(isSelectedTwo)
     }
+    console.log(isSelectedOne)
     return isSelectedOne
   }
 
@@ -96,32 +96,56 @@ export default function CustomizedAccordions(props: {
     setSelected()
   )
 
+  const [record, setRecord] = React.useState<LastView[]>([])
+
+  console.log('fetch')
+  console.log(record)
 
   React.useEffect(() => {
+    const fetchData = async () => {
+      const [data] = await Promise.all([fetchRecord()])
+      console.log(data)
+      setRecord(data)
+      const lastViewVideo = data.reduce((earliest, current) => {
+        const earliestTime = new Date(earliest.viewTime)
+        const currentTime = new Date(current.viewTime)
 
-    setVideoSelect(setSelected())
-    if (record.length != 0 && data.length != 0) {
-      console.log('initial last video')
-      dispatch(setVideoId(record[record.length - 1].videoId))
-    } else if (record.length == 0 && data.length != 0) {
-      dispatch(setVideoId(data[0].videos[0].id))
+        // console.log(earliestTime)
+        // console.log(currentTime)
+
+        return earliestTime > currentTime ? earliest : current
+      }, data[0])
+      const id = lastViewVideo.videoId
+      setVideoSelect(setSelected(-1, -1, id))
+      dispatch(setVideoId(id))
+      console.log(id)
     }
+    fetchData()
   }, [])
 
-
+  const fetchRecord = async () => {
+    if (data != undefined) {
+      return fetch(`http://localhost:3000/api/record/${data[0].courseId}`)
+        .then((response) => response.json())
+        .then((data) => {
+          const lastView: LastView[] = data[0].lastView
+          return lastView
+        })
+    }
+  }
 
   if (data == undefined) {
     return <></>
   } else if (data.length == 0) {
     return (
       <>
-        <Typography align='center' sx={{ py: 2, fontWeight: 'bold' }}>
+        <Typography align="center" sx={{ py: 2, fontWeight: 'bold' }}>
           課程尚未新增影片和章節
         </Typography>
       </>
     )
   } else {
-    console.log(videoSelect)
+    console.log('render')
     return (
       <div>
         {data.map(({ title, videos }, indexOne) => {
@@ -159,9 +183,9 @@ export default function CustomizedAccordions(props: {
                         >
                           <CardActionArea
                             onClick={() => {
-                              // console.log(id)
                               setVideoSelect(setSelected(indexOne, indexTwo))
                               dispatch(setVideoId(id))
+                              console.log(id)
                             }}
                           >
                             <CardContent
