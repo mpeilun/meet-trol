@@ -4,108 +4,105 @@ import {
   Box,
   Input,
   InputLabel,
+  TextField,
   FormControl,
   Typography,
   Button,
   Checkbox,
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { Choice as ChoicePrisma } from '@prisma/client'
 
-interface CreateChoice {
-  question: string
-  op
+interface Choice extends ChoicePrisma {
+  id: string | null
+  videoId: string | null
+}
+
+const initQuestion: Choice = {
+  id: null,
+  title: '',
+  options: [{ option: '', isAnswer: false }],
+  start: 0,
+  end: 0,
+  videoId: null,
 }
 
 const CreateChoice = () => {
-  const [question, setQuestion] = useState({
-    title: '',
-    options: [''],
-    checked: [false],
-  })
-  //取得題目
-  // const { id } = useParams()
-  const id = '636fc3b3226a145127e56cf7'
-  //如果id不為undefined就向資料庫拿資料
+  const [question, setQuestion] = useState<Choice>(initQuestion)
 
-  const [submitQuestion, setSubmitQuestion] = useState({
-    title: '',
-    options: [''],
-    checked: [false],
-  })
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setQuestion({ ...question, title: event.target.value })
+  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setQuestion((prev) => ({ ...prev, title: event.target.value }))
   }
-  const handleAnswerChange =
-    (idx: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      question.options[idx] = event.target.value
-      setQuestion({ ...question })
+  const handleQuestionSubmit = () => {}
+
+  const addOption = () => {
+    setQuestion((prev) => {
+      const prevOptions = prev.options
+      prevOptions.push({ option: '', isAnswer: false })
+      return { ...prev, options: prevOptions }
+    })
+  }
+
+  const removeOption = (index: number) => {
+    setQuestion((prev) => {
+      const prevOptions = prev.options
+      prevOptions.splice(index, 1)
+      return { ...prev, options: prevOptions }
+    })
+  }
+
+  const handleOptionChange =
+    (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setQuestion((prev) => {
+        const prevOptions = prev.options
+        prevOptions[index].option = event.target.value
+        return { ...prev, options: prevOptions }
+      })
+      // if (question.options[index]) {
+      //   setQuestion((prev) => {
+      //     const prevOptions = prev.options
+      //     prevOptions[index].option = event.target.value
+      //     return { ...prev, options: prevOptions }
+      //   })
+      // } else {
+      //   setQuestion((prev) => {
+      //     const prevOptions = prev.options
+      //     prevOptions.push({ option: event.target.value, isAnswer: false })
+      //     return { ...prev, options: prevOptions }
+      //   })
+      // }
     }
-  //處理checkbox
+
   const handleCheckedChange =
-    (idx: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      question.checked[idx] = event.target.checked
-      setQuestion({ ...question })
+    (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setQuestion((prev) => {
+        const prevOptions = prev.options
+        prevOptions[index].isAnswer = event.target.checked
+        return { ...prev, options: prevOptions }
+      })
     }
-  //送出按鈕
-  function handleQuestionSubmit() {
-    console.log('Sending')
-    // chrome.runtime.sendMessage({
-    //   contentScriptQuery: id == undefined ? 'addQuestion' : 'editQuestion',
-    //   id: id,
-    //   data: {
-    //     title: question.title,
-    //     options: question.options,
-    //     checked: question.checked,
-    //   },
-    // })
-    setSubmitQuestion(question)
-    // window.setTimeout(() => navigate(-1), 1000)
-  }
-  //新增選項
-  function addChoice() {
-    var opt = [...question.options]
-    var checked = [...question.checked]
-    opt.push('')
-    checked.push(false)
-    setQuestion({ ...question, options: opt, checked: checked })
-  }
-  function removeChoice(idx: number) {
-    var options = [...question.options]
-    var checked = [...question.checked]
-    options.splice(idx, 1)
-    checked.splice(idx, 1)
-    setQuestion({ ...question, options: options, checked: checked })
-  }
-  const menuItem = question.options.map((item, idx) => {
-    var id = 'standard-adornment-option-' + idx
-    var htmlfor = 'standard-adornment-option-' + idx
 
+  const Options = question.options.map((item, index) => {
     return (
-      <Box sx={{ flexDirection: 'row' }} key={'box' + idx}>
-        <FormControl
+      <Box sx={{ flexDirection: 'row' }} key={item.option}>
+        <TextField
           sx={{ m: 1, width: '60%' }}
           variant="standard"
-          key={'form' + idx}
-        >
-          <InputLabel htmlFor={htmlfor}>選項{idx + 1}</InputLabel>
-          <Input
-            id={id}
-            value={question.options[idx]}
-            onChange={handleAnswerChange(idx)}
-          />
-        </FormControl>
+          label={`選項 ${index + 1}`}
+          value={question.options[index].option}
+          onChange={handleOptionChange(index)}
+        />
         <Checkbox
           sx={{ mt: 2 }}
-          checked={question.checked[idx]}
-          onChange={handleCheckedChange(idx)}
-          inputProps={{ 'aria-label': 'controlled-' + idx }}
+          checked={question.options[index].isAnswer}
+          onChange={handleCheckedChange(index)}
         />
         <Button
           sx={{ width: '5%', mt: 2 }}
-          key={idx}
+          key={index}
           variant="outlined"
           onClick={() => {
-            removeChoice(idx)
+            removeOption(index)
           }}
         >
           <DeleteIcon />
@@ -118,25 +115,16 @@ const CreateChoice = () => {
       <Card sx={{ width: 400, height: 'auto', p: 5, m: 2 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           <Typography>題目</Typography>
-          <FormControl sx={{ m: 1 }} variant="standard">
-            <InputLabel htmlFor="standard-adornment-title">題目</InputLabel>
-            <Input
-              id="standard-adornment-title"
-              value={question.title}
-              onChange={handleChange}
-            />
-          </FormControl>
+          <TextField
+            sx={{ m: 1 }}
+            variant="standard"
+            label="題目"
+            value={question.title}
+            onChange={handleTitleChange}
+          />
           <Typography sx={{ mt: 2 }}>選項</Typography>
-          {/* <FormControl sx={{ m: 1 }} variant="standard">
-                        <InputLabel htmlFor="standard-adornment-option-a">選項A</InputLabel>
-                        <Input
-                            id="standard-adornment-option-a"
-                            value={question.options[0]}
-                            onChange={handleChange('optionA')}
-                        />
-                    </FormControl> */}
-          {menuItem}
-          <Button sx={{ m: 2 }} variant="outlined" onClick={addChoice}>
+          {Options}
+          <Button sx={{ m: 2 }} variant="outlined" onClick={addOption}>
             新增選項
           </Button>
           <Button
