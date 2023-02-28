@@ -22,27 +22,7 @@ import PopupFab from '../popup/popupFab'
 import { FullScreen, useFullScreenHandle } from 'react-full-screen'
 import { OnProgressProps } from 'react-player/base'
 
-
-import { Video, Info, Choice, Rank, Fill, Drag, AnswersChoice, AnswersFill, AnswersRank, AnswersDrag } from '@prisma/client'
-interface VideoData extends Video {
-  info: Info[],
-  choice: ChoiceData[],
-  rank: RankData[],
-  fill: FillData[],
-  drag: DragData[],
-}
-interface ChoiceData extends Choice {
-  yourAnswer: AnswersChoice[]
-}
-interface RankData extends Rank {
-  yourAnswer: AnswersRank[]
-}
-interface FillData extends Fill {
-  yourAnswer: AnswersFill[]
-}
-interface DragData extends Drag {
-  yourAnswer: AnswersDrag[]
-}
+import { Video, Info, Choice, Rank, Fill, Drag } from '@prisma/client'
 
 interface ReactPlayerOnProgressProps {
   played: number
@@ -85,27 +65,23 @@ function CoursePlayer() {
   //redux
   const videoId = useAppSelector((state) => state.course.videoId)
   const dispatch = useAppDispatch()
-  const [videoData, setVideoData] = React.useState();
-
+  const [videoData, setVideoData] = React.useState<Video>()
 
   React.useEffect(() => {
-    console.log(videoId)
     const fetchData = async () => {
-      const response = await fetch(
-        `http://localhost:3000/api/video/${videoId}`)
-      const data: Array<VideoData> = await response.json()
+      const response = await fetch(`http://localhost:3000/api/video/${videoId}`)
+      const data = await response.json()
       console.log(data)
-
+      setVideoData(data)
     }
     fetchData()
-
   }, [videoId])
 
   // 控制彈跳互動視窗
   const [openPopupModal, setOpenPopupModal] = React.useState(false)
   const handleOpenPopupModal = () => {
     setOpenPopupModal(true)
-    pause() 
+    pause()
   }
   const handleClosePopupModal = () => {
     setOpenPopupModal(false)
@@ -125,8 +101,6 @@ function CoursePlayer() {
       setVideoDuration(playerRef.current.getDuration())
     }
   }
-
-
 
   let handlePlayerStatus = (props: OnProgressProps) => {
     dispatch(setPlayedSecond(props.playedSeconds))
@@ -229,7 +203,7 @@ function CoursePlayer() {
           ></PopupFab>
         )}
         <ReactPlayer
-          url={url}
+          url={videoData == undefined ? '' : videoData.url}
           playing={playing}
           onPlay={play}
           onPause={pause}

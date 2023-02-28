@@ -5,16 +5,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
   } else if (req.method === 'GET') {
     const query = req.query as { id: string }
-    const data = await prisma.video.findMany({
+    const data = await prisma.video.findUnique({
       where: {
         id: query.id,
       },
       include: {
         info: true,
-        choice: { include: { yourAnswer: true } },
-        rank: { include: { yourAnswer: true } },
-        fill: { include: { yourAnswer: true } },
-        drag: { include: { yourAnswer: true } },
+        choice: { include: { feedback: true } },
+        rank: { include: { feedback: true } },
+        fill: { include: { feedback: true } },
+        drag: { include: { feedback: true } },
       },
     })
     res.status(200).json(data)
