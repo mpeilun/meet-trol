@@ -101,16 +101,15 @@ function EditQuestionPage() {
           alignItems="flex-start"
           // height="100%"
         >
-          <Box
-            width="50%"
-            // sx={{ m: '1rem 1rem 1rem 2rem' }}
-          >
+          <Box width="45%">
             {/*播放器*/}
             {hasWindow && ReactPlayer.canPlay(playerUrl) && (
               <ReactPlayer
-                style={{
-                  display: 'flex',
-                }}
+                style={
+                  {
+                    // display: 'flex',
+                  }
+                }
                 url={playerUrl}
                 playing={playing}
                 onPlay={play}
@@ -133,6 +132,7 @@ function EditQuestionPage() {
             )}
             {/*網址輸入框*/}
             <TextField
+              fullWidth
               label="Youtube Link"
               variant="outlined"
               value={playerUrl}
@@ -148,8 +148,7 @@ function EditQuestionPage() {
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              width: '50%',
-              // m: '1rem 2rem 1rem 1rem',
+              width: '45%',
             }}
           >
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
