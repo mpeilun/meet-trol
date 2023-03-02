@@ -1,6 +1,18 @@
 import { useState, MouseEvent } from 'react'
 import Link from 'next/link'
-import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, Button, Tooltip, MenuItem } from '@mui/material'
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  IconButton,
+  Typography,
+  Menu,
+  Container,
+  Avatar,
+  Button,
+  Tooltip,
+  MenuItem,
+} from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
 import { useSession } from 'next-auth/react'
@@ -35,6 +47,7 @@ function MainNavigation() {
     { displayName: '我的課程', path: '/courses' },
     { displayName: '課程管理', path: '/courses' },
     { displayName: '關於我們', path: '/courses/search' },
+    { displayName: 'course title', path: 'course/courseid' },
   ]
   const settings = [
     {
@@ -57,7 +70,9 @@ function MainNavigation() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* 手機尺寸 */}
-          <RemoveRedEyeIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <RemoveRedEyeIcon
+            sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}
+          />
           <Typography
             variant="h6"
             noWrap
@@ -76,7 +91,14 @@ function MainNavigation() {
             Meet-Trol
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton size="large" aria-label="account of current user" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleOpenNavMenu} color="inherit">
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleOpenNavMenu}
+              color="inherit"
+            >
               <MenuIcon />
             </IconButton>
             <Menu
@@ -97,15 +119,27 @@ function MainNavigation() {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem href={page.path} key={page.displayName} onClick={handleCloseNavMenu} LinkComponent={Link}>
-                  {page.displayName}
-                </MenuItem>
-              ))}
+              {pages.map((page, index) => {
+                const isCourseTitle = index == pages.length - 1
+
+                return (
+                  <MenuItem
+                    href={page.path}
+                    key={page.displayName}
+                    onClick={handleCloseNavMenu}
+                    LinkComponent={Link}
+                    sx={{ color: 'black' }}
+                  >
+                    {page.displayName}
+                  </MenuItem>
+                )
+              })}
             </Menu>
           </Box>
           {/* 電腦尺寸 */}
-          <RemoveRedEyeIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          <RemoveRedEyeIcon
+            sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}
+          />
           <Typography
             variant="h5"
             noWrap
@@ -126,7 +160,13 @@ function MainNavigation() {
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
-              <Button href={page.path} key={page.displayName} onClick={handleCloseNavMenu} LinkComponent={Link} sx={{ my: 2, color: 'white', display: 'block' }}>
+              <Button
+                href={page.path}
+                key={page.displayName}
+                onClick={handleCloseNavMenu}
+                LinkComponent={Link}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
                 {page.displayName}
               </Button>
             ))}
@@ -136,13 +176,21 @@ function MainNavigation() {
             {session ? (
               <Tooltip title={session.user.name}>
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar sx={{ width: '40px', height: '40px' }} src={session.user.image} alt="ProfilePhoto">
-                    <Image src={session.user.image} alt="ProfilePhoto" width={200} height={200}></Image>
+                  <Avatar
+                    sx={{ width: '40px', height: '40px' }}
+                    src={session.user.image}
+                    alt="ProfilePhoto"
+                  >
+                    <Image
+                      src={session.user.image}
+                      alt="ProfilePhoto"
+                      width={200}
+                      height={200}
+                    ></Image>
                   </Avatar>
                 </IconButton>
               </Tooltip>
             ) : (
-              
               <Tooltip title={'登入'}>
                 <IconButton
                   onClick={() => {

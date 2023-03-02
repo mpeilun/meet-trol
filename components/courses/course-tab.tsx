@@ -73,6 +73,11 @@ export default function CourseTabs(props: Video) {
         <ul>
           <li>{props.title}</li>
           <li>{props.description}</li>
+          <li>{props.description}</li>
+          <li>{props.description}</li>
+          <li>{props.description}</li>
+          <li>{props.description}</li>
+          <li>{props.description}</li>
         </ul>
       </TabPanel>
 

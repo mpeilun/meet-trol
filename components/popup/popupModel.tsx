@@ -62,7 +62,7 @@ const PopupModal = (props: {
           display: props.open ? 'flex' : 'none',
           justifyContent: 'center',
           alignItems: 'center',
-          visibility: isRender ? 'visible' : 'hidden',
+          visibility: 'visible',
           position: 'absolute',
           // top: '20%',
           // right: '20%',

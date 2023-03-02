@@ -23,7 +23,7 @@ function Layout(props: { children: ReactNode }) {
             body: { margin: 0, backgroundColor: grey[200] },
           }}
         />
-        <Box display="flex" width="100vw" height="100vh" sx={{ flexDirection: 'column' }}>
+        <Box display="flex" overflow='hidden' height="100vh" sx={{ flexDirection: 'column' }}>
           {asPath !== '/auth/signin' && <MainNavigation />}
           <main style={{ height: '100%' }}>{props.children}</main>
         </Box>

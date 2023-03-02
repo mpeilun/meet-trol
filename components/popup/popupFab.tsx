@@ -11,6 +11,18 @@ const PopupFab = (props: {
   open: boolean
   questionType: number
 }) => {
+  const QuestionType = (questionType: number) => {
+    if (questionType == 0) {
+      return <InfoIcon />
+    } else if (questionType == 1 || questionType == 2 || questionType == 3) {
+      return <MenuIcon />
+    } else if (questionType == 4) {
+      return <CameraIcon />
+    } else {
+      return <Typography>題目顯示失敗</Typography>
+    }
+  }
+
   if (props.questionType == 0) {
     return (
       <>
@@ -23,7 +35,8 @@ const PopupFab = (props: {
             left: '10%',
             right: 'auto',
             bottom: 'auto',
-            display: props.open ? 'none' : 'flex',
+            visibility: props.open ? 'hidden' : 'visible',
+            // display: props.open ? 'none' : 'flex',
           }}
           color="warning"
           aria-label="info"
@@ -53,7 +66,9 @@ const PopupFab = (props: {
             left: '10%',
             right: 'auto',
             bottom: 'auto',
-            display: props.open ? 'none' : 'flex',
+            visibility: props.open ? 'hidden' : 'visible',
+
+            // display: props.open ? 'none' : 'flex',
           }}
           color="primary"
           aria-label="choice"
@@ -83,7 +98,8 @@ const PopupFab = (props: {
             left: '10%',
             right: 'auto',
             bottom: 'auto',
-            display: props.open ? 'none' : 'flex',
+            visibility: props.open ? 'hidden' : 'visible',
+            // display: props.open ? 'none' : 'flex',
           }}
           color="secondary"
           aria-label="drag"
