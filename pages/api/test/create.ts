@@ -6,7 +6,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     //# create course
     const result = await prisma.course.create({
       data: {
-        title: 'test 2',
+        title: 'New course 4',
         description: `fake data create at ${Date.now().toLocaleString('zh-TW')}`,
         mebersId: ['63f9ae2dc0c1b35a267f6473'],
       },

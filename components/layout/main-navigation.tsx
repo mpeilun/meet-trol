@@ -47,6 +47,7 @@ function MainNavigation() {
     { displayName: '我的課程', path: '/courses' },
     { displayName: '課程管理', path: '/courses' },
     { displayName: '關於我們', path: '/courses/search' },
+    { displayName: 'course title', path: 'course/courseid' },
   ]
   const settings = [
     {
@@ -118,19 +119,26 @@ function MainNavigation() {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem
-                  href={page.path}
-                  key={page.displayName}
-                  onClick={handleCloseNavMenu}
-                  LinkComponent={Link}
-                >
-                  {page.displayName}
-                </MenuItem>
-              ))}
+              {pages.map((page, index) => {
+                const isCourseTitle = index == pages.length - 1
+                return (
+                  <MenuItem
+                    href={page.path}
+                    key={page.displayName}
+                    onClick={handleCloseNavMenu}
+                    LinkComponent={Link}
+                    sx={{ color: 'black' }}
+                  >
+                    {page.displayName}
+                  </MenuItem>
+                )
+              })}
             </Menu>
           </Box>
           {/* 電腦尺寸 */}
+          <RemoveRedEyeIcon
+            sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}
+          />
           <RemoveRedEyeIcon
             sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}
           />
@@ -153,17 +161,21 @@ function MainNavigation() {
             Meet-Trol
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button
-                href={page.path}
-                key={page.displayName}
-                onClick={handleCloseNavMenu}
-                LinkComponent={Link}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page.displayName}
-              </Button>
-            ))}
+            {pages.map((page) => {
+              return (
+                <>
+                  <Button
+                    href={page.path}
+                    key={page.displayName}
+                    onClick={handleCloseNavMenu}
+                    LinkComponent={Link}
+                    sx={{ my: 2, color: 'white', display: 'block' }}
+                  >
+                    {page.displayName}
+                  </Button>
+                </>
+              )
+            })}
           </Box>
           {/* 帳號頭像 */}
           <Box sx={{ flexGrow: 0 }}>

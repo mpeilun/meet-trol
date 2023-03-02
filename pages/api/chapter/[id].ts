@@ -15,8 +15,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         where: {
           courseId: query.id,
         },
-        include: {
-          videos: true,
+        select: {
+          title: true,
+          videos: {
+            select:{
+              id:true,
+              title: true
+            }
+          },
         },
       })
       res.status(200).json(data)

@@ -14,7 +14,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           userId: session.user.id,
         },
         select: {
-          lastView: true,
+          lastView: {
+            select: {
+                videoId: true,
+                videoTime: true,
+                viewTime: true,
+            }
+          }
         },
       })
       res.status(200).json(data)
