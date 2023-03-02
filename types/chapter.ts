@@ -18,7 +18,7 @@ export interface ChapterListData {
   videos: { id: string; title: string }[]
 }
 
-export interface InteractionData {
+export interface VideoData {
   url: string
   info: Info[]
   choice: ChoiceData[]
@@ -26,16 +26,25 @@ export interface InteractionData {
   fill: FillData[]
   drag: DragData[]
 }
-interface ChoiceData extends Choice {
+
+export interface InteractionData {
+  info: Info[]
+  choice: ChoiceData[]
+  rank: RankData[]
+  fill: FillData[]
+  drag: DragData[]
+}
+
+export interface ChoiceData extends Choice {
   feedback: ChoiceFeedback[]
 }
-interface RankData extends Rank {
+export interface RankData extends Rank {
   feedback: RankFeedback[]
 }
-interface FillData extends Fill {
+export interface FillData extends Fill {
   feedback: FillFeedback[]
 }
-interface DragData extends Drag {
+export interface DragData extends Drag {
   feedback: DragFeedback[]
 }
 
