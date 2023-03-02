@@ -62,8 +62,8 @@ model LastView {
   videoId   String   @db.ObjectId
   videoTime Float
   viewTime  DateTime @default(now())
-  record    Record  @relation(fields: [recordId], references: [id])
-  recordId  String  @db.ObjectId
+  record    Record   @relation(fields: [recordId], references: [id])
+  recordId  String   @db.ObjectId
 }
 
 model VerificationToken {

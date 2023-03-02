@@ -8,8 +8,6 @@ import { authOptions } from '../api/auth/[...nextauth]'
 import { useEffect } from 'react'
 import { CircularProgress, Box } from '@mui/material'
 
-import { getSession } from 'next-auth/client'
-
 function SignInPage({
   providers,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {

@@ -12,6 +12,7 @@ import {
 import { useState, useEffect, useRef } from 'react'
 import { OnProgressProps } from 'react-player/base'
 import CreateChoice from '../../../components/question/choice/create'
+import TestVideoEditTimeLine from '../../../components/edit/video-edit-timeline'
 
 export interface PlayerProgress extends OnProgressProps {
   duration: number
@@ -169,7 +170,10 @@ function EditQuestionPage() {
             </TabPanel>
             <TabPanel value={value} index={1}>
               #選擇題
-              <CreateChoice />
+              <CreateChoice
+                playerProgress={playerProgress}
+                setPlayerProgress={setPlayerProgress}
+              />
             </TabPanel>
             <TabPanel value={value} index={2}>
               #填空題
@@ -191,6 +195,9 @@ function EditQuestionPage() {
           flexDirection="column"
           m={2}
         >
+          <TestVideoEditTimeLine />
+          {/* <VideoEditTimeLine />
+          <VideoEditTimeLine /> */}
           <Button
             variant="contained"
             size="small"
