@@ -73,6 +73,9 @@ function MainNavigation() {
           <RemoveRedEyeIcon
             sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}
           />
+          <RemoveRedEyeIcon
+            sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}
+          />
           <Typography
             variant="h6"
             noWrap
@@ -121,7 +124,6 @@ function MainNavigation() {
             >
               {pages.map((page, index) => {
                 const isCourseTitle = index == pages.length - 1
-
                 return (
                   <MenuItem
                     href={page.path}
@@ -137,6 +139,9 @@ function MainNavigation() {
             </Menu>
           </Box>
           {/* 電腦尺寸 */}
+          <RemoveRedEyeIcon
+            sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}
+          />
           <RemoveRedEyeIcon
             sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}
           />
@@ -159,17 +164,21 @@ function MainNavigation() {
             Meet-Trol
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button
-                href={page.path}
-                key={page.displayName}
-                onClick={handleCloseNavMenu}
-                LinkComponent={Link}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page.displayName}
-              </Button>
-            ))}
+            {pages.map((page) => {
+              return (
+                <>
+                  <Button
+                    href={page.path}
+                    key={page.displayName}
+                    onClick={handleCloseNavMenu}
+                    LinkComponent={Link}
+                    sx={{ my: 2, color: 'white', display: 'block' }}
+                  >
+                    {page.displayName}
+                  </Button>
+                </>
+              )
+            })}
           </Box>
           {/* 帳號頭像 */}
           <Box sx={{ flexGrow: 0 }}>
