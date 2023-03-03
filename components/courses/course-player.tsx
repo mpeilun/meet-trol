@@ -53,21 +53,18 @@ function CoursePlayer() {
   //PlayerController
   const url = 'https://www.youtube.com/watch?v=1iHURb6K4qc'
   const [progress, setProgress] = React.useState('')
-  const playerRef: any = React.useRef<ReactPlayer>(null)
-  const containerRef = React.useRef(null)
-  const [showPlayerBar, setShowPlayerBar] = React.useState(false)
-  const [mouseEnter, setMouseEnter] = React.useState(false)
-  const [playerControllerProps, setPlayerControllerProps] = React.useState({
-    width: 0,
-    height: 0,
-  })
-  const [playing, setPlaying] = React.useState(false)
-  const play = () => setPlaying(true)
-  const pause = () => setPlaying(false)
-  const [videoDuration, setVideoDuration] = React.useState(0)
-  const [timer, setTimer] = React.useState<any>(null)
 
-  const handleFullScreen = useFullScreenHandle()
+  //ReactPlayer
+  const playerRef: any = React.useRef<ReactPlayer>(null) //ReactPlayer 的參照
+  const [showPlayerBar, setShowPlayerBar] = React.useState(false) //是否顯示播放器控制列
+  // const [mouseEnter, setMouseEnter] = React.useState(false)
+  const [playing, setPlaying] = React.useState(false) //播放狀態
+  const play = () => setPlaying(true) //播放
+  const pause = () => setPlaying(false) //暫停
+  // const [videoDuration, setVideoDuration] = React.useState(0)
+  const [timer, setTimer] = React.useState<any>(null)
+  const [volume, setVolume] = React.useState(1) //音量
+  const handleFullScreen = useFullScreenHandle() //全螢幕控制器
 
   //redux
   const videoId = useAppSelector((state) => state.course.videoId)
@@ -103,6 +100,9 @@ function CoursePlayer() {
     setPlayedSeconds(newValue)
     playerRef.current.seekTo(newValue, 'seconds')
   }
+  const handleVolumeSliderChange = (event: any, newValue: any) => {
+    setVolume(newValue)
+  }
   const onReady = React.useCallback(
     (time: number) => {
       playerRef.current.seekTo(time, 'seconds')
@@ -115,11 +115,11 @@ function CoursePlayer() {
   let onPlayerReady = () => {
     if (playerRef.current != null) {
       console.log(playerRef.current)
-      setPlayerControllerProps({
-        width: playerRef.current.props.width,
-        height: playerRef.current.props.height,
-      })
-      setVideoDuration(playerRef.current.getDuration())
+      // setPlayerControllerProps({
+      //   width: playerRef.current.props.width,
+      //   height: playerRef.current.props.height,
+      // })
+      // setVideoDuration(playerRef.current.getDuration())
     }
   }
 
@@ -151,10 +151,10 @@ function CoursePlayer() {
         className="course-player-div"
         onMouseOver={() => {
           setShowPlayerBar(true)
-          setMouseEnter(true)
+          // setMouseEnter(true)
         }}
         onMouseLeave={() => {
-          setMouseEnter(false)
+          // setMouseEnter(false)
           setShowPlayerBar(false)
         }}
       >
@@ -164,6 +164,8 @@ function CoursePlayer() {
           playerRef={playerRef}
           playedSeconds={playedSeconds}
           handleTimeSliderChange={handleTimeSliderChange}
+          handleVolumeSliderChange={handleVolumeSliderChange}
+          volume={volume}
           showPlayerBar={showPlayerBar}
           playing={playing}
           play={play}
@@ -210,6 +212,7 @@ function CoursePlayer() {
           onProgress={handlePlayerStatus}
           ref={playerRef}
           onReady={onPlayerReady}
+          volume={volume}
           width={'100%'}
           height={handleFullScreen.active ? '100%' : 600}
           progressInterval={200}
@@ -231,15 +234,17 @@ interface PlayerBarProps {
   showPlayerBar: boolean,
   playedSeconds: number,
   handleTimeSliderChange: (event: Event, value: number | number[]) => void,
+  handleVolumeSliderChange: (event: Event, value: number | number[]) => void,
   playerRef: React.MutableRefObject<ReactPlayer | null>,
   playing: boolean,
+  volume: number,
   play: () => void,
   pause: () => void,
   handleFullScreen: FullScreenHandle,
 }
 const PlayerBar = (props: PlayerBarProps) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const { showPlayerBar, playedSeconds, handleTimeSliderChange, playerRef, playing, play, pause, handleFullScreen } = props
+  const { showPlayerBar, playedSeconds, handleTimeSliderChange, handleVolumeSliderChange, playerRef, playing, play, pause, handleFullScreen, volume } = props
   return(
     <Box
           className="course-player-bar"
@@ -292,6 +297,17 @@ const PlayerBar = (props: PlayerBarProps) => {
                 >
                   {playing ? <Pause /> : <PlayArrow />}
                 </ButtonBase>
+                <Box width={'100%'} height={'100%'} display='flex'>
+                  <Slider
+                  sx={{width: 100, alignSelf: 'center'}}
+                  value={volume}
+                  onChange={handleVolumeSliderChange}
+                  min={0}
+                  max={1}
+                  step={0.05}
+                />
+                </Box>
+                
                 <ButtonBase
                   sx={{ height: 50, width: 50 }}
                   onClick={handleFullScreen.active ? handleFullScreen.exit : handleFullScreen.enter}
