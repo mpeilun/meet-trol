@@ -163,17 +163,15 @@ function MainNavigation() {
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => {
               return (
-                <>
-                  <Button
-                    href={page.path}
-                    key={page.displayName}
-                    onClick={handleCloseNavMenu}
-                    LinkComponent={Link}
-                    sx={{ my: 2, color: 'white', display: 'block' }}
-                  >
-                    {page.displayName}
-                  </Button>
-                </>
+                <Button
+                  href={page.path}
+                  key={page.displayName}
+                  onClick={handleCloseNavMenu}
+                  LinkComponent={Link}
+                  sx={{ my: 2, color: 'white', display: 'block' }}
+                >
+                  {page.displayName}
+                </Button>
               )
             })}
           </Box>

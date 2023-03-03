@@ -1,3 +1,4 @@
+import { JSONTree } from 'react-json-tree'
 import ReactPlayer from 'react-player/youtube'
 import {
   Box,
@@ -8,11 +9,17 @@ import {
   Tab,
   Card,
   Paper,
+  CircularProgress,
 } from '@mui/material'
 import { useState, useEffect, useRef } from 'react'
+import useSWRImmutable from 'swr/immutable'
+import { useRouter } from 'next/router'
 import { OnProgressProps } from 'react-player/base'
 import CreateChoice from '../../../components/question/choice/create'
 import TestVideoEditTimeLine from '../../../components/edit/video-edit-timeline'
+import { Video } from '../../../types/video-edit'
+
+import { Info, Choice, Rank, Fill, Drag } from '@prisma/client'
 
 export interface PlayerProgress extends OnProgressProps {
   duration: number
@@ -22,6 +29,21 @@ interface TabPanelProps {
   children?: React.ReactNode
   index: number
   value: number
+}
+
+function useVideo(id: string) {
+  const fetcher = (url: string) => fetch(url).then((r) => r.json())
+  const { data, error, isLoading, mutate } = useSWRImmutable(
+    `/api/video/edit/${id}`,
+    fetcher
+  )
+
+  const isError: null | { message: string | null } =
+    error || data?.message
+      ? { message: `${data?.message} ${error ? error : ''}` }
+      : null
+
+  return { video: data as Video, isLoading, isError, mutate }
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -48,17 +70,30 @@ function a11yProps(index: number) {
 }
 
 function EditQuestionPage() {
-  const [value, setValue] = useState(0)
+  const router = useRouter()
+  const { id } = router.query as { id: string }
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue)
+  // for testing id
+  // 63f45bbf82f16bcec3a6381a
+
+  const { video, isError, isLoading, mutate } = useVideo(id)
+
+  const setVideoUrl = (url: string) => {
+    mutate({ ...video, url: url })
+  }
+  // const fetcher = (url: string) => fetch(url).then((r) => r.json())
+  // const { data, error, isLoading } = useSWR<Video>(
+  //   `/api/video/edit/${id}`,
+  //   fetcher
+  // )
+
+  const [tabValue, setTabValue] = useState(0)
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue)
   }
 
   const playerRef = useRef<ReactPlayer>(null)
   const [hasWindow, setHasWindow] = useState(false)
-  const [playerUrl, setPlayerUrl] = useState(
-    'https://www.youtube.com/watch?v=1iHURb6K4qc'
-  )
   const [playing, setPlaying] = useState(false)
   const play = () => setPlaying(true)
   const pause = () => setPlaying(false)
@@ -89,6 +124,14 @@ function EditQuestionPage() {
     }
   }, [])
 
+  if (isLoading) {
+    return <CircularProgress />
+  }
+
+  if (isError) {
+    return <Typography variant="h5"> message: {isError.message} </Typography>
+  }
+
   return (
     <>
       <Box display="flex" flexDirection="column">
@@ -104,14 +147,14 @@ function EditQuestionPage() {
         >
           <Box width="45%">
             {/*播放器*/}
-            {hasWindow && ReactPlayer.canPlay(playerUrl) && (
+            {hasWindow && ReactPlayer.canPlay(video.url) && (
               <ReactPlayer
                 style={
                   {
                     // display: 'flex',
                   }
                 }
-                url={playerUrl}
+                url={video.url}
                 playing={playing}
                 onPlay={play}
                 onPause={pause}
@@ -136,11 +179,11 @@ function EditQuestionPage() {
               fullWidth
               label="Youtube Link"
               variant="outlined"
-              value={playerUrl}
+              value={video.url}
               size="small"
               sx={{ m: '24px 0' }}
               onChange={(event) => {
-                setPlayerUrl(event.target.value)
+                setVideoUrl(event.target.value)
               }}
             />
           </Box>
@@ -154,8 +197,8 @@ function EditQuestionPage() {
           >
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
               <Tabs
-                value={value}
-                onChange={handleChange}
+                value={tabValue}
+                onChange={handleTabChange}
                 aria-label="basic tabs example"
               >
                 <Tab label="資訊" {...a11yProps(0)} />
@@ -165,23 +208,23 @@ function EditQuestionPage() {
                 <Tab label="圖選" {...a11yProps(4)} />
               </Tabs>
             </Box>
-            <TabPanel value={value} index={0}>
+            <TabPanel value={tabValue} index={0}>
               #資訊卡
             </TabPanel>
-            <TabPanel value={value} index={1}>
+            <TabPanel value={tabValue} index={1}>
               #選擇題
               <CreateChoice
                 playerProgress={playerProgress}
                 setPlayerProgress={setPlayerProgress}
               />
             </TabPanel>
-            <TabPanel value={value} index={2}>
+            <TabPanel value={tabValue} index={2}>
               #填空題
             </TabPanel>
-            <TabPanel value={value} index={3}>
+            <TabPanel value={tabValue} index={3}>
               #排序題
             </TabPanel>
-            <TabPanel value={value} index={4}>
+            <TabPanel value={tabValue} index={4}>
               #圖片選答
             </TabPanel>
           </Paper>
@@ -195,7 +238,7 @@ function EditQuestionPage() {
           flexDirection="column"
           m={2}
         >
-          <TestVideoEditTimeLine />
+          {hasWindow && <TestVideoEditTimeLine />}
           {/* <VideoEditTimeLine />
           <VideoEditTimeLine /> */}
           <Button
@@ -203,7 +246,7 @@ function EditQuestionPage() {
             size="small"
             onClick={() => {
               if (playerRef.current) {
-                playerRef.current.seekTo(50.11111)
+                playerRef.current.seekTo(50)
               }
             }}
           >
@@ -215,6 +258,7 @@ function EditQuestionPage() {
             <Typography>影片時長 {playerProgress?.duration}</Typography>
           </Box>
         </Box>
+        <JSONTree data={video} />
       </Box>
     </>
   )
