@@ -1,5 +1,5 @@
 import { JSONTree } from 'react-json-tree'
-import ReactPlayer from 'react-player/youtube'
+import ReactPlayer from 'react-player/lazy'
 import {
   Box,
   Button,
@@ -93,7 +93,6 @@ function EditQuestionPage() {
   }
 
   const playerRef = useRef<ReactPlayer>(null)
-  const [hasWindow, setHasWindow] = useState(false)
   const [playing, setPlaying] = useState(false)
   const play = () => setPlaying(true)
   const pause = () => setPlaying(false)
@@ -115,14 +114,6 @@ function EditQuestionPage() {
   }
 
   const handPlayerReady = () => {}
-
-  //fix react player hydration issue
-  //https://stackoverflow.com/questions/72235211/trying-to-use-react-player-throws-a-hydration-error
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setHasWindow(true)
-    }
-  }, [])
 
   if (isLoading) {
     return <CircularProgress />
@@ -147,33 +138,33 @@ function EditQuestionPage() {
         >
           <Box width="45%">
             {/*播放器*/}
-            {hasWindow && ReactPlayer.canPlay(video.url) && (
-              <ReactPlayer
-                style={
-                  {
-                    // display: 'flex',
-                  }
+            ReactPlayer.canPlay(video.url) && (
+            <ReactPlayer
+              style={
+                {
+                  // display: 'flex',
                 }
-                url={video.url}
-                playing={playing}
-                onPlay={play}
-                onPause={pause}
-                onProgress={handlePlayerStatus}
-                onDuration={handelPlayerDuration}
-                ref={playerRef}
-                onReady={handPlayerReady}
-                width={'100%'}
-                progressInterval={200}
-                config={{
+              }
+              url={video.url}
+              playing={playing}
+              onPlay={play}
+              onPause={pause}
+              onProgress={handlePlayerStatus}
+              onDuration={handelPlayerDuration}
+              ref={playerRef}
+              onReady={handPlayerReady}
+              width={'100%'}
+              progressInterval={200}
+              config={{
+                youtube: {
                   playerVars: {
-                    showinfo: 0,
                     controls: 1,
                     modestbranding: 1,
                     rel: 0,
                   },
-                }}
-              />
-            )}
+                },
+              }}
+            />
             {/*網址輸入框*/}
             <TextField
               fullWidth
@@ -238,7 +229,7 @@ function EditQuestionPage() {
           flexDirection="column"
           m={2}
         >
-          {hasWindow && <TestVideoEditTimeLine />}
+          {<TestVideoEditTimeLine />}
           {/* <VideoEditTimeLine />
           <VideoEditTimeLine /> */}
           <Button
