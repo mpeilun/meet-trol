@@ -40,7 +40,7 @@ const PopupFab = (props: {
       <>
         <Fab
           sx={{
-            mb:1,
+            mb: 1,
             // width: '50%',
             // height: '50%',z
             // position: 'absolute',
@@ -74,7 +74,7 @@ const PopupFab = (props: {
       <>
         <Fab
           sx={{
-            mb:1,
+            mb: 1,
             // width: '50%',
             // height: '50%',
             // position: 'absolute',
@@ -109,7 +109,7 @@ const PopupFab = (props: {
       <>
         <Fab
           sx={{
-            mb:1,
+            mb: 1,
             // width: '50%',
             // height: '50%',
             // position: 'absolute',

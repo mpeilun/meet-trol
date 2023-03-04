@@ -13,7 +13,6 @@ const Row = () => {
   useEffect(() => {
     if (rndRef?.current) {
       setY(rndRef?.current?.offsetTop)
-      console.log(rndRef?.current?.offsetTop, y)
     }
   }, [rndRef?.current?.offsetTop])
 

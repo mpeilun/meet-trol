@@ -44,23 +44,24 @@ const DragDrop = () => {
         {questionArray.map((title, index) => {
           if (ansArray.indexOf(title) == -1) {
             return (
-              <>
-                <Typography
-                  variant="body1"
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                >
-                  {title}
-                </Typography>
-              </>
+              <Typography
+                key={`dragdrop-question-${index}`}
+                variant="body1"
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                {title}
+              </Typography>
             )
           } else {
             return (
-              <>
-                <AnsItem index={index} ans={title}></AnsItem>
-              </>
+              <AnsItem
+                key={`dragdrop-question-${index}`}
+                index={index}
+                ans={title}
+              />
             )
           }
         })}
@@ -82,9 +83,11 @@ const DragDrop = () => {
       >
         {ansArray.map((title, index) => {
           return (
-            <>
-              <FillItem title={title} index={index}></FillItem>
-            </>
+            <FillItem
+              key={`dragdrop-ans-${index}`}
+              title={title}
+              index={index}
+            ></FillItem>
           )
         })}
       </Box>

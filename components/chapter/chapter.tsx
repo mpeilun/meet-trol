@@ -20,8 +20,6 @@ import { useAppSelector, useAppDispatch } from '../../hooks/redux'
 import { setVideoId, setVideoTime } from '../../store/course-data'
 import { ChapterListData } from '../../types/chapter'
 
-
-
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
 ))(({ theme }) => ({
@@ -95,7 +93,6 @@ export default function CustomizedAccordions(props: {
   //       expandedArray.push(false)
   //     }
   //   }
-  
 
   //   if (index == 0) {
   //     return isSelectedOne
@@ -147,7 +144,6 @@ export default function CustomizedAccordions(props: {
   //   }
   // }
 
-
   if (data == undefined) {
     return <></>
   } else if (data.length == 0) {
@@ -163,86 +159,76 @@ export default function CustomizedAccordions(props: {
       <div>
         {data.map(({ title, videos }, indexOne) => {
           return (
-            <>
-              <Accordion
-              key={indexOne}
-                onChange={() => {
-                  
-                }}
+            <Accordion key={indexOne} onChange={() => {}}>
+              <AccordionSummary
+                aria-controls={`panel${indexOne + 1}d-content`}
+                id={`panel${indexOne + 1}d-header`}
               >
-                <AccordionSummary
-                  aria-controls={`panel${indexOne + 1}d-content`}
-                  id={`panel${indexOne + 1}d-header`}
-                >
-                  <Box sx={{ pl: 1 }}>
-                    <Typography
-                      sx={{ fontSize: '0.95rem', fontWeight: 'bold' }}
-                    >
-                      {title}
-                    </Typography>
-                  </Box>
-                </AccordionSummary>
-                <AccordionDetails>
-                  {videos.map(({ title, id }, indexTwo) => {
-                    let isLast = true
-                    if (videos.length == indexTwo + 1) {
-                      isLast = false
-                    }
-                    return (
-                      <>
-                        <Card
-                        key={indexTwo}
-                          elevation={0}
-                          sx={{
-                            borderRadius: 0,
-                            borderColor: 'transparent',
-                            display: 'flex',
+                <Box sx={{ pl: 1 }}>
+                  <Typography sx={{ fontSize: '0.95rem', fontWeight: 'bold' }}>
+                    {title}
+                  </Typography>
+                </Box>
+              </AccordionSummary>
+              <AccordionDetails>
+                {videos.map(({ title, id }, indexTwo) => {
+                  let isLast = true
+                  if (videos.length == indexTwo + 1) {
+                    isLast = false
+                  }
+                  return (
+                    <Box key={indexTwo}>
+                      <Card
+                        elevation={0}
+                        sx={{
+                          borderRadius: 0,
+                          borderColor: 'transparent',
+                          display: 'flex',
+                        }}
+                      >
+                        <CardActionArea
+                          onClick={() => {
+                            // setVideoSelect(setSelected(0, indexOne, indexTwo))
+                            dispatch(setVideoId(id))
                           }}
                         >
-                          <CardActionArea
-                            onClick={() => {
-                              // setVideoSelect(setSelected(0, indexOne, indexTwo))
-                              dispatch(setVideoId(id))
+                          <CardContent
+                            sx={{
+                              display: 'flex',
+                              flexDirection: 'row',
+                              alignItems: 'center',
                             }}
                           >
-                            <CardContent
-                              sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                              }}
+                            <Box
+                            // sx={{
+                            //   backgroundColor: videoSelect[indexOne][
+                            //     indexTwo
+                            //   ]
+                            //     ? '#67a1f3'
+                            //     : 'white',
+                            //   color: videoSelect[indexOne][indexTwo]
+                            //     ? '#67a1f3'
+                            //     : 'white',
+                            // }}
                             >
-                              <Box
-                                // sx={{
-                                //   backgroundColor: videoSelect[indexOne][
-                                //     indexTwo
-                                //   ]
-                                //     ? '#67a1f3'
-                                //     : 'white',
-                                //   color: videoSelect[indexOne][indexTwo]
-                                //     ? '#67a1f3'
-                                //     : 'white',
-                                // }}
-                              >
-                                {`.`}
-                              </Box>
-                              <Typography
-                                sx={{ ml: 1 }}
-                                variant="body2"
-                                component="div"
-                              >
-                                {title}
-                              </Typography>
-                            </CardContent>
-                          </CardActionArea>
-                        </Card>
-                        {isLast && <Divider variant="middle" />}
-                      </>
-                    )
-                  })}
-                </AccordionDetails>
-              </Accordion>
-            </>
+                              {`.`}
+                            </Box>
+                            <Typography
+                              sx={{ ml: 1 }}
+                              variant="body2"
+                              component="div"
+                            >
+                              {title}
+                            </Typography>
+                          </CardContent>
+                        </CardActionArea>
+                      </Card>
+                      {isLast && <Divider variant="middle" />}
+                    </Box>
+                  )
+                })}
+              </AccordionDetails>
+            </Accordion>
           )
         })}
         {/* <Accordion>

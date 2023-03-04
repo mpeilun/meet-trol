@@ -12,14 +12,11 @@ import {
   CircularProgress,
 } from '@mui/material'
 import { useState, useEffect, useRef } from 'react'
-import useSWRImmutable from 'swr/immutable'
 import { useRouter } from 'next/router'
 import { OnProgressProps } from 'react-player/base'
 import CreateChoice from '../../../components/question/choice/create'
 import TestVideoEditTimeLine from '../../../components/edit/video-edit-timeline'
 import { Video } from '../../../types/video-edit'
-
-import { Info, Choice, Rank, Fill, Drag } from '@prisma/client'
 
 export interface PlayerProgress extends OnProgressProps {
   duration: number
@@ -29,21 +26,6 @@ interface TabPanelProps {
   children?: React.ReactNode
   index: number
   value: number
-}
-
-function useVideo(id: string) {
-  const fetcher = (url: string) => fetch(url).then((r) => r.json())
-  const { data, error, isLoading, mutate } = useSWRImmutable(
-    `/api/video/edit/${id}`,
-    fetcher
-  )
-
-  const isError: null | { message: string | null } =
-    error || data?.message
-      ? { message: `${data?.message} ${error ? error : ''}` }
-      : null
-
-  return { video: data as Video, isLoading, isError, mutate }
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -71,21 +53,22 @@ function a11yProps(index: number) {
 
 function EditQuestionPage() {
   const router = useRouter()
-  const { id } = router.query as { id: string }
+  const query = router.query
 
   // for testing id
   // 63f45bbf82f16bcec3a6381a
 
-  const { video, isError, isLoading, mutate } = useVideo(id)
+  const [video, setVideo] = useState<Video>(null)
 
-  const setVideoUrl = (url: string) => {
-    mutate({ ...video, url: url })
-  }
-  // const fetcher = (url: string) => fetch(url).then((r) => r.json())
-  // const { data, error, isLoading } = useSWR<Video>(
-  //   `/api/video/edit/${id}`,
-  //   fetcher
-  // )
+  useEffect(() => {
+    if (!router.isReady) return
+    const fetchVideo = async () => {
+      const res = await fetch(`/api/video/edit/${query.id}`)
+      const data = await res.json()
+      setVideo(data)
+    }
+    fetchVideo()
+  }, [router.isReady])
 
   const [tabValue, setTabValue] = useState(0)
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -113,14 +96,19 @@ function EditQuestionPage() {
     })
   }
 
-  const handPlayerReady = () => {}
-
-  if (isLoading) {
-    return <CircularProgress />
+  if (!video) {
+    return (
+      <CircularProgress
+        sx={{
+          display: 'block',
+          margin: '24px auto',
+        }}
+      />
+    )
   }
 
-  if (isError) {
-    return <Typography variant="h5"> message: {isError.message} </Typography>
+  if (video?.message) {
+    return <Typography variant="h5"> message: {video.message} </Typography>
   }
 
   return (
@@ -138,33 +126,45 @@ function EditQuestionPage() {
         >
           <Box width="45%">
             {/*播放器*/}
-            ReactPlayer.canPlay(video.url) && (
-            <ReactPlayer
-              style={
-                {
-                  // display: 'flex',
-                }
-              }
-              url={video.url}
-              playing={playing}
-              onPlay={play}
-              onPause={pause}
-              onProgress={handlePlayerStatus}
-              onDuration={handelPlayerDuration}
-              ref={playerRef}
-              onReady={handPlayerReady}
-              width={'100%'}
-              progressInterval={200}
-              config={{
-                youtube: {
-                  playerVars: {
-                    controls: 1,
-                    modestbranding: 1,
-                    rel: 0,
+            {ReactPlayer.canPlay(video.url) ? (
+              <ReactPlayer
+                fallback={<div>loading...</div>}
+                url={video.url}
+                playing={playing}
+                onPlay={play}
+                onPause={pause}
+                onProgress={handlePlayerStatus}
+                onDuration={handelPlayerDuration}
+                ref={playerRef}
+                width={'100%'}
+                progressInterval={200}
+                config={{
+                  youtube: {
+                    playerVars: {
+                      controls: 1,
+                      modestbranding: 1,
+                      rel: 0,
+                    },
                   },
-                },
-              }}
-            />
+                }}
+              />
+            ) : (
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  flexDirection: 'column',
+                }}
+              >
+                <Typography
+                  variant="h5"
+                  textAlign="center"
+                  sx={{ color: 'error.main' }}
+                >
+                  請輸入正確的網址！
+                </Typography>
+              </Box>
+            )}
             {/*網址輸入框*/}
             <TextField
               fullWidth
@@ -174,7 +174,9 @@ function EditQuestionPage() {
               size="small"
               sx={{ m: '24px 0' }}
               onChange={(event) => {
-                setVideoUrl(event.target.value)
+                setVideo((prev) => {
+                  return { ...prev, url: event.target.value }
+                })
               }}
             />
           </Box>

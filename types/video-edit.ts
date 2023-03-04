@@ -16,4 +16,5 @@ export interface Chapter extends ChapterPrisma {
 export interface Video extends VideoPrisma {
   question: (Info | Choice | Rank | Fill | Drag)[]
   chapter: Chapter
+  message?: string
 }

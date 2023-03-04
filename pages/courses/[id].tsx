@@ -24,10 +24,9 @@ import {
 } from '@prisma/client'
 import { ChapterListData } from '../../types/chapter'
 
-const CoursePlayer = dynamic(
-  () => import('../../components/courses/course-player'),
-  { ssr: false }
-)
+// const CoursePlayer = dynamic(
+//   () => import('../../components/courses/course-player')
+import CoursePlayer from '../../components/courses/course-player'
 const CourseTab = dynamic(() => import('../../components/courses/course-tab'), {
   ssr: false,
 })
@@ -105,7 +104,7 @@ export async function getStaticPaths() {
   return {
     paths,
     fallback: true,
-    //true(找無pre-render時，render, 此時還沒有資料, 需要有fallback) false blocking
+    //true(沒有pre-render時，render, 此時還沒有資料, 需要有fallback) false blocking
   }
 }
 

@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useAppSelector, useAppDispatch } from '../../hooks/redux'
 import { setPlayedSecond } from '../../store/course-data'
 // import dynamic from 'next/dynamic';
-import { YouTubePlayerProps } from 'react-player/youtube'
+// import { YouTubePlayerProps } from 'react-player/youtube'
 // const ReactPlayer = dynamic(() => import('react-player/youtube'), { ssr: false });
 import ReactPlayer from 'react-player/lazy'
 import Slide from '@mui/material/Slide'
@@ -25,16 +25,7 @@ import {
   useFullScreenHandle,
 } from 'react-full-screen'
 import { OnProgressProps } from 'react-player/base'
-
-import { Info } from '@prisma/client'
-import {
-  VideoData,
-  InteractionData,
-  ChoiceData,
-  RankData,
-  FillData,
-  DragData,
-} from '../../types/chapter'
+import { VideoData } from '../../types/chapter'
 
 interface ReactPlayerOnProgressProps {
   played: number
@@ -70,29 +61,35 @@ function CoursePlayer() {
   const [volume, setVolume] = React.useState(1) //音量
   const handleFullScreen = useFullScreenHandle() //全螢幕控制器
 
+  const [hasWindow, setHasWindow] = React.useState(false)
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setHasWindow(true)
+    }
+  }, [])
+
   //redux
   const videoId = useAppSelector((state) => state.course.videoId)
   const videoTime = useAppSelector((state) => state.course.videoTime)
   const dispatch = useAppDispatch()
-  const [videoData, setVideoData] = React.useState<VideoData>()
-  const [interactionData, setInteractionData] =
-    React.useState<(Info | ChoiceData | RankData | FillData | DragData)[]>()
+  const [videoData, setVideoData] = React.useState<VideoData>(null)
+  // const [interactionData, setInteractionData] =
+  //   React.useState<(Info | ChoiceData | RankData | FillData | DragData)[]>()
 
   React.useEffect(() => {
     console.log('fetch video data')
     const fetchData = async () => {
-      let interactionData = []
+      // let interactionData = []
       const response = await fetch(`http://localhost:3000/api/video/${videoId}`)
       const data: VideoData = await response.json()
       console.log(data)
       setVideoData(data)
-      data.info.map((info) => interactionData.push(info))
-      data.choice.map((choice) => interactionData.push(choice))
-      data.fill.map((fill) => interactionData.push(fill))
-      data.rank.map((rank) => interactionData.push(rank))
-      data.drag.map((drag) => interactionData.push(drag))
+      // data.info.map((info) => interactionData.push(info))
+      // data.fill.map((fill) => interactionData.push(fill))
+      // data.rank.map((rank) => interactionData.push(rank))
+      // data.drag.map((drag) => interactionData.push(drag))
       // console.log(interactionData)
-      setInteractionData(interactionData)
+      // setInteractionData(data.question)
     }
     fetchData()
   }, [videoId])
@@ -150,56 +147,60 @@ function CoursePlayer() {
   // console.log('render')
   return (
     <FullScreen handle={handleFullScreen}>
-      <Box
-        sx={{ position: 'relative', width: '100%', height: '100%' }}
-        className="course-player-div"
-        onMouseOver={() => {
-          setShowPlayerBar(true)
-          // setMouseEnter(true)
-        }}
-        onMouseLeave={() => {
-          // setMouseEnter(false)
-          setShowPlayerBar(false)
-        }}
-      >
-        {/* 自訂播放bar */}
+      {hasWindow && (
+        <Box
+          sx={{ position: 'relative', width: '100%', height: '100%' }}
+          className="course-player-div"
+          onMouseOver={() => {
+            setShowPlayerBar(true)
+            // setMouseEnter(true)
+          }}
+          onMouseLeave={() => {
+            // setMouseEnter(false)
+            setShowPlayerBar(false)
+          }}
+        >
+          {/* 自訂播放bar */}
 
-        <PlayerBar
-          playerRef={playerRef}
-          playedSeconds={playedSeconds}
-          handleTimeSliderChange={handleTimeSliderChange}
-          handleVolumeSliderChange={handleVolumeSliderChange}
-          volume={volume}
-          showPlayerBar={showPlayerBar}
-          playing={playing}
-          play={play}
-          pause={pause}
-          handleFullScreen={handleFullScreen}
-        />
+          <PlayerBar
+            playerRef={playerRef}
+            playedSeconds={playedSeconds}
+            handleTimeSliderChange={handleTimeSliderChange}
+            handleVolumeSliderChange={handleVolumeSliderChange}
+            volume={volume}
+            showPlayerBar={showPlayerBar}
+            playing={playing}
+            play={play}
+            pause={pause}
+            handleFullScreen={handleFullScreen}
+          />
 
-        {interactionData != undefined && (
-          <Box
-            sx={{
-              visibility: 'hidden',
-              height: '100%',
-              width: '100%',
-              left: '5%',
-              top: '10%',
-              position: 'absolute',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            {interactionData.map((data) => {
-              return (
-                <>
-                  <PopupFab pause={pause} play={play} data={data}></PopupFab>
-                </>
-              )
-            })}
-          </Box>
-        )}
-        {/* {showComponent && (
+          {videoData?.question && (
+            <Box
+              sx={{
+                visibility: 'hidden',
+                height: '100%',
+                width: '100%',
+                left: '5%',
+                top: '10%',
+                position: 'absolute',
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
+              {videoData?.question.map((data, index) => {
+                return (
+                  <PopupFab
+                    key={`popupfab-${index}`}
+                    pause={pause}
+                    play={play}
+                    data={data}
+                  ></PopupFab>
+                )
+              })}
+            </Box>
+          )}
+          {/* {showComponent && (
           <PopupFab
             setClose={handleClosePopupModal}
             setOpen={handleOpenPopupModal}
@@ -207,37 +208,39 @@ function CoursePlayer() {
             questionType={questionType}
           ></PopupFab>
         )} */}
-        <ReactPlayer
-          url={videoData == undefined ? '' : videoData.url}
-          playing={playing}
-          onPlay={play}
-          onPause={pause}
-          onProgress={handlePlayerStatus}
-          ref={playerRef}
-          onReady={onPlayerReady}
-          volume={volume}
-          width={'100%'}
-          height={handleFullScreen.active ? '100%' : 600}
-          progressInterval={200}
-          config={{
-            youtube: {
-              playerVars: {
-                start: videoTime,
-                // 此參數指定從影片開始播放時起算的秒數，表示播放器應停止播放影片的時間。參數值為正整數。
-                // 請注意，時間是從影片開頭算起，而非從 start 播放器參數的值或 startSeconds 參數 (用於在 YouTube Player API 函式中載入或排入影片)。
-                controls: 1,
-                //controls=0：播放器控制項不會顯示播放器的控制項。
-                //controls=1 (預設)：在播放器中顯示播放器控制項。
-                modestbranding: 1,
-                // 此參數可用來避免未顯示 YouTube 標誌的 YouTube 播放器。將參數值設為 1
-                // 可避免在控制列中顯示 YouTube 標誌。請注意，當使用者的滑鼠遊標懸停在播放器上時，暫停顯示的右上角仍會顯示小型的 YouTube 文字標籤。
-                rel: 0,
-                // 如果 rel 參數設為 0，相關影片則會從播放過的影片來自同一個頻道。
+          <ReactPlayer
+            fallback={<div>loading...</div>}
+            url={videoData == undefined ? '' : videoData.url}
+            playing={playing}
+            onPlay={play}
+            onPause={pause}
+            onProgress={handlePlayerStatus}
+            ref={playerRef}
+            onReady={onPlayerReady}
+            volume={volume}
+            width={'100%'}
+            height={handleFullScreen.active ? '100%' : 600}
+            progressInterval={200}
+            config={{
+              youtube: {
+                playerVars: {
+                  start: videoTime,
+                  // 此參數指定從影片開始播放時起算的秒數，表示播放器應停止播放影片的時間。參數值為正整數。
+                  // 請注意，時間是從影片開頭算起，而非從 start 播放器參數的值或 startSeconds 參數 (用於在 YouTube Player API 函式中載入或排入影片)。
+                  controls: 0,
+                  //controls=0：播放器控制項不會顯示播放器的控制項。
+                  //controls=1 (預設)：在播放器中顯示播放器控制項。
+                  modestbranding: 1,
+                  // 此參數可用來避免未顯示 YouTube 標誌的 YouTube 播放器。將參數值設為 1
+                  // 可避免在控制列中顯示 YouTube 標誌。請注意，當使用者的滑鼠遊標懸停在播放器上時，暫停顯示的右上角仍會顯示小型的 YouTube 文字標籤。
+                  rel: 0,
+                  // 如果 rel 參數設為 0，相關影片則會從播放過的影片來自同一個頻道。
+                },
               },
-            },
-          }}
-        ></ReactPlayer>
-      </Box>
+            }}
+          ></ReactPlayer>
+        </Box>
+      )}
     </FullScreen>
   )
 }
