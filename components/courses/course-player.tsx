@@ -1,14 +1,18 @@
 import * as React from 'react'
 import { useAppSelector, useAppDispatch } from '../../hooks/redux'
 import { setPlayedSecond } from '../../store/course-data'
-// import dynamic from 'next/dynamic';
-// import { YouTubePlayerProps } from 'react-player/youtube'
-// const ReactPlayer = dynamic(() => import('react-player/youtube'), { ssr: false });
-import ReactPlayer from 'react-player/lazy'
+import dynamic from 'next/dynamic'
+import { ReactPlayerType } from '../../types/react-player'
 import Slide from '@mui/material/Slide'
-// import Slider from '@mui/material/Slider'
 
-import { Box, ButtonBase, Slider, SliderProps, Grid } from '@mui/material'
+import {
+  Box,
+  ButtonBase,
+  Slider,
+  SliderProps,
+  Grid,
+  CircularProgress,
+} from '@mui/material'
 import {
   PlayArrow,
   Pause,
@@ -27,12 +31,19 @@ import {
 import { OnProgressProps } from 'react-player/base'
 import { VideoData } from '../../types/chapter'
 
-interface ReactPlayerOnProgressProps {
-  played: number
-  playedSeconds: number
-  loaded: number
-  loadedSeconds: number
-}
+const ReactPlayerDynamic = dynamic(() => import('react-player/lazy'), {
+  loading: () => (
+    <Box
+      width={'100%'}
+      height={'100%'}
+      display={'flex'}
+      justifyContent={'center'}
+    >
+      <CircularProgress />
+    </Box>
+  ),
+  ssr: false,
+})
 
 // DATA
 interface questionList {
@@ -45,12 +56,8 @@ interface questionList {
 }
 
 function CoursePlayer() {
-  //PlayerController
-  const url = 'https://www.youtube.com/watch?v=1iHURb6K4qc'
-  const [progress, setProgress] = React.useState('')
-
   //ReactPlayer
-  const playerRef: any = React.useRef<ReactPlayer>(null) //ReactPlayer 的參照
+  const playerRef = React.useRef<ReactPlayerType>(null) //ReactPlayer 的參照
   const [showPlayerBar, setShowPlayerBar] = React.useState(false) //是否顯示播放器控制列
   // const [mouseEnter, setMouseEnter] = React.useState(false)
   const [playing, setPlaying] = React.useState(false) //播放狀態
@@ -73,58 +80,19 @@ function CoursePlayer() {
   const videoTime = useAppSelector((state) => state.course.videoTime)
   const dispatch = useAppDispatch()
   const [videoData, setVideoData] = React.useState<VideoData>(null)
-  // const [interactionData, setInteractionData] =
-  //   React.useState<(Info | ChoiceData | RankData | FillData | DragData)[]>()
 
   React.useEffect(() => {
     console.log('fetch video data')
     const fetchData = async () => {
-      // let interactionData = []
       const response = await fetch(`http://localhost:3000/api/video/${videoId}`)
       const data: VideoData = await response.json()
       console.log(data)
       setVideoData(data)
-      // data.info.map((info) => interactionData.push(info))
-      // data.fill.map((fill) => interactionData.push(fill))
-      // data.rank.map((rank) => interactionData.push(rank))
-      // data.drag.map((drag) => interactionData.push(drag))
-      // console.log(interactionData)
-      // setInteractionData(data.question)
     }
     fetchData()
   }, [videoId])
 
-  //Slider
-
-  const [playedSeconds, setPlayedSeconds] = React.useState(0)
-  const handleTimeSliderChange = (event: any, newValue: any) => {
-    setPlayedSeconds(newValue)
-    playerRef.current.seekTo(newValue, 'seconds')
-  }
-  const handleVolumeSliderChange = (event: any, newValue: any) => {
-    setVolume(newValue)
-  }
-  const onReady = React.useCallback(
-    (time: number) => {
-      playerRef.current.seekTo(time, 'seconds')
-    },
-    [playerRef.current]
-  )
-
-  // 是否顯示 Fab
-
-  let onPlayerReady = () => {
-    if (playerRef.current != null) {
-      console.log(playerRef.current)
-      // setPlayerControllerProps({
-      //   width: playerRef.current.props.width,
-      //   height: playerRef.current.props.height,
-      // })
-      // setVideoDuration(playerRef.current.getDuration())
-    }
-  }
-
-  let handlePlayerStatus = (props: ReactPlayerOnProgressProps) => {
+  let handlePlayerStatus = (props: OnProgressProps) => {
     setPlayedSeconds(props.playedSeconds)
     dispatch(setPlayedSecond(props.playedSeconds))
 
@@ -144,7 +112,35 @@ function CoursePlayer() {
     // console.log(playerRef.current.props.height)
     // console.log(playerRef.current.props.width)
   }
-  // console.log('render')
+
+  //Slider
+  const [playedSeconds, setPlayedSeconds] = React.useState(0)
+  const handleTimeSliderChange = (event: any, newValue: any) => {
+    if (playedSeconds != newValue) {
+      React.startTransition(() => setPlayedSeconds(newValue))
+      playerRef.current.seekTo(newValue, 'seconds')
+    }
+  }
+  const handleVolumeSliderChange = (event: any, newValue: any) => {
+    if (volume != newValue) {
+      setVolume(newValue)
+    }
+  }
+
+  // 以下用途未知
+  // const onReady = React.useCallback(
+  //   (time: number) => {
+  //     playerRef.current.seekTo(time, 'seconds')
+  //   },
+  //   [playerRef.current]
+  // )
+
+  let onPlayerReady = (player: ReactPlayerType) => {
+    if (playerRef) {
+      playerRef.current = player
+    }
+  }
+
   return (
     <FullScreen handle={handleFullScreen}>
       {hasWindow && (
@@ -162,20 +158,22 @@ function CoursePlayer() {
         >
           {/* 自訂播放bar */}
 
-          <PlayerBar
-            playerRef={playerRef}
-            playedSeconds={playedSeconds}
-            handleTimeSliderChange={handleTimeSliderChange}
-            handleVolumeSliderChange={handleVolumeSliderChange}
-            volume={volume}
-            showPlayerBar={showPlayerBar}
-            playing={playing}
-            play={play}
-            pause={pause}
-            handleFullScreen={handleFullScreen}
-          />
+          {playerRef?.current && (
+            <PlayerBar
+              playerRef={playerRef}
+              playedSeconds={playedSeconds}
+              handleTimeSliderChange={handleTimeSliderChange}
+              handleVolumeSliderChange={handleVolumeSliderChange}
+              volume={volume}
+              showPlayerBar={showPlayerBar}
+              playing={playing}
+              play={play}
+              pause={pause}
+              handleFullScreen={handleFullScreen}
+            />
+          )}
 
-          {videoData?.question && (
+          {playerRef?.current && videoData?.question && (
             <Box
               sx={{
                 visibility: 'hidden',
@@ -208,14 +206,12 @@ function CoursePlayer() {
             questionType={questionType}
           ></PopupFab>
         )} */}
-          <ReactPlayer
-            fallback={<div>loading...</div>}
+          <ReactPlayerDynamic
             url={videoData == undefined ? '' : videoData.url}
             playing={playing}
             onPlay={play}
             onPause={pause}
             onProgress={handlePlayerStatus}
-            ref={playerRef}
             onReady={onPlayerReady}
             volume={volume}
             width={'100%'}
@@ -238,7 +234,7 @@ function CoursePlayer() {
                 },
               },
             }}
-          ></ReactPlayer>
+          />
         </Box>
       )}
     </FullScreen>
@@ -253,7 +249,7 @@ interface PlayerBarProps {
   playedSeconds: number
   handleTimeSliderChange: (event: Event, value: number | number[]) => void
   handleVolumeSliderChange: (event: Event, value: number | number[]) => void
-  playerRef: React.MutableRefObject<ReactPlayer | null>
+  playerRef: React.MutableRefObject<ReactPlayerType | null>
   playing: boolean
   volume: number
   play: () => void
