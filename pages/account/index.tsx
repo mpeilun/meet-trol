@@ -19,7 +19,7 @@ function AccountPage() {
 
   useEffect(() => {
     const fetchDate = async () => {
-      const data = await fetch('/api/account/profile')
+      const data = await fetch('/api/account')
       setProfile(await data.json())
     }
     fetchDate().catch(console.error)

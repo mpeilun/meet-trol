@@ -17,6 +17,7 @@ import { OnProgressProps } from 'react-player/base'
 import CreateChoice from '../../../components/question/choice/create'
 import TestVideoEditTimeLine from '../../../components/edit/video-edit-timeline'
 import { Video } from '../../../types/video-edit'
+import TimeRangeSlider from '../../../components/edit/video-edit-timeline'
 
 export interface PlayerProgress extends OnProgressProps {
   duration: number
@@ -231,9 +232,17 @@ function EditQuestionPage() {
           flexDirection="column"
           m={2}
         >
-          {<TestVideoEditTimeLine />}
-          {/* <VideoEditTimeLine />
-          <VideoEditTimeLine /> */}
+          {
+            <TimeRangeSlider
+              sx={{ width: '400px' }}
+              start={500}
+              end={600}
+              duration={playerRef?.current?.getDuration()}
+              onTimeChange={(startTime, endTime) => {
+                console.log(startTime, endTime)
+              }}
+            />
+          }
           <Button
             variant="contained"
             size="small"

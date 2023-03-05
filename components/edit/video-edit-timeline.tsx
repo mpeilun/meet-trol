@@ -1,74 +1,67 @@
-import { height, width } from '@mui/system'
-import React, { useRef, useEffect } from 'react'
-import { Rnd } from 'react-rnd'
+import React, { useState } from 'react'
+import Slider, { SliderProps } from '@mui/material/Slider'
+import { SxProps, Theme } from '@mui/material'
 
-const Row = () => {
-  const rootRef = useRef(null)
-  const rndRef = useRef(null)
-  const [width, setWidth] = React.useState(200)
-  const [height, setHeight] = React.useState(50)
-  const [x, setX] = React.useState(0)
-  const [y, setY] = React.useState(0)
+function formatTime(value) {
+  const hours = Math.floor(value / 3600)
+  const formattedHours = `${hours < 10 ? '0' : ''}${hours}`
 
-  useEffect(() => {
-    if (rndRef?.current) {
-      setY(rndRef?.current?.offsetTop)
+  const minutes = Math.floor((value % 3600) / 60)
+  const formattedMinutes = `${minutes < 10 ? '0' : ''}${minutes}`
+
+  const seconds = Math.floor(value % 60)
+  const formattedSeconds = `${seconds < 10 ? '0' : ''}${seconds}`
+
+  return `${
+    formattedHours == '00' ? '' : formattedHours + ':'
+  }${formattedMinutes}:${formattedSeconds}`
+}
+
+function VideoRangeSlider({
+  sx,
+  start,
+  end,
+  duration,
+  onTimeChange,
+}: {
+  sx: SxProps<Theme>
+  duration: number
+  start?: number
+  end?: number
+  onTimeChange: (start: number, end: number) => void
+}) {
+  const [values, setValues] = useState([start ?? 0, end ?? 20])
+  const handleChange = (event, newValue, activeThumb) => {
+    if (!Array.isArray(newValue)) {
+      return
     }
-  }, [rndRef?.current?.offsetTop])
 
-  const handleResizeStop = (e, direction, ref, delta) => {
-    if (direction === 'left') {
-      setX(x - delta.width)
-      // setY(y - delta.height)
+    if (activeThumb === 0) {
+      setValues([Math.min(newValue[0], values[1]), values[1]])
+    } else {
+      setValues([values[0], Math.max(newValue[1], values[0])])
     }
-    setWidth(ref.style.width)
-    setHeight(ref.style.height)
-  }
 
-  const handleDragStop = (e, d) => {
-    setX(d.x)
-    setY(d.y)
+    onTimeChange(newValue[0], newValue[1])
   }
-
-  const style = {
-    display: 'flex',
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    border: 'solid 1px #000',
-    background: '#f0f0f0',
-  }
-
   return (
-    <div
-      ref={rootRef}
-      style={{ width: `100%`, height: `50px`, overflow: 'hidden' }}
-    >
-      <Rnd
-        ref={rndRef}
-        style={style}
-        size={{ width: width, height: height }}
-        position={{ x: x, y: y }}
-        minWidth={100}
-        maxWidth={rootRef?.current?.clientWidth}
-        bounds={rootRef?.current}
-        onResizeStop={handleResizeStop}
-        onDragStop={handleDragStop}
-        dragAxis="x"
-        enableResizing={{
-          left: true,
-          right: true,
-          top: false,
-          bottom: false,
-          topRight: false,
-          bottomRight: false,
-          bottomLeft: false,
-          topLeft: false,
-        }}
-      >
-        <div>Row item</div>
-      </Rnd>
-    </div>
+    <Slider
+      sx={sx}
+      value={values}
+      onChange={handleChange}
+      max={duration}
+      disableSwap={true}
+      valueLabelDisplay="auto"
+      valueLabelFormat={(value) => formatTime(value)}
+      marks={[
+        {
+          value: 0,
+          label: formatTime(duration).length > 5 ? '00:00:00' : '00:00',
+        },
+        { value: duration ?? 0, label: formatTime(duration) },
+      ]}
+    />
   )
 }
 
-export default Row
+export default VideoRangeSlider

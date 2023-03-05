@@ -127,14 +127,6 @@ function CoursePlayer() {
     }
   }
 
-  // 以下用途未知
-  // const onReady = React.useCallback(
-  //   (time: number) => {
-  //     playerRef.current.seekTo(time, 'seconds')
-  //   },
-  //   [playerRef.current]
-  // )
-
   let onPlayerReady = (player: ReactPlayerType) => {
     if (playerRef) {
       playerRef.current = player
@@ -223,14 +215,11 @@ function CoursePlayer() {
                   start: videoTime,
                   // 此參數指定從影片開始播放時起算的秒數，表示播放器應停止播放影片的時間。參數值為正整數。
                   // 請注意，時間是從影片開頭算起，而非從 start 播放器參數的值或 startSeconds 參數 (用於在 YouTube Player API 函式中載入或排入影片)。
-                  controls: 0,
-                  //controls=0：播放器控制項不會顯示播放器的控制項。
-                  //controls=1 (預設)：在播放器中顯示播放器控制項。
-                  modestbranding: 1,
+                  controls: 0, // 0, 播放器控制項不會顯示播放器的控制項。
+                  modestbranding: 0,
                   // 此參數可用來避免未顯示 YouTube 標誌的 YouTube 播放器。將參數值設為 1
                   // 可避免在控制列中顯示 YouTube 標誌。請注意，當使用者的滑鼠遊標懸停在播放器上時，暫停顯示的右上角仍會顯示小型的 YouTube 文字標籤。
-                  rel: 0,
-                  // 如果 rel 參數設為 0，相關影片則會從播放過的影片來自同一個頻道。
+                  rel: 0, // 0, 相關影片則會從播放過的影片來自同一個頻道。
                 },
               },
             }}
