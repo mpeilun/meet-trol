@@ -4,26 +4,26 @@ import RankQuestion from '../question/rank/rank'
 import Info from '../question/info/info'
 import FillIn from '../question/fillIn/fillIn'
 import Drag from '../question/drag/drag'
+import { ChoiceData, RankData, FillData, DragData } from '../../types/chapter'
+import { Info as InfoData} from '@prisma/client'
 
 const QuestionType = (props: {
   setClose: () => void
-  setOpen: Function
-  open: boolean
-  questionType: string
+  data: InfoData | ChoiceData | RankData | FillData | DragData
 }) => {
   // console.log(props.questionType)
-  switch (props.questionType) {
+  switch (props.data.questionType) {
     // info
     case 'info':
       return (
         <>
-          <Info handleQuestionClose={props.setClose}></Info>
+          <Info handleQuestionClose={props.setClose} data={props.data}></Info>
         </>
       )
 
     // choice
     case 'choice':
-      return <Choice handleQuestionClose={props.setClose}></Choice>
+      return <Choice handleQuestionClose={props.setClose} data={props.data as ChoiceData}></Choice>
 
     // FillIn
     case 'fill':

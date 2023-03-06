@@ -20,8 +20,10 @@ interface Choice extends ChoicePrisma {
 
 const initQuestion: Choice = {
   id: null,
-  questionType: 0,
+  questionType:'choice',
   title: '',
+  isShowAnswer: false,
+  note: null,
   options: [{ option: '', isAnswer: false }],
   start: 0,
   end: 0,
