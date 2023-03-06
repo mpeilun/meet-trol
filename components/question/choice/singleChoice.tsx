@@ -48,14 +48,14 @@ export default function SingleChoice(props: { data: ChoiceData }) {
       // })
     } else if (value === '') {
       setIsAnsError({
-        isShow: true,
+        isShow: data.isShowAnswer,
         text: '請選擇答案',
         severity: 'warning',
       })
     } else {
       setIsReply(true)
       setIsAnsError({
-        isShow: true,
+        isShow: data.isShowAnswer,
         text: '錯誤',
         severity: 'error',
       })
@@ -81,10 +81,7 @@ export default function SingleChoice(props: { data: ChoiceData }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <FormControl
-        sx={{ pt: 1, width: '100%' }}
-        variant="standard"
-      >
+      <FormControl sx={{ pt: 1, width: '100%' }} variant="standard">
         <FormLabel id="demo-error-radios">{data.title}</FormLabel>
         <Box sx={{ height: 0 }}></Box>
         <RadioGroup
@@ -92,12 +89,11 @@ export default function SingleChoice(props: { data: ChoiceData }) {
           name="quiz"
           value={value}
           onChange={handleRadioChange}
-          
         >
           {data.options.map((option, index) => {
             return (
               <FormControlLabel
-              disabled={isReply}
+                disabled={isReply}
                 key={`${index}- ${option.option} option`}
                 value={option.isAnswer ? 'right' : `${index}-wrong`}
                 control={<Radio />}
