@@ -18,7 +18,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         select: {
           url: true,
           info: true,
-          choice: true,
+          choice: { include: { feedback: true } },
           rank: { include: { feedback: true } },
           fill: { include: { feedback: true } },
           drag: { include: { feedback: true } },

@@ -16,21 +16,7 @@ import {
   TextField,
   Paper,
 } from '@mui/material'
-import {
-  AppBar,
-  Box,
-  Toolbar,
-  IconButton,
-  Typography,
-  Menu,
-  Container,
-  Avatar,
-  Button,
-  Tooltip,
-  MenuItem,
-  TextField,
-  Paper,
-} from '@mui/material'
+
 import Grid from '@mui/material/Unstable_Grid2' // Grid version 2
 import { grey } from '@mui/material/colors'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
@@ -50,7 +36,8 @@ function AllCoursesPage() {
   }, [])
 
   return (
-    <Paper key={'paper'}
+    <Paper
+      key={'paper'}
       sx={{
         width: { md: '80%', xs: ' 100%' },
         height: '100%',
@@ -96,19 +83,18 @@ function AllCoursesPage() {
             >
               {courseData.map(({ id, title, description }, index) => {
                 return (
-                    <Grid md={4} key={index.toString()}>
-                      <Box m={'auto'} width={'100%'} maxWidth="200px">
-                        <Link href={`/courses/${id}`}>
-                          <Typography textAlign={'center'} bgcolor={grey[400]}>
-                            {title}
-                          </Typography>
-                        </Link>
-                      </Box>
-                      <Typography textAlign={'center'} sx={{ color: grey }}>
-                        {description}
-                      </Typography>
-                    </Grid>
-                
+                  <Grid md={4} key={index.toString()}>
+                    <Box m={'auto'} width={'100%'} maxWidth="200px">
+                      <Link href={`/courses/${id}`}>
+                        <Typography textAlign={'center'} bgcolor={grey[400]}>
+                          {title}
+                        </Typography>
+                      </Link>
+                    </Box>
+                    <Typography textAlign={'center'} sx={{ color: grey }}>
+                      {description}
+                    </Typography>
+                  </Grid>
                 )
               })}
             </Grid>

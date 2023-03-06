@@ -14,7 +14,7 @@ const PopupModal = (props: {
   setClose: () => void
   setOpen: Function
   open: boolean
-  questionType: number
+  questionType: string
 }) => {
   const questionRef = useRef<HTMLDivElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)

@@ -41,7 +41,7 @@ const PopupFab = (props: {
 
 
   if (playedSecond > props.data.start && playedSecond < props.data.end) {
-    if (props.data.questionType == 0) {
+    if (props.data.questionType == 'info') {
       return (
         <>
           <Fab
@@ -75,7 +75,7 @@ const PopupFab = (props: {
           ></PopupModal>
         </>
       )
-    } else if (0 < props.data.questionType && props.data.questionType < 4) {
+    } else if (props.data.questionType == 'choice' || props.data.questionType == 'rank' || props.data.questionType == 'fill') {
       return (
         <>
           <Fab
@@ -110,7 +110,7 @@ const PopupFab = (props: {
         ></PopupModal>
       </>
     )
-  } else if (props.data.questionType == 4) {
+  } else if (props.data.questionType == 'drag') {
     return (
       <>
         <Fab
@@ -147,6 +147,6 @@ const PopupFab = (props: {
   } else {
     return <Typography>題目顯示失敗</Typography>
   }
-}
+}}
 
 export default PopupFab
