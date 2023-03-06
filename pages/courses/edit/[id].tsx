@@ -15,7 +15,6 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { OnProgressProps } from 'react-player/base'
 import CreateChoice from '../../../components/question/choice/create'
-import TestVideoEditTimeLine from '../../../components/edit/video-edit-timeline'
 import { Video } from '../../../types/video-edit'
 import TimeRangeSlider from '../../../components/edit/video-edit-timeline'
 
