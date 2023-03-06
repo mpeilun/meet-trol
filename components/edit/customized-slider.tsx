@@ -1,27 +1,33 @@
-import { SliderProps, Typography } from '@mui/material'
+import { createMuiTheme, SliderProps, Typography } from '@mui/material'
 import { Slider, SliderThumb, Box, styled } from '@mui/material'
 import { ReactNode } from 'react'
 import PlaceIcon from '@mui/icons-material/Place'
+import { ClassNames } from '@emotion/react'
 
 //custom component
 const CustomSlider = styled(Slider)(({ theme }) => ({
+  //https://mui.com/material-ui/guides/styled-engine/
+  //go for emotion
   //TODO 把外框的顏色改成透明
-  color: 'primary.main',
-  backgroundColor: 'transparent',
-  height: 3,
-  padding: '0',
+  // color: 'transparent',
+  // height: 3,
+  // padding: '0',
+  // boxShadow: 'none',
+  '& .MuiCircularProgress-circle': {
+    display: 'none',
+    boxShadow: 'none',
+  },
   '& .MuiSlider-thumb': {
     height: 30,
     width: 30,
-    backgroundColor: 'transparent',
-    border: 'none',
-    boxShadow: 'none',
+    color: 'red',
+    // border: 'none',
+    boxShadow: '0px 0px 0px 0px rgba(255, 255, 25, 0.16)',
+    borderRadius: '5%',
+    display: 'none',
     // '&.second-thumb': {
     //   border: '2px dashed purple',
     // },
-    '&:hover': {
-      boxShadow: '0 0 0 0 rgba(58, 133, 137, 0.16)',
-    },
     // '& .airbnb-bar': {
     //   height: 9,
     //   width: 1,
@@ -34,22 +40,33 @@ const CustomSlider = styled(Slider)(({ theme }) => ({
     // '&.second-thumb .airbnb-bar': {
     //   backgroundColor: 'currentColor',
     // },
+    '&:before': {
+      boxShadow: 'none',
+    },
+    '& .custom-slider-thumb': {
+      display: 'none',
+      boxShadow: 'none',
+    },
   },
   '& .MuiSlider-track': {
-    color: 'transparent',
+    display: 'none',
     height: 10,
   },
   '& .MuiSlider-rail': {
-    color: 'transparent',
-    opacity: theme.palette.mode === 'dark' ? undefined : 1,
+    display: 'none',
     height: 10,
   },
+  // '.custom-slider-thumb': {
+  //   backgroundColor: '#eeeeee',
+  //   shadow: '0',
+  //   radius: '0',
+  // },
 }))
 
 function CustomThumb(props: { children: ReactNode; other: any }) {
   const { children, ...other } = props
   return (
-    <SliderThumb {...other}>
+    <SliderThumb {...other} className={'custom-slider-thumb'}>
       {children}
       <PlaceIcon {...other} sx={{ width: '100%', height: '100%' }} />
     </SliderThumb>
