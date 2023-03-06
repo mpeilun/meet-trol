@@ -5,65 +5,151 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
 import FormLabel from '@mui/material/FormLabel'
-import { Button, Box } from '@mui/material'
+import { Button, Box, AlertColor, Collapse, Alert } from '@mui/material'
+import { ChoiceData } from '../../../types/chapter'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 
-export default function SingleChoice(props: { handleClose: () => void }) {
+interface alert {
+  isShow: boolean
+  text: string
+  severity: AlertColor
+}
+
+export default function SingleChoice(props: { data: ChoiceData }) {
+  const data = props.data
   const [value, setValue] = React.useState('')
   const [error, setError] = React.useState(false)
-  const [helperText, setHelperText] = React.useState('')
+  const [isReply, setIsReply] = React.useState(false)
 
-  const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue((event.target as HTMLInputElement).value)
-    setHelperText(' ')
-    setError(false)
-  }
+  const [isAnsError, setIsAnsError] = React.useState<alert>({
+    isShow: false,
+    text: '',
+    severity: 'error',
+  })
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    console.log(value)
+    if (value === 'right') {
+      setIsReply(true)
 
-    if (value === 'best') {
-      setHelperText('答對了！')
-      setError(false)
-      new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve(true)
-        }, 1000)
-      }).then(() => {
-        // props.handleClose()
+      console.log('correct')
+      setIsAnsError({
+        isShow: true,
+        text: '正確',
+        severity: 'success',
       })
-    } else if (value === 'worst') {
-      setHelperText('你答錯囉！')
+      // new Promise((resolve, reject) => {
+      //   setTimeout(() => {
+      //     resolve(true)
+      //   }, 750)
+      // }).then(() => {
+      //   // props.handleQuestionClose()
+      // })
+    } else if (value === '') {
+      setIsAnsError({
+        isShow: true,
+        text: '請選擇答案',
+        severity: 'warning',
+      })
+    } else {
+      setIsReply(true)
+      setIsAnsError({
+        isShow: true,
+        text: '錯誤',
+        severity: 'error',
+      })
+    }
+
+    if (value === 'right') {
+      setError(false)
+    } else if (value === null) {
       setError(true)
     } else {
-      setHelperText('請選取一個選項。')
       setError(true)
     }
   }
 
+  const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValue((event.target as HTMLInputElement).value)
+    setIsAnsError({
+      isShow: false,
+      text: '',
+      severity: 'info',
+    })
+  }
+
   return (
     <form onSubmit={handleSubmit}>
-      <FormControl sx={{ pt: 1 }} error={error} variant="standard">
-        <FormLabel id="demo-error-radios">
-          請問 string.xml 是放在哪個資料夾？
-        </FormLabel>
-        <Box sx={{ height: 20 }}></Box>
+      <FormControl
+        sx={{ pt: 1, width: '100%' }}
+        variant="standard"
+      >
+        <FormLabel id="demo-error-radios">{data.title}</FormLabel>
+        <Box sx={{ height: 0 }}></Box>
         <RadioGroup
           aria-labelledby="demo-error-radios"
           name="quiz"
           value={value}
           onChange={handleRadioChange}
+          
         >
-          <FormControlLabel
-            value="best"
-            control={<Radio />}
-            label="/res/values/"
-          />
-          <FormControlLabel value="worst" control={<Radio />} label="/java/" />
+          {data.options.map((option, index) => {
+            return (
+              <FormControlLabel
+              disabled={isReply}
+                key={`${index}- ${option.option} option`}
+                value={option.isAnswer ? 'right' : `${index}-wrong`}
+                control={<Radio />}
+                label={option.option}
+              ></FormControlLabel>
+            )
+          })}
         </RadioGroup>
-        <FormHelperText>{helperText}</FormHelperText>
-        <Button sx={{ mt: 1, mr: 1 }} type="submit" variant="outlined">
-          確認答案
-        </Button>
+        <Collapse in={isAnsError.isShow}>
+          <Alert severity={isAnsError.severity} sx={{ mb: 2 }}>
+            {isAnsError.text}
+          </Alert>
+        </Collapse>
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}
+        >
+          {isReply && (
+            <Button
+              disableElevation
+              type="button"
+              variant="contained"
+              sx={{ width: 125, fontWeight: 'bold', borderRadius: 16 }}
+            >
+              詳解
+            </Button>
+          )}
+          <Box></Box>
+          <Button
+            disableElevation
+            type="submit"
+            variant="contained"
+            disabled={isReply}
+            startIcon={<CheckCircleOutlineIcon />}
+            sx={{
+              bgcolor: '#82CD00',
+              '&:hover': {
+                backgroundColor: '#54B435',
+                color: 'white',
+              },
+              width: 125,
+              fontWeight: 'bold',
+              borderRadius: 16,
+            }}
+          >
+            送出
+          </Button>
+        </Box>
       </FormControl>
     </form>
   )

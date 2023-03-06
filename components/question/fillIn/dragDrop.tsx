@@ -26,13 +26,13 @@ const questionComponent = () => {
     } else if (isInsideBracket) {
       if (char === ')') {
         questionElement.push(
-          <AnsItem index={i} ans={answers[answerIndex]}></AnsItem>
+          <AnsItem key={`${i}ans`} ans={answers[answerIndex]}></AnsItem>
         )
         isInsideBracket = false
         answerIndex++
       }
     } else {
-      questionElement.push(<span key={i}>{question[i]}</span>)
+      questionElement.push(<span  key={`${i}text`}>{question[i]}</span>)
     }
   }
 }
@@ -54,9 +54,10 @@ const DragDrop = () => {
       <Box
         sx={{
           border: 2,
-          px: 2,
+          p: 2,
           mr: 2,
           borderRadius: 2,
+          lineHeight: 2,
           // display: 'flex',
           // flexDirection: 'row',
           // justifyContent: 'space-around',
@@ -65,35 +66,6 @@ const DragDrop = () => {
         }}
       >
         {questionElement}
-        {/* <Grid container rowSpacing={2}>
-          {questionArray.map((title, index) => {
-            return (
-              <>
-                {ansArray.indexOf(title) == -1 ? (
-                  <Grid
-                    item
-                    xs={8}
-                    sx={{ display: 'flex', alignItems: 'center' }}
-                  >
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                      }}
-                    >
-                      {title}
-                    </Typography>
-                  </Grid>
-                ) : (
-                  <Grid item xs={4}>
-                    <AnsItem index={index} ans={title}></AnsItem>
-                  </Grid>
-                )}
-              </>
-            )
-          })}
-        </Grid> */}
       </Box>
       {/* answer items */}
       <Box

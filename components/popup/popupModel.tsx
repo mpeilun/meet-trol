@@ -9,12 +9,13 @@ import { useAppSelector, useAppDispatch } from '../../hooks/redux'
 import { setQuestionLocate } from '../../store/course-data'
 
 import { useWindowDimensions } from '../../hooks/common'
+import { ChoiceData, RankData, FillData, DragData } from '../../types/chapter'
+import { Info } from '@prisma/client'
 
 const PopupModal = (props: {
   setClose: () => void
-  setOpen: Function
   open: boolean
-  questionType: string
+  data: Info | ChoiceData | RankData | FillData | DragData
 }) => {
   const questionRef = useRef<HTMLDivElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)
@@ -114,9 +115,7 @@ const PopupModal = (props: {
           >
             <QuestionType
               setClose={props.setClose}
-              setOpen={props.setOpen}
-              open={props.open}
-              questionType={props.questionType}
+              data={props.data}
             ></QuestionType>
           </Box>
         </Card>

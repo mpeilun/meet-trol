@@ -300,7 +300,7 @@ const PlayerBar = (props: PlayerBarProps) => {
             }}
           >
             <ButtonBase
-              sx={{ height: 50, width: 50 }}
+              sx={{ height: 50, width: 50, zIndex: 1000 }}
               onClick={() => {
                 playing ? pause() : play()
               }}
@@ -309,7 +309,7 @@ const PlayerBar = (props: PlayerBarProps) => {
             </ButtonBase>
             <Box width={'100%'} height={'100%'} display="flex">
               <Slider
-                sx={{ width: 100, alignSelf: 'center' }}
+                sx={{ width: 100, alignSelf: 'center', zIndex: 1000 }}
                 value={volume}
                 onChange={handleVolumeSliderChange}
                 min={0}
@@ -319,7 +319,7 @@ const PlayerBar = (props: PlayerBarProps) => {
             </Box>
 
             <ButtonBase
-              sx={{ height: 50, width: 50 }}
+              sx={{ height: 50, width: 50, zIndex: 1000 }}
               onClick={
                 handleFullScreen.active
                   ? handleFullScreen.exit

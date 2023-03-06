@@ -1,22 +1,23 @@
 import { Box, Card, Divider, IconButton, Typography } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import SingleChoice from './singleChoice'
-export default function Choice(props: { handleQuestionClose: () => void }) {
+import { ChoiceData } from '../../../types/chapter'
+import MultipleChoice from './multipleChoice'
+export default function Choice(props: {
+  handleQuestionClose: () => void
+  data: ChoiceData
+}) {
+  const data = props.data
+  const count = data.options.reduce((acc, curr) => {
+    if (curr.isAnswer === true) {
+      return acc + 1
+    }
+    return acc
+  }, 0)
+  const isSingleChoice = count == 1
+  // console.log(isSingleChoice)
+
   return (
-    // <Card
-    //   sx={{
-    //     width: '600px',
-    //     height: '400px',
-    //     position: 'absolute',
-    //     display: props.displayQuestion ? 'block' : 'none',
-    //     left: 0,
-    //     right: 0,
-    //     top: 0,
-    //     bottom: 0,
-    //     m: 'auto',
-    //     boxShadow: 10,
-    //   }}
-    // >
     <Box>
       <Box minHeight={50} display="flex" alignItems="center">
         <Typography variant="h5" sx={{ width: '100%' }}>
@@ -27,7 +28,15 @@ export default function Choice(props: { handleQuestionClose: () => void }) {
         </IconButton>
       </Box>
       <Divider />
-      <SingleChoice handleClose={props.handleQuestionClose} />
+      {isSingleChoice ? (
+        <Box sx={{ minWidth: 400 }}>
+          <SingleChoice data={data} />
+        </Box>
+      ) : (
+        <Box>
+          <MultipleChoice></MultipleChoice>{' '}
+        </Box>
+      )}
     </Box>
     // </Card>
   )
