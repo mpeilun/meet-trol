@@ -112,7 +112,7 @@ model Video {
 
 model Info {
   id           String  @id @default(auto()) @map("_id") @db.ObjectId
-  questionType Int
+  questionType String
   title        String
   content      String?
   url          String?
@@ -128,15 +128,15 @@ type ChoiceOption {
 }
 
 model Choice {
-  id           String @id @default(auto()) @map("_id") @db.ObjectId
-  questionType Int
-  title    String
-  options  ChoiceOption[]
-  feedback ChoiceFeedback[] // 第一層List放回答次數，第二層放答案index index有兩個以上則為複選
-  start    Float
-  end      Float
-  video    Video            @relation(fields: [videoId], references: [id])
-  videoId  String           @db.ObjectId
+  id           String           @id @default(auto()) @map("_id") @db.ObjectId
+  questionType String
+  title        String
+  options      ChoiceOption[]
+  feedback     ChoiceFeedback[] // 第一層List放回答次數，第二層放答案index index有兩個以上則為複選
+  start        Float
+  end          Float
+  video        Video            @relation(fields: [videoId], references: [id])
+  videoId      String           @db.ObjectId
 }
 
 model ChoiceFeedback {
@@ -148,15 +148,15 @@ model ChoiceFeedback {
 }
 
 model Rank {
-  id           String @id @default(auto()) @map("_id") @db.ObjectId
-  questionType Int
-  title    String
-  options  String[]
-  feedback RankFeedback[] // 第一層List放回答次數，第二層放答案順序
-  start    Float
-  end      Float
-  video    Video          @relation(fields: [videoId], references: [id])
-  videoId  String         @db.ObjectId
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  questionType String
+  title        String
+  options      String[]
+  feedback     RankFeedback[] // 第一層List放回答次數，第二層放答案順序
+  start        Float
+  end          Float
+  video        Video          @relation(fields: [videoId], references: [id])
+  videoId      String         @db.ObjectId
 }
 
 model RankFeedback {
@@ -168,15 +168,15 @@ model RankFeedback {
 }
 
 model Fill {
-  id           String @id @default(auto()) @map("_id") @db.ObjectId
-  questionType Int
-  title    String
-  options  String[]
-  feedback FillFeedback[]
-  start    Float
-  end      Float
-  video    Video          @relation(fields: [videoId], references: [id])
-  videoId  String         @db.ObjectId
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  questionType String
+  title        String
+  options      String[]
+  feedback     FillFeedback[]
+  start        Float
+  end          Float
+  video        Video          @relation(fields: [videoId], references: [id])
+  videoId      String         @db.ObjectId
 }
 
 model FillFeedback {
@@ -195,16 +195,16 @@ type Position {
 }
 
 model Drag {
-  id           String @id @default(auto()) @map("_id") @db.ObjectId
-  questionType Int
-  title    String?
-  url      String?
-  options  Position[]
-  feedback DragFeedback[]
-  start    Float
-  end      Float
-  video    Video          @relation(fields: [videoId], references: [id])
-  videoId  String         @db.ObjectId
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  questionType String
+  title        String?
+  url          String?
+  options      Position[]
+  feedback     DragFeedback[]
+  start        Float
+  end          Float
+  video        Video          @relation(fields: [videoId], references: [id])
+  videoId      String         @db.ObjectId
 }
 
 model DragFeedback {

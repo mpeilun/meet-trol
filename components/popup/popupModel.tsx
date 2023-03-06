@@ -14,7 +14,7 @@ const PopupModal = (props: {
   setClose: () => void
   setOpen: Function
   open: boolean
-  questionType: number
+  questionType: string
 }) => {
   const questionRef = useRef<HTMLDivElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)
@@ -98,13 +98,12 @@ const PopupModal = (props: {
             display: 'inline-block',
             // minWidth: 600,
             maxWidth: 700,
-            maxHeight: 450,
+            maxHeight: 500,
             border: look ? '0.3rem outset green' : '0.3rem outset red',
           }}
         >
           <Box
             sx={{
-              overflow: 'hidden',
               overflowY: 'auto',
               p: 2,
               display: 'flex',

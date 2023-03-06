@@ -185,9 +185,6 @@ export default function RankQuestion(props: {
       {/* 拖曳 */}
       <Box
         sx={{
-          overflow: 'hidden',
-          overflowY: 'auto',
-
           display: 'flex',
           flexDirection: 'column',
         }}

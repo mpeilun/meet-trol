@@ -30,7 +30,7 @@ function Layout(props: { children: ReactNode }) {
           // ?? 下面不確定要不要加上
           // overflow={'hidden'}
           height="100vh"
-          sx={{ flexDirection: 'column' }}
+          sx={{ flexDirection: 'column', overflow:'hidden' }}
         >
           {asPath !== '/auth/signin' && <MainNavigation />}
           <main style={{ height: '100%' }}>{props.children}</main>

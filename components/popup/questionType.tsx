@@ -9,12 +9,12 @@ const QuestionType = (props: {
   setClose: () => void
   setOpen: Function
   open: boolean
-  questionType: number
+  questionType: string
 }) => {
   // console.log(props.questionType)
   switch (props.questionType) {
     // info
-    case 0:
+    case 'info':
       return (
         <>
           <Info handleQuestionClose={props.setClose}></Info>
@@ -22,11 +22,11 @@ const QuestionType = (props: {
       )
 
     // choice
-    case 1:
+    case 'choice':
       return <Choice handleQuestionClose={props.setClose}></Choice>
 
     // FillIn
-    case 2:
+    case 'fill':
       return (
         <>
           <FillIn handleQuestionClose={props.setClose}></FillIn>
@@ -34,11 +34,11 @@ const QuestionType = (props: {
       )
 
     // rank
-    case 3:
+    case 'rank':
       return <RankQuestion handleQuestionClose={props.setClose}></RankQuestion>
 
     // drag
-    case 4:
+    case 'drag':
       return <Drag handleQuestionClose={props.setClose}></Drag>
 
     default:
