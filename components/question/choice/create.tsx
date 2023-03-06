@@ -23,6 +23,7 @@ const initQuestion: Choice = {
   questionType:'choice',
   title: '',
   isShowAnswer: false,
+  note: null,
   options: [{ option: '', isAnswer: false }],
   start: 0,
   end: 0,
