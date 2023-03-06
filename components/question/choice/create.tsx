@@ -11,12 +11,6 @@ import {
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { Choice as ChoicePrisma } from '@prisma/client'
-import { TimeField } from '@mui/x-date-pickers'
-import dayjs, { Dayjs } from 'dayjs'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import ArrowDropUpOutlinedIcon from '@mui/icons-material/ArrowDropUpOutlined'
-import ArrowDropDownOutlinedIcon from '@mui/icons-material/ArrowDropDownOutlined'
 import { PlayerProgress } from '../../../pages/courses/edit/[id]'
 
 interface Choice extends ChoicePrisma {
@@ -26,6 +20,7 @@ interface Choice extends ChoicePrisma {
 
 const initQuestion: Choice = {
   id: null,
+  questionType: 0,
   title: '',
   options: [{ option: '', isAnswer: false }],
   start: 0,
@@ -112,14 +107,6 @@ const CreateChoice = (props: {
   return (
     <>
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <Typography>Test {props.playerProgress.playedSeconds}</Typography>
-        <Typography>時間</Typography>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Box display="flex" sx={{ m: 1 }}>
-            <VideoTimePicker label="開始" sx={{ mr: 5 }} />
-            <VideoTimePicker label="結束" />
-          </Box>
-        </LocalizationProvider>
         <Typography sx={{ mt: 2 }}>題目</Typography>
         <TextField
           sx={{ m: 1 }}
@@ -151,61 +138,3 @@ const CreateChoice = (props: {
   )
 }
 export default CreateChoice
-
-function VideoTimePicker(props: { label?: string; sx?: SxProps<Theme> }) {
-  const timeFieldRef = useRef<HTMLInputElement>(null)
-  const [timePicker, setTimePicker] = useState<Dayjs | null>(
-    dayjs().startOf('date')
-  )
-
-  const timerButtonSx: SxProps<Theme> = {
-    height: '50%',
-    p: 0,
-    borderRadius: 0.5,
-    maxWidth: '20px',
-    minWidth: '20px',
-    maxHeight: '20px',
-    minHeight: '20px',
-  }
-
-  return (
-    <>
-      <Box display="flex" flexDirection="row" sx={props.sx}>
-        <TimeField
-          variant="standard"
-          ref={timeFieldRef}
-          label={props.label}
-          value={timePicker}
-          onChange={(newValue: Dayjs) => setTimePicker(newValue)}
-          format="HH:mm:ss"
-          sx={{ maxWidth: '120px', minWidth: '120px', display: 'flex' }}
-        />
-        <Box
-          display="flex"
-          flexDirection="column"
-          justifyContent={'space-evenly'}
-          ml={0.5}
-        >
-          <Button
-            variant="contained"
-            sx={{ ...timerButtonSx, mb: 0.25 }}
-            onClick={() => {
-              setTimePicker((prev) => prev?.add(1, 'minute'))
-            }}
-          >
-            <ArrowDropUpOutlinedIcon />
-          </Button>
-          <Button
-            variant="contained"
-            sx={{ ...timerButtonSx, mt: 0.25 }}
-            onClick={() => {
-              setTimePicker((prev) => prev?.subtract(1, 'minute'))
-            }}
-          >
-            <ArrowDropDownOutlinedIcon />
-          </Button>
-        </Box>
-      </Box>
-    </>
-  )
-}
