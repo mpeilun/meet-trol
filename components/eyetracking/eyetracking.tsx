@@ -15,7 +15,12 @@ function EyesTracking() {
   const eyeTracking = useAppSelector((state) => state.course.eyeTracking)
   const eyeTrackingRef = useRef<{ x: number; y: number }>()
   const questionLocate = useAppSelector((state) => state.course.questionLocate)
-  const questionLocateRef = useRef<{ xStart: number; xEnd: number; yStart: number; yEnd: number }>()
+  const questionLocateRef = useRef<{
+    xStart: number
+    xEnd: number
+    yStart: number
+    yEnd: number
+  }>()
   const dispatch = useAppDispatch()
 
   useEffect(() => {
@@ -34,7 +39,12 @@ function EyesTracking() {
         dispatch(updateEyeTracking({ x: prediction.x, y: prediction.y }))
         console.log(eyeTrackingRef.current)
         const questionLocateCurrent = questionLocateRef.current!
-        if (prediction.x >= questionLocateCurrent.xStart && prediction.x <= questionLocateCurrent.xEnd && prediction.y >= questionLocateCurrent.yStart && prediction.y <= questionLocateCurrent.yEnd) {
+        if (
+          prediction.x >= questionLocateCurrent.xStart &&
+          prediction.x <= questionLocateCurrent.xEnd &&
+          prediction.y >= questionLocateCurrent.yStart &&
+          prediction.y <= questionLocateCurrent.yEnd
+        ) {
           dispatch(isLooking(true))
         } else {
           dispatch(isLooking(false))
@@ -49,7 +59,7 @@ function EyesTracking() {
   return (
     <>
       <Script
-        src="../external-lib/webgazer.js"
+        src="../external-script/webgazer.js"
         onLoad={() => {
           setWebgazerScript(true)
           // webgazer.setGazeListener(function (data: { x: any; y: any } | null, elapsedTime: any) {

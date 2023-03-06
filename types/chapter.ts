@@ -20,11 +20,7 @@ export interface ChapterListData {
 
 export interface VideoData {
   url: string
-  info: Info[]
-  choice: ChoiceData[]
-  rank: RankData[]
-  fill: FillData[]
-  drag: DragData[]
+  question: (Info | ChoiceData | RankData | FillData | DragData)[]
 }
 
 export interface InteractionData {

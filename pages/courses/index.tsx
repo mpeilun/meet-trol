@@ -16,6 +16,21 @@ import {
   TextField,
   Paper,
 } from '@mui/material'
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  IconButton,
+  Typography,
+  Menu,
+  Container,
+  Avatar,
+  Button,
+  Tooltip,
+  MenuItem,
+  TextField,
+  Paper,
+} from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2' // Grid version 2
 import { grey } from '@mui/material/colors'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
@@ -81,7 +96,6 @@ function AllCoursesPage() {
             >
               {courseData.map(({ id, title, description }, index) => {
                 return (
-                  <>
                     <Grid md={4} key={index.toString()}>
                       <Box m={'auto'} width={'100%'} maxWidth="200px">
                         <Link href={`/courses/${id}`}>
@@ -94,7 +108,7 @@ function AllCoursesPage() {
                         {description}
                       </Typography>
                     </Grid>
-                  </>
+                
                 )
               })}
             </Grid>

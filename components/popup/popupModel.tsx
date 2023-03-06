@@ -47,7 +47,8 @@ const PopupModal = (props: {
       )
 
       setIsRender(true)
-      console.log(questionWidth, questionHeight)
+
+      console.log('question width height', questionWidth, questionHeight)
     }
   }, [questionRef.current?.clientHeight])
 
@@ -64,7 +65,7 @@ const PopupModal = (props: {
           alignItems: 'center',
           visibility: 'visible',
           position: 'absolute',
-          top:'-10%',
+          top: '-10%',
           left: '-5%',
           zIndex: 5,
           // top: '20%',

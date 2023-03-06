@@ -27,6 +27,8 @@ function Layout(props: { children: ReactNode }) {
           display="flex"
           //TODO危險
           // width="100vw"
+          // ?? 下面不確定要不要加上
+          // overflow={'hidden'}
           height="100vh"
           sx={{ flexDirection: 'column', overflow:'hidden' }}
         >

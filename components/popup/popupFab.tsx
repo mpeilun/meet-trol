@@ -91,64 +91,61 @@ const PopupFab = (props: {
               zIndex: 1,
               visibility: openQuestion ? 'hidden' : 'visible',
 
-              // display: props.open ? 'none' : 'flex',
-            }}
-            color="primary"
-            aria-label="choice"
-            onClick={() => {
-              handleOpenQuestion()
-            }}
-          >
-            <MenuIcon />
-          </Fab>
-          <PopupModal
-            setClose={handleCloseQuestion}
-            setOpen={handleOpenQuestion}
-            open={openQuestion}
-            questionType={props.data.questionType}
-            // data={props.data}
-          ></PopupModal>
-        </>
-      )
-    } else if (props.data.questionType == 4) {
-      return (
-        <>
-          <Fab
-            sx={{
-              mb: 1,
-              // width: '50%',
-              // height: '50%',
-              // position: 'absolute',
-              // top: '20%',
-              // left: '10%',
-              // right: 'auto',
-              // bottom: 'auto',
-              zIndex: 1,
-              visibility: openQuestion ? 'hidden' : 'visible',
-              // display: props.open ? 'none' : 'flex',
-            }}
-            color="secondary"
-            aria-label="drag"
-            onClick={() => {
-              handleOpenQuestion()
-            }}
-          >
-            <CameraIcon />
-          </Fab>
-          <PopupModal
-            setClose={handleCloseQuestion}
-            setOpen={handleOpenQuestion}
-            open={openQuestion}
-            questionType={props.data.questionType}
-            // data={props.data}
-          ></PopupModal>
-        </>
-      )
-    } else {
-      return <Typography>題目顯示失敗</Typography>
-    }
+            // display: props.open ? 'none' : 'flex',
+          }}
+          color="primary"
+          aria-label="choice"
+          onClick={() => {
+            handleOpenQuestion()
+          }}
+        >
+          <MenuIcon />
+        </Fab>
+        <PopupModal
+          setClose={handleCloseQuestion}
+          setOpen={handleOpenQuestion}
+          open={openQuestion}
+          questionType={props.data.questionType}
+          // data={props.data}
+        ></PopupModal>
+      </>
+    )
+  } else if (props.data.questionType == 4) {
+    return (
+      <>
+        <Fab
+          sx={{
+            mb:1,
+            // width: '50%',
+            // height: '50%',
+            // position: 'absolute',
+            // top: '20%',
+            // left: '10%',
+            // right: 'auto',
+            // bottom: 'auto',
+            zIndex: 1,
+            visibility: openQuestion ? 'hidden' : 'visible',
+            // display: props.open ? 'none' : 'flex',
+          }}
+          color="secondary"
+          aria-label="drag"
+          onClick={() => {
+            handleOpenQuestion()
+          }}
+        >
+          <CameraIcon />
+        </Fab>
+        <PopupModal
+          setClose={handleCloseQuestion}
+          setOpen={handleOpenQuestion}
+          open={openQuestion}
+          questionType={props.data.questionType}
+          // data={props.data}
+        ></PopupModal>
+      </>
+    )
   } else {
-    return <></>
+    return <Typography>題目顯示失敗</Typography>
   }
 }
 

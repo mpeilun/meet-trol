@@ -112,9 +112,11 @@ const DragDrop = () => {
       >
         {ansArray.map((title, index) => {
           return (
-            <>
-              <FillItem title={title} index={index}></FillItem>
-            </>
+            <FillItem
+              key={`dragdrop-ans-${index}`}
+              title={title}
+              index={index}
+            ></FillItem>
           )
         })}
       </Box>

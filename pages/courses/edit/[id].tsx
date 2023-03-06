@@ -1,4 +1,5 @@
-import ReactPlayer from 'react-player/youtube'
+import { JSONTree } from 'react-json-tree'
+import ReactPlayer from 'react-player/lazy'
 import {
   Box,
   Button,
@@ -8,11 +9,15 @@ import {
   Tab,
   Card,
   Paper,
+  CircularProgress,
 } from '@mui/material'
 import { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/router'
 import { OnProgressProps } from 'react-player/base'
 import CreateChoice from '../../../components/question/choice/create'
 import TestVideoEditTimeLine from '../../../components/edit/video-edit-timeline'
+import { Video } from '../../../types/video-edit'
+import TimeRangeSlider from '../../../components/edit/video-edit-timeline'
 
 export interface PlayerProgress extends OnProgressProps {
   duration: number
@@ -48,17 +53,30 @@ function a11yProps(index: number) {
 }
 
 function EditQuestionPage() {
-  const [value, setValue] = useState(0)
+  const router = useRouter()
+  const query = router.query
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue)
+  // for testing id
+  // 63f45bbf82f16bcec3a6381a
+
+  const [video, setVideo] = useState<Video>(null)
+
+  useEffect(() => {
+    if (!router.isReady) return
+    const fetchVideo = async () => {
+      const res = await fetch(`/api/video/edit/${query.id}`)
+      const data = await res.json()
+      setVideo(data)
+    }
+    fetchVideo()
+  }, [router.isReady])
+
+  const [tabValue, setTabValue] = useState(0)
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue)
   }
 
   const playerRef = useRef<ReactPlayer>(null)
-  const [hasWindow, setHasWindow] = useState(false)
-  const [playerUrl, setPlayerUrl] = useState(
-    'https://www.youtube.com/watch?v=1iHURb6K4qc'
-  )
   const [playing, setPlaying] = useState(false)
   const play = () => setPlaying(true)
   const pause = () => setPlaying(false)
@@ -79,15 +97,20 @@ function EditQuestionPage() {
     })
   }
 
-  const handPlayerReady = () => {}
+  if (!video) {
+    return (
+      <CircularProgress
+        sx={{
+          display: 'block',
+          margin: '24px auto',
+        }}
+      />
+    )
+  }
 
-  //fix react player hydration issue
-  //https://stackoverflow.com/questions/72235211/trying-to-use-react-player-throws-a-hydration-error
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setHasWindow(true)
-    }
-  }, [])
+  if (video?.message) {
+    return <Typography variant="h5"> message: {video.message} </Typography>
+  }
 
   return (
     <>
@@ -104,43 +127,57 @@ function EditQuestionPage() {
         >
           <Box width="45%">
             {/*播放器*/}
-            {hasWindow && ReactPlayer.canPlay(playerUrl) && (
+            {ReactPlayer.canPlay(video.url) ? (
               <ReactPlayer
-                style={
-                  {
-                    // display: 'flex',
-                  }
-                }
-                url={playerUrl}
+                fallback={<div>loading...</div>}
+                url={video.url}
                 playing={playing}
                 onPlay={play}
                 onPause={pause}
                 onProgress={handlePlayerStatus}
                 onDuration={handelPlayerDuration}
                 ref={playerRef}
-                onReady={handPlayerReady}
                 width={'100%'}
                 progressInterval={200}
                 config={{
-                  playerVars: {
-                    showinfo: 0,
-                    controls: 1,
-                    modestbranding: 1,
-                    rel: 0,
+                  youtube: {
+                    playerVars: {
+                      controls: 1,
+                      modestbranding: 1,
+                      rel: 0,
+                    },
                   },
                 }}
               />
+            ) : (
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  flexDirection: 'column',
+                }}
+              >
+                <Typography
+                  variant="h5"
+                  textAlign="center"
+                  sx={{ color: 'error.main' }}
+                >
+                  請輸入正確的網址！
+                </Typography>
+              </Box>
             )}
             {/*網址輸入框*/}
             <TextField
               fullWidth
               label="Youtube Link"
               variant="outlined"
-              value={playerUrl}
+              value={video.url}
               size="small"
               sx={{ m: '24px 0' }}
               onChange={(event) => {
-                setPlayerUrl(event.target.value)
+                setVideo((prev) => {
+                  return { ...prev, url: event.target.value }
+                })
               }}
             />
           </Box>
@@ -154,8 +191,8 @@ function EditQuestionPage() {
           >
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
               <Tabs
-                value={value}
-                onChange={handleChange}
+                value={tabValue}
+                onChange={handleTabChange}
                 aria-label="basic tabs example"
               >
                 <Tab label="資訊" {...a11yProps(0)} />
@@ -165,23 +202,23 @@ function EditQuestionPage() {
                 <Tab label="圖選" {...a11yProps(4)} />
               </Tabs>
             </Box>
-            <TabPanel value={value} index={0}>
+            <TabPanel value={tabValue} index={0}>
               #資訊卡
             </TabPanel>
-            <TabPanel value={value} index={1}>
+            <TabPanel value={tabValue} index={1}>
               #選擇題
               <CreateChoice
                 playerProgress={playerProgress}
                 setPlayerProgress={setPlayerProgress}
               />
             </TabPanel>
-            <TabPanel value={value} index={2}>
+            <TabPanel value={tabValue} index={2}>
               #填空題
             </TabPanel>
-            <TabPanel value={value} index={3}>
+            <TabPanel value={tabValue} index={3}>
               #排序題
             </TabPanel>
-            <TabPanel value={value} index={4}>
+            <TabPanel value={tabValue} index={4}>
               #圖片選答
             </TabPanel>
           </Paper>
@@ -195,15 +232,23 @@ function EditQuestionPage() {
           flexDirection="column"
           m={2}
         >
-          <TestVideoEditTimeLine />
-          {/* <VideoEditTimeLine />
-          <VideoEditTimeLine /> */}
+          {
+            <TimeRangeSlider
+              sx={{ width: '400px' }}
+              start={500}
+              end={600}
+              duration={playerRef?.current?.getDuration()}
+              onTimeChange={(startTime, endTime) => {
+                console.log(startTime, endTime)
+              }}
+            />
+          }
           <Button
             variant="contained"
             size="small"
             onClick={() => {
               if (playerRef.current) {
-                playerRef.current.seekTo(50.11111)
+                playerRef.current.seekTo(50)
               }
             }}
           >
@@ -215,6 +260,7 @@ function EditQuestionPage() {
             <Typography>影片時長 {playerProgress?.duration}</Typography>
           </Box>
         </Box>
+        <JSONTree data={video} />
       </Box>
     </>
   )

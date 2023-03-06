@@ -16,7 +16,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           id: query.id,
         },
         select: {
-          url:true,
+          url: true,
           info: true,
           choice: true,
           rank: { include: { feedback: true } },
@@ -24,7 +24,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           drag: { include: { feedback: true } },
         },
       })
-      res.status(200).json(data)
+      const { info, choice, rank, fill, drag, ...result } = data
+      res.status(200).json({
+        ...result,
+        question: [...info, ...choice, ...rank, ...fill, ...drag],
+      })
     } else {
       res.status(400).json({ message: 'Error' })
     }

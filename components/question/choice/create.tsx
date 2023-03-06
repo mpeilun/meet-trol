@@ -17,7 +17,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import ArrowDropUpOutlinedIcon from '@mui/icons-material/ArrowDropUpOutlined'
 import ArrowDropDownOutlinedIcon from '@mui/icons-material/ArrowDropDownOutlined'
-import { PlayerProgress } from '../../../pages/courses/edit/question'
+import { PlayerProgress } from '../../../pages/courses/edit/[id]'
 
 interface Choice extends ChoicePrisma {
   id: string | null

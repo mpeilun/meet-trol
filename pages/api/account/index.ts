@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import prisma from '../../../prisma/prisma'
 import { getServerSession } from 'next-auth/next'
-import { authOptions } from '../../api/auth/[...nextauth]'
+import { authOptions } from '../auth/[...nextauth]'
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
