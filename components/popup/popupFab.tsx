@@ -4,6 +4,8 @@ import InfoIcon from '@mui/icons-material/Info'
 import MenuIcon from '@mui/icons-material/Menu'
 import CameraIcon from '@mui/icons-material/Camera'
 import { Typography } from '@mui/material'
+import { useAppSelector, useAppDispatch } from '../../hooks/redux'
+
 import PopupModal from './popupModel'
 import { ChoiceData, RankData, FillData, DragData } from '../../types/chapter'
 import { Info } from '@prisma/client'
@@ -13,6 +15,8 @@ const PopupFab = (props: {
   play: () => void
   data: Info | ChoiceData | RankData | FillData | DragData
 }) => {
+  const playedSecond = useAppSelector((state) => state.course.playedSecond)
+
   // const QuestionType = (questionType: number) => {
   //   if (props.data.questionType== 0) {
   //     return <InfoIcon />
@@ -25,121 +29,126 @@ const PopupFab = (props: {
   //   }
   // }
 
-  const [openQuestion, setopenQuestion] = React.useState(false)
+  const [openQuestion, setOpenQuestion] = React.useState(false)
   const handleOpenQuestion = () => {
-    setopenQuestion(true)
+    setOpenQuestion(true)
     props.pause()
   }
   const handleCloseQuestion = () => {
-    setopenQuestion(false)
+    setOpenQuestion(false)
     props.play()
   }
 
-  if (props.data.questionType == 0) {
-    return (
-      <>
-        <Fab
-          sx={{
-            mb:1,
-            // width: '50%',
-            // height: '50%',z
-            // position: 'absolute',
-            // top: '20%',
-            // left: '10%',
-            // right: 'auto',
-            // bottom: 'auto',
-            zIndex: 1,
-            visibility: openQuestion ? 'hidden' : 'visible',
-            // display: props.open ? 'none' : 'flex',
-          }}
-          color="warning"
-          aria-label="info"
-          onClick={() => {
-            handleOpenQuestion()
-          }}
-        >
-          <InfoIcon />
-        </Fab>
-        <PopupModal
-          setClose={handleCloseQuestion}
-          setOpen={handleOpenQuestion}
-          open={openQuestion}
-          questionType={props.data.questionType}
-          // data={props.data}
-        ></PopupModal>
-      </>
-    )
-  } else if (0 < props.data.questionType && props.data.questionType < 4) {
-    return (
-      <>
-        <Fab
-          sx={{
-            mb:1,
-            // width: '50%',
-            // height: '50%',
-            // position: 'absolute',
-            // top: '20%',
-            // left: '10%',
-            // right: 'auto',
-            // bottom: 'auto',
-            zIndex: 1,
-            visibility: openQuestion ? 'hidden' : 'visible',
 
-            // display: props.open ? 'none' : 'flex',
-          }}
-          color="primary"
-          aria-label="choice"
-          onClick={() => {
-            handleOpenQuestion()
-          }}
-        >
-          <MenuIcon />
-        </Fab>
-        <PopupModal
-          setClose={handleCloseQuestion}
-          setOpen={handleOpenQuestion}
-          open={openQuestion}
-          questionType={props.data.questionType}
-          // data={props.data}
-        ></PopupModal>
-      </>
-    )
-  } else if (props.data.questionType == 4) {
-    return (
-      <>
-        <Fab
-          sx={{
-            mb:1,
-            // width: '50%',
-            // height: '50%',
-            // position: 'absolute',
-            // top: '20%',
-            // left: '10%',
-            // right: 'auto',
-            // bottom: 'auto',
-            zIndex: 1,
-            visibility: openQuestion ? 'hidden' : 'visible',
-            // display: props.open ? 'none' : 'flex',
-          }}
-          color="secondary"
-          aria-label="drag"
-          onClick={() => {
-            handleOpenQuestion()
-          }}
-        >
-          <CameraIcon />
-        </Fab>
-        <PopupModal
-          setClose={handleCloseQuestion}
-          setOpen={handleOpenQuestion}
-          open={openQuestion}
-          questionType={props.data.questionType}
-          // data={props.data}
-        ></PopupModal>
-      </>
-    )
+  if (playedSecond > props.data.start && playedSecond < props.data.end) {
+    if (props.data.questionType == 0) {
+      return (
+        <>
+          <Fab
+            sx={{
+              mb: 1,
+              // width: '50%',
+              // height: '50%',z
+              // position: 'absolute',
+              // top: '20%',
+              // left: '10%',
+              // right: 'auto',
+              // bottom: 'auto',
+              zIndex: 1,
+              visibility: openQuestion ? 'hidden' : 'visible',
+              // display: props.open ? 'none' : 'flex',
+            }}
+            color="warning"
+            aria-label="info"
+            onClick={() => {
+              handleOpenQuestion()
+            }}
+          >
+            <InfoIcon />
+          </Fab>
+          <PopupModal
+            setClose={handleCloseQuestion}
+            setOpen={handleOpenQuestion}
+            open={openQuestion}
+            questionType={props.data.questionType}
+            // data={props.data}
+          ></PopupModal>
+        </>
+      )
+    } else if (0 < props.data.questionType && props.data.questionType < 4) {
+      return (
+        <>
+          <Fab
+            sx={{
+              mb: 1,
+              // width: '50%',
+              // height: '50%',
+              // position: 'absolute',
+              // top: '20%',
+              // left: '10%',
+              // right: 'auto',
+              // bottom: 'auto',
+              zIndex: 1,
+              visibility: openQuestion ? 'hidden' : 'visible',
+
+              // display: props.open ? 'none' : 'flex',
+            }}
+            color="primary"
+            aria-label="choice"
+            onClick={() => {
+              handleOpenQuestion()
+            }}
+          >
+            <MenuIcon />
+          </Fab>
+          <PopupModal
+            setClose={handleCloseQuestion}
+            setOpen={handleOpenQuestion}
+            open={openQuestion}
+            questionType={props.data.questionType}
+            // data={props.data}
+          ></PopupModal>
+        </>
+      )
+    } else if (props.data.questionType == 4) {
+      return (
+        <>
+          <Fab
+            sx={{
+              mb: 1,
+              // width: '50%',
+              // height: '50%',
+              // position: 'absolute',
+              // top: '20%',
+              // left: '10%',
+              // right: 'auto',
+              // bottom: 'auto',
+              zIndex: 1,
+              visibility: openQuestion ? 'hidden' : 'visible',
+              // display: props.open ? 'none' : 'flex',
+            }}
+            color="secondary"
+            aria-label="drag"
+            onClick={() => {
+              handleOpenQuestion()
+            }}
+          >
+            <CameraIcon />
+          </Fab>
+          <PopupModal
+            setClose={handleCloseQuestion}
+            setOpen={handleOpenQuestion}
+            open={openQuestion}
+            questionType={props.data.questionType}
+            // data={props.data}
+          ></PopupModal>
+        </>
+      )
+    } else {
+      return <Typography>題目顯示失敗</Typography>
+    }
   } else {
-    return <Typography>題目顯示失敗</Typography>
+    return <></>
   }
 }
 

@@ -28,7 +28,7 @@ function Layout(props: { children: ReactNode }) {
           //TODO危險
           // width="100vw"
           height="100vh"
-          sx={{ flexDirection: 'column' }}
+          sx={{ flexDirection: 'column', overflow:'hidden' }}
         >
           {asPath !== '/auth/signin' && <MainNavigation />}
           <main style={{ height: '100%' }}>{props.children}</main>

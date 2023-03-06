@@ -32,7 +32,7 @@ function AnsItem(props: {
 
   // console.log(props.index)
   return (
-    <>
+    <span>
       <Box
         // overflow="hidden"
         // textOverflow="ellipsis"
@@ -85,7 +85,7 @@ function AnsItem(props: {
           </Box>
         </Box>
       </Box>
-    </>
+    </span>
   )
 }
 

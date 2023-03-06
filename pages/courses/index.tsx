@@ -1,7 +1,21 @@
 import { useRouter } from 'next/router'
 
 import CourseList from '../../components/courses/course-list'
-import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, Button, Tooltip, MenuItem, TextField, Paper } from '@mui/material'
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  IconButton,
+  Typography,
+  Menu,
+  Container,
+  Avatar,
+  Button,
+  Tooltip,
+  MenuItem,
+  TextField,
+  Paper,
+} from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2' // Grid version 2
 import { grey } from '@mui/material/colors'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
@@ -21,7 +35,7 @@ function AllCoursesPage() {
   }, [])
 
   return (
-    <Paper
+    <Paper key={'paper'}
       sx={{
         width: { md: '80%', xs: ' 100%' },
         height: '100%',
@@ -31,9 +45,24 @@ function AllCoursesPage() {
         backgroundColor: '#FFF',
       }}
     >
-      <Grid container flexDirection="row-reverse" justifyContent="space-between" spacing={2}>
-        <Grid md={12} xs={12} display="flex" justifyContent="center" alignContent="center" m={2}>
-          <TextField placeholder="加入課程" sx={{ width: '50%', minWidth: '100px' }}></TextField>
+      <Grid
+        container
+        flexDirection="row-reverse"
+        justifyContent="space-between"
+        spacing={2}
+      >
+        <Grid
+          md={12}
+          xs={12}
+          display="flex"
+          justifyContent="center"
+          alignContent="center"
+          m={2}
+        >
+          <TextField
+            placeholder="加入課程"
+            sx={{ width: '50%', minWidth: '100px' }}
+          ></TextField>
           {/*TODO 考慮使用ICON Button */}
           <Button variant="contained" sx={{ ml: '1rem', height: '95%' }}>
             <ArrowForwardIcon />
@@ -44,11 +73,16 @@ function AllCoursesPage() {
             <Typography variant="h5" m={'0 auto'}>
               我的課程
             </Typography>
-            <Grid container spacing={2} mt={1} justifyContent={{ md: 'center', xs: 'center' }}>
+            <Grid
+              container
+              spacing={2}
+              mt={1}
+              justifyContent={{ md: 'center', xs: 'center' }}
+            >
               {courseData.map(({ id, title, description }, index) => {
                 return (
                   <>
-                    <Grid md={4} key={index}>
+                    <Grid md={4} key={index.toString()}>
                       <Box m={'auto'} width={'100%'} maxWidth="200px">
                         <Link href={`/courses/${id}`}>
                           <Typography textAlign={'center'} bgcolor={grey[400]}>

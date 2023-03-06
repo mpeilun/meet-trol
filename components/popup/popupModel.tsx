@@ -97,13 +97,12 @@ const PopupModal = (props: {
             display: 'inline-block',
             // minWidth: 600,
             maxWidth: 700,
-            maxHeight: 450,
+            maxHeight: 500,
             border: look ? '0.3rem outset green' : '0.3rem outset red',
           }}
         >
           <Box
             sx={{
-              overflow: 'hidden',
               overflowY: 'auto',
               p: 2,
               display: 'flex',
