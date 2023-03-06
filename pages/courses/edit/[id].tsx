@@ -7,7 +7,6 @@ import {
   Typography,
   Tabs,
   Tab,
-  Card,
   Paper,
   CircularProgress,
 } from '@mui/material'
@@ -165,20 +164,36 @@ function EditQuestionPage() {
                 </Typography>
               </Box>
             )}
-            {/*網址輸入框*/}
-            <TextField
-              fullWidth
-              label="Youtube Link"
-              variant="outlined"
-              value={video.url}
-              size="small"
-              sx={{ m: '24px 0' }}
-              onChange={(event) => {
-                setVideo((prev) => {
-                  return { ...prev, url: event.target.value }
-                })
-              }}
-            />
+            <Box padding={1}>
+              {/*時間軸*/}
+              <TimeRangeSlider
+                sx={{ width: '100%' }}
+                title={'Test'}
+                questionType={'choice'}
+                now={playerProgress?.playedSeconds}
+                // start={500}
+                // end={600}
+                duration={playerRef?.current?.getDuration()}
+                onTimeChange={(startTime, endTime) => {
+                  console.log(startTime, endTime)
+                }}
+                seekTo={playerRef?.current?.seekTo}
+              />
+              {/*網址輸入框*/}
+              <TextField
+                fullWidth
+                label="Youtube Link"
+                variant="standard"
+                value={video.url}
+                size="small"
+                sx={{ m: '24px 0' }}
+                onChange={(event) => {
+                  setVideo((prev) => {
+                    return { ...prev, url: event.target.value }
+                  })
+                }}
+              />
+            </Box>
           </Box>
           {/*出題區塊*/}
           <Paper
@@ -231,17 +246,6 @@ function EditQuestionPage() {
           flexDirection="column"
           m={2}
         >
-          {
-            <TimeRangeSlider
-              sx={{ width: '400px' }}
-              start={500}
-              end={600}
-              duration={playerRef?.current?.getDuration()}
-              onTimeChange={(startTime, endTime) => {
-                console.log(startTime, endTime)
-              }}
-            />
-          }
           <Button
             variant="contained"
             size="small"

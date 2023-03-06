@@ -30,7 +30,11 @@ function Layout(props: { children: ReactNode }) {
           // ?? 下面不確定要不要加上
           // overflow={'hidden'}
           height="100vh"
-          sx={{ flexDirection: 'column', overflow:'hidden' }}
+          sx={{
+            flexDirection: 'column',
+            //暫時的
+            // overflow: asPath.includes('/courses/') ? 'hidden' : 'auto',
+          }}
         >
           {asPath !== '/auth/signin' && <MainNavigation />}
           <main style={{ height: '100%' }}>{props.children}</main>
