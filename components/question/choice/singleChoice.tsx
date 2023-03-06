@@ -48,7 +48,7 @@ export default function SingleChoice(props: { data: ChoiceData }) {
       // })
     } else if (value === '') {
       setIsAnsError({
-        isShow: data.isShowAnswer,
+        isShow: true,
         text: '請選擇答案',
         severity: 'warning',
       })
