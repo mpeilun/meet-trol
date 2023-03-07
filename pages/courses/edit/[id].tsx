@@ -38,7 +38,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && <Box sx={{ p: 3, mb: 1 }}>{children}</Box>}
     </div>
   )
 }
@@ -74,6 +74,7 @@ function EditQuestionPage() {
     setTabValue(newValue)
   }
 
+  const blockLeft = useRef<HTMLDivElement>(null)
   const playerRef = useRef<ReactPlayer>(null)
   const [playing, setPlaying] = useState(false)
   const play = () => setPlaying(true)
@@ -112,7 +113,7 @@ function EditQuestionPage() {
 
   return (
     <>
-      <Box display="flex" flexDirection="column">
+      <Box display="flex" flexDirection="column" padding={2}>
         <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
           創建題目
         </Typography>
@@ -123,7 +124,8 @@ function EditQuestionPage() {
           alignItems="flex-start"
           // height="100%"
         >
-          <Box width="45%">
+          {/* 影片區塊 左側 */}
+          <Box width="45%" ref={blockLeft}>
             {/*播放器*/}
             {ReactPlayer.canPlay(video.url) ? (
               <ReactPlayer
@@ -164,10 +166,10 @@ function EditQuestionPage() {
                 </Typography>
               </Box>
             )}
-            <Box padding={1}>
+            <Box>
               {/*時間軸*/}
               <TimeRangeSlider
-                sx={{ width: '100%' }}
+                sx={{ width: '100%', padding: '10px 0 10px 0' }}
                 title={'Test'}
                 questionType={'choice'}
                 now={playerProgress?.playedSeconds}
@@ -195,12 +197,15 @@ function EditQuestionPage() {
               />
             </Box>
           </Box>
-          {/*出題區塊*/}
+          {/* 出題區塊 右側*/}
           <Paper
             sx={{
               display: 'flex',
               flexDirection: 'column',
               width: '45%',
+              minHeight: blockLeft?.current?.clientHeight ?? '480px',
+              maxHeight: blockLeft?.current?.clientHeight ?? '480px',
+              overflow: 'auto',
             }}
           >
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -244,25 +249,8 @@ function EditQuestionPage() {
           justifyContent="center"
           alignItems="center"
           flexDirection="column"
-          m={2}
-        >
-          <Button
-            variant="contained"
-            size="small"
-            onClick={() => {
-              if (playerRef.current) {
-                playerRef.current.seekTo(50)
-              }
-            }}
-          >
-            setPlayerProgress
-          </Button>
-          <Box>
-            <Typography>秒數 {playerProgress?.playedSeconds}</Typography>
-            <Typography>進度 {playerProgress?.played}</Typography>
-            <Typography>影片時長 {playerProgress?.duration}</Typography>
-          </Box>
-        </Box>
+          m={3}
+        ></Box>
         <JSONTree data={video} />
       </Box>
     </>

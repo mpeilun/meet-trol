@@ -90,7 +90,7 @@ function VideoRangeSlider({
 
   return (
     <>
-      <Box sx={sx}>
+      <Box sx={sx} margin={'0 0 36px 0'}>
         <CustomizedSlider
           value={nowTime}
           onChange={(event, newValue: number) => {
@@ -104,19 +104,28 @@ function VideoRangeSlider({
           valueLabelDisplay="on"
           valueLabelFormat={(value) => formatTime(value)}
           disableSwap
-          // marks={[{ value: now, label: formatTime(now) }]}
         />
-
         <Slider
           sx={{
-            paddingBottom: '0',
-            // '.MuiSlider-mark': { width: '8px' },
-            // '.MuiSlider-rail': { width: '8px' },
-            '.MuiSlider-thumb': {
+            position: 'relative',
+            bottom: '8px',
+            margin: '0 0 0 0',
+            padding: '0 0 0 0',
+            height: '8px',
+            boxShadow: 'none !important',
+            '& .MuiSlider-thumb': {
               width: '8px',
               height: '20px',
               borderRadius: '5%',
               boxShadow: 'none',
+            },
+            '& .MuiSlider-mark': {
+              display: 'none',
+            },
+            '& .MuiSlider-markLabel': {
+              position: 'absolute',
+              zIndex: -1,
+              top: '16px',
             },
           }}
           value={values}
@@ -125,124 +134,68 @@ function VideoRangeSlider({
           valueLabelDisplay="auto"
           valueLabelFormat={(value) => formatTime(value)}
           disableSwap
-          // marks={[{ value: now, label: formatTime(now) }]}
+          marks={[
+            { value: 0, label: formatTime(0) },
+            { value: duration, label: formatTime(duration) },
+          ]}
         />
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Box
-            display="flex"
-            flexDirection="row"
-            justifyContent={'space-between'}
-          >
-            {/* 影片長度 */}
-            {/* 開始時間 */}
-            <Box display="flex" flexDirection="row">
-              <TimeField
-                variant="standard"
-                label={'開始時間'}
-                value={dayjs().startOf('day').add(values[0], 'second')}
-                minTime={dayjs().startOf('day')}
-                maxTime={dayjs().startOf('day').add(values[1], 'second')}
-                onChange={(newValue: Dayjs) => {
-                  if (
-                    covertToSecond(newValue) <= values[1] &&
-                    covertToSecond(newValue) >= 0
-                  ) {
-                    setValues([covertToSecond(newValue), values[0]])
-                  }
-                }}
-                format="HH:mm:ss"
-                sx={{
-                  maxWidth: '120px',
-                  minWidth: '120px',
-                  display: 'flex',
-                }}
-              />
-              <Box
-                display="flex"
-                flexDirection="column"
-                justifyContent={'space-evenly'}
-                ml={0.5}
-              >
-                <Button
-                  variant="contained"
-                  sx={{ ...timerButtonSx, mb: 0.25 }}
-                  onClick={() => {
-                    if (values[0] + 60 <= values[1]) {
-                      setValues((prev) => [prev[0] + 60, prev[1]])
-                    }
-                  }}
-                >
-                  <ArrowDropUpOutlinedIcon />
-                </Button>
-                <Button
-                  variant="contained"
-                  sx={{ ...timerButtonSx, mt: 0.25 }}
-                  onClick={() => {
-                    if (values[0] - 60 >= 0) {
-                      setValues((prev) => [prev[0] - 60, prev[1]])
-                    }
-                  }}
-                >
-                  <ArrowDropDownOutlinedIcon />
-                </Button>
-              </Box>
-            </Box>
-            {/* 結束時間 */}
-            <Box display="flex" flexDirection="row">
-              <TimeField
-                variant="standard"
-                label={'結束時間'}
-                value={dayjs().startOf('day').add(values[1], 'second')}
-                minTime={dayjs().startOf('day').add(values[0], 'second')}
-                maxTime={dayjs().startOf('day').add(duration, 'second')}
-                onChange={(newValue: Dayjs) => {
-                  if (
-                    covertToSecond(newValue) <= duration &&
-                    covertToSecond(newValue) >= values[0]
-                  ) {
-                    setValues([covertToSecond(newValue), values[1]])
-                  }
-                }}
-                format="HH:mm:ss"
-                sx={{
-                  maxWidth: '120px',
-                  minWidth: '120px',
-                  display: 'flex',
-                }}
-              />
-              <Box
-                display="flex"
-                flexDirection="column"
-                justifyContent={'space-evenly'}
-                ml={0.5}
-              >
-                <Button
-                  variant="contained"
-                  sx={{ ...timerButtonSx, mb: 0.25 }}
-                  onClick={() => {
-                    if (values[1] + 60 <= duration) {
-                      setValues((prev) => [prev[0], prev[1] + 60])
-                    }
-                  }}
-                >
-                  <ArrowDropUpOutlinedIcon />
-                </Button>
-                <Button
-                  variant="contained"
-                  sx={{ ...timerButtonSx, mt: 0.25 }}
-                  onClick={() => {
-                    if (values[1] - 60 >= values[0]) {
-                      setValues((prev) => [prev[0], prev[1] - 60])
-                    }
-                  }}
-                >
-                  <ArrowDropDownOutlinedIcon />
-                </Button>
-              </Box>
-            </Box>
-          </Box>
-        </LocalizationProvider>
       </Box>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <Box display="flex" margin={'8px 0 8px 0'}>
+          {/* 影片長度 */}
+          {/* 開始時間 */}
+
+          <TimeField
+            label={'開始時間'}
+            value={dayjs().startOf('day').add(values[0], 'second')}
+            minTime={dayjs().startOf('day')}
+            maxTime={dayjs().startOf('day').add(values[1], 'second')}
+            onChange={(newValue: Dayjs) => {
+              if (
+                covertToSecond(newValue) <= values[1] &&
+                covertToSecond(newValue) >= 0
+              ) {
+                setValues([covertToSecond(newValue), values[0]])
+              }
+            }}
+            format="HH:mm:ss"
+            sx={{
+              marginRight: '16px',
+              '.MuiInputBase-input': {
+                padding: '8px',
+                height: '30px',
+                width: '80px',
+                textAlign: 'center',
+              },
+            }}
+          />
+          {/* 結束時間 */}
+
+          <TimeField
+            label={'結束時間'}
+            value={dayjs().startOf('day').add(values[1], 'second')}
+            minTime={dayjs().startOf('day').add(values[0], 'second')}
+            maxTime={dayjs().startOf('day').add(duration, 'second')}
+            onChange={(newValue: Dayjs) => {
+              if (
+                covertToSecond(newValue) <= duration &&
+                covertToSecond(newValue) >= values[0]
+              ) {
+                setValues([covertToSecond(newValue), values[1]])
+              }
+            }}
+            format="HH:mm:ss"
+            sx={{
+              '.MuiInputBase-input': {
+                padding: '8px',
+                height: '30px',
+                width: '80px',
+                textAlign: 'center',
+              },
+            }}
+          />
+        </Box>
+      </LocalizationProvider>
     </>
   )
 }
