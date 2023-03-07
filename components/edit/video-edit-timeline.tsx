@@ -88,6 +88,13 @@ function VideoRangeSlider({
     return time?.hour() * 3600 + time?.minute() * 60 + time?.second()
   }
 
+  //TODO 0307
+  //判斷 duration, now 型態
+  //開始 結束 時間設定還沒修改
+  //Youtube Link 拉上來
+  //修復 consol.log 錯誤
+  //在devtools 看會跑版?
+
   return (
     <>
       <Box sx={sx} margin={'0 0 36px 0'}>
