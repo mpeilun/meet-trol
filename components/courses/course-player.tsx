@@ -18,6 +18,8 @@ import {
   Pause,
   Fullscreen,
   FullscreenExit,
+  KeyboardDoubleArrowDown,
+  KeyboardDoubleArrowUp,
 } from '@mui/icons-material'
 
 import PopupModal from '../popup/popupModel'
@@ -67,6 +69,7 @@ function CoursePlayer() {
   const [timer, setTimer] = React.useState<any>(null)
   const [volume, setVolume] = React.useState(1) //音量
   const handleFullScreen = useFullScreenHandle() //全螢幕控制器
+  const [playbackRate, setPlaybackRate] = React.useState(1.0) //播放速度
 
   const [hasWindow, setHasWindow] = React.useState(false)
   React.useEffect(() => {
@@ -130,6 +133,8 @@ function CoursePlayer() {
   let onPlayerReady = (player: ReactPlayerType) => {
     if (playerRef) {
       playerRef.current = player
+      // var availableQualityLevels=player.getInternalPlayer().getAvailableQualityLevels()
+      // console.log(availableQualityLevels)
     }
   }
 
@@ -162,6 +167,8 @@ function CoursePlayer() {
               play={play}
               pause={pause}
               handleFullScreen={handleFullScreen}
+              playbackRate={playbackRate}
+              setPlaybackRate={setPlaybackRate}
             />
           )}
 
@@ -209,6 +216,7 @@ function CoursePlayer() {
             width={'100%'}
             height={handleFullScreen.active ? '100%' : 600}
             progressInterval={200}
+            playbackRate={playbackRate}
             config={{
               youtube: {
                 playerVars: {
@@ -244,8 +252,11 @@ interface PlayerBarProps {
   play: () => void
   pause: () => void
   handleFullScreen: FullScreenHandle
+  playbackRate: number
+  setPlaybackRate: (value: number) => void
 }
 const PlayerBar = (props: PlayerBarProps) => {
+  const buttonSize = { width: 50, height: 50 }
   const containerRef = React.useRef<HTMLDivElement>(null)
   const {
     showPlayerBar,
@@ -258,7 +269,10 @@ const PlayerBar = (props: PlayerBarProps) => {
     pause,
     handleFullScreen,
     volume,
+    playbackRate,
+    setPlaybackRate
   } = props
+
   return (
     <Box
       className="course-player-bar"
@@ -293,41 +307,62 @@ const PlayerBar = (props: PlayerBarProps) => {
               // height: `calc(${playerControllerProps.height} * 0.15)`,
               width: '100%',
               height: 50,
-              backgroundColor: 'gray',
-              opacity: '80%',
+              backgroundColor: 'white',
+              opacity: '85%',
               display: 'flex',
               justifyContent: 'space-between',
             }}
           >
-            <ButtonBase
-              sx={{ height: 50, width: 50, zIndex: 1000 }}
-              onClick={() => {
-                playing ? pause() : play()
-              }}
-            >
-              {playing ? <Pause /> : <PlayArrow />}
-            </ButtonBase>
-            <Box width={'100%'} height={'100%'} display="flex">
+            <div style={{ display: 'flex' }}>
+              <ButtonBase
+                sx={{ ...buttonSize }}
+                onClick={() => {
+                  playing ? pause() : play()
+                }}
+              >
+                {playing ? <Pause /> : <PlayArrow />}
+              </ButtonBase>
               <Slider
-                sx={{ width: 100, alignSelf: 'center', zIndex: 1000 }}
+                sx={{ width: 100, alignSelf: 'center' }}
                 value={volume}
                 onChange={handleVolumeSliderChange}
                 min={0}
                 max={1}
                 step={0.05}
               />
-            </Box>
+            </div>
 
-            <ButtonBase
-              sx={{ height: 50, width: 50, zIndex: 1000 }}
-              onClick={
-                handleFullScreen.active
-                  ? handleFullScreen.exit
-                  : handleFullScreen.enter
-              }
-            >
-              {handleFullScreen.active ? <FullscreenExit /> : <Fullscreen />}
-            </ButtonBase>
+            {/* <Box width={'100%'} height={'100%'} display="flex">
+              
+            </Box> */}
+            <div>
+              <ButtonBase sx={{ ...buttonSize }}
+                disabled={playbackRate <= 0.25}
+                onClick={() => { setPlaybackRate(playbackRate - 0.25) }
+
+                }
+              >
+                <KeyboardDoubleArrowDown />
+              </ButtonBase>
+              {playbackRate.toFixed(2)}
+              <ButtonBase sx={{ ...buttonSize }}
+                disabled={playbackRate >= 2}
+                onClick={() => { setPlaybackRate(playbackRate + 0.25) }}
+              >
+                <KeyboardDoubleArrowUp />
+              </ButtonBase>
+              <ButtonBase
+                sx={{ ...buttonSize, zIndex: 1000 }}
+                onClick={
+                  handleFullScreen.active
+                    ? handleFullScreen.exit
+                    : handleFullScreen.enter
+                }
+              >
+                {handleFullScreen.active ? <FullscreenExit /> : <Fullscreen />}
+              </ButtonBase>
+
+            </div>
           </div>
         </div>
       </Slide>
