@@ -1,5 +1,5 @@
 import ReactPlayer from 'react-player'
-
+import { OnProgressProps } from 'react-player/base'
 export declare class ReactPlayerType extends ReactPlayer {
   static canPlay(url: string): boolean
   static canEnablePIP(url: string): boolean
@@ -11,4 +11,8 @@ export declare class ReactPlayerType extends ReactPlayer {
   getDuration(): number
   getInternalPlayer(key?: string): Record<string, any>
   showPreview(): void
+}
+
+export interface PlayerProgress extends OnProgressProps {
+  duration: number
 }

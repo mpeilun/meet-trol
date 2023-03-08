@@ -25,40 +25,39 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import ArrowDropUpOutlinedIcon from '@mui/icons-material/ArrowDropUpOutlined'
 import ArrowDropDownOutlinedIcon from '@mui/icons-material/ArrowDropDownOutlined'
 import CustomizedSlider from './customized-slider'
+import { PlayerProgress, ReactPlayerType } from '../../types/react-player'
 
 function formatTime(value) {
   dayjs.extend(duration)
   return dayjs.duration(value, 'seconds').format('HH:mm:ss')
 }
 
-function VideoRangeSlider({
-  sx,
-  title,
-  questionType,
-  now,
-  start,
-  end,
-  duration,
-  onTimeChange,
-  seekTo,
-}: {
-  sx: SxProps<Theme>
-  title: string
-  questionType: string
-  now?: number
+interface VideoRangeSliderProps {
+  sx?: SxProps<Theme>
+  reactPlayer: ReactPlayerType
+  playerProgress: PlayerProgress
   start?: number
   end?: number
-  duration: number
-  onTimeChange: (start: number, end: number) => void
-  seekTo: (time: number) => void
-}) {
-  const [values, setValues] = useState([start ?? 0, end ?? 40])
-  const [nowTime, setNowTime] = useState(now ?? 0)
+  onSelectRangeChange?: (start: number, end: number) => void
+}
+
+function VideoRangeSlider(props: VideoRangeSliderProps) {
+  const { sx, reactPlayer, playerProgress, start, end, onSelectRangeChange } =
+    props
+
+  type CurrentProgressType = number | number[]
+  const [currentProgress, setCurrentProgress] = useState<CurrentProgressType>(0)
+  const [selectRange, setSelectRange] = useState([start ?? 0, end ?? 40])
 
   useEffect(() => {
-    if (now == nowTime) return
-    setNowTime(now)
-  }, [now])
+    console.log(typeof playerProgress.playedSeconds)
+    console.log(typeof playerProgress.playedSeconds)
+    console.log(typeof playerProgress.playedSeconds)
+    console.log(typeof playerProgress.playedSeconds)
+    setCurrentProgress((prev) =>
+      typeof prev === 'number' ? playerProgress.playedSeconds : [0, 0]
+    )
+  }, [playerProgress.playedSeconds])
 
   const handleChange = (event, newValue, activeThumb) => {
     if (!Array.isArray(newValue)) {
@@ -66,12 +65,14 @@ function VideoRangeSlider({
     }
 
     if (activeThumb === 0) {
-      setValues([Math.min(newValue[0], values[1]), values[1]])
+      setSelectRange([Math.min(newValue[0], selectRange[1]), selectRange[1]])
     } else {
-      setValues([values[0], Math.max(newValue[1], values[0])])
+      setSelectRange([selectRange[0], Math.max(newValue[1], selectRange[0])])
     }
 
-    onTimeChange(newValue[0], newValue[1])
+    if (onSelectRangeChange) {
+      onSelectRangeChange(selectRange[0], selectRange[1])
+    }
   }
 
   const timerButtonSx: SxProps<Theme> = {
@@ -90,7 +91,6 @@ function VideoRangeSlider({
 
   //TODO 0307
   //判斷 duration, now 型態
-  //開始 結束 時間設定還沒修改
   //Youtube Link 拉上來
   //修復 consol.log 錯誤
   //在devtools 看會跑版?
@@ -99,15 +99,12 @@ function VideoRangeSlider({
     <>
       <Box sx={sx} margin={'0 0 36px 0'}>
         <CustomizedSlider
-          value={nowTime}
-          onChange={(event, newValue: number) => {
-            if (nowTime == newValue) return
-            startTransition(() => {
-              setNowTime(newValue)
-              seekTo(newValue)
-            })
+          value={currentProgress}
+          onChange={(event, newValue) => {
+            setCurrentProgress(newValue)
+            reactPlayer?.getInternalPlayer().seekTo(newValue)
           }}
-          max={duration}
+          max={playerProgress.duration}
           valueLabelDisplay="on"
           valueLabelFormat={(value) => formatTime(value)}
           disableSwap
@@ -135,34 +132,36 @@ function VideoRangeSlider({
               top: '16px',
             },
           }}
-          value={values}
+          value={selectRange}
           onChange={handleChange}
-          max={duration}
+          max={playerProgress.duration}
           valueLabelDisplay="auto"
           valueLabelFormat={(value) => formatTime(value)}
           disableSwap
           marks={[
             { value: 0, label: formatTime(0) },
-            { value: duration, label: formatTime(duration) },
+            {
+              value: playerProgress.duration,
+              label: formatTime(playerProgress.duration),
+            },
           ]}
         />
       </Box>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
+        {/* 影片長度 */}
         <Box display="flex" margin={'8px 0 8px 0'}>
-          {/* 影片長度 */}
           {/* 開始時間 */}
-
           <TimeField
             label={'開始時間'}
-            value={dayjs().startOf('day').add(values[0], 'second')}
+            value={dayjs().startOf('day').add(selectRange[0], 'second')}
             minTime={dayjs().startOf('day')}
-            maxTime={dayjs().startOf('day').add(values[1], 'second')}
+            maxTime={dayjs().startOf('day').add(selectRange[1], 'second')}
             onChange={(newValue: Dayjs) => {
               if (
-                covertToSecond(newValue) <= values[1] &&
+                covertToSecond(newValue) <= selectRange[1] &&
                 covertToSecond(newValue) >= 0
               ) {
-                setValues([covertToSecond(newValue), values[0]])
+                setSelectRange([covertToSecond(newValue), selectRange[1]])
               }
             }}
             format="HH:mm:ss"
@@ -177,18 +176,19 @@ function VideoRangeSlider({
             }}
           />
           {/* 結束時間 */}
-
           <TimeField
             label={'結束時間'}
-            value={dayjs().startOf('day').add(values[1], 'second')}
-            minTime={dayjs().startOf('day').add(values[0], 'second')}
-            maxTime={dayjs().startOf('day').add(duration, 'second')}
+            value={dayjs().startOf('day').add(selectRange[1], 'second')}
+            minTime={dayjs().startOf('day').add(selectRange[0], 'second')}
+            maxTime={dayjs()
+              .startOf('day')
+              .add(playerProgress.duration, 'second')}
             onChange={(newValue: Dayjs) => {
               if (
-                covertToSecond(newValue) <= duration &&
-                covertToSecond(newValue) >= values[0]
+                covertToSecond(newValue) <= playerProgress.duration &&
+                covertToSecond(newValue) >= selectRange[0]
               ) {
-                setValues([covertToSecond(newValue), values[1]])
+                setSelectRange([selectRange[0], covertToSecond(newValue)])
               }
             }}
             format="HH:mm:ss"

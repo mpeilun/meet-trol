@@ -25,15 +25,9 @@ function Layout(props: { children: ReactNode }) {
         />
         <Box
           display="flex"
-          //TODO危險
-          // width="100vw"
-          // ?? 下面不確定要不要加上
-          // overflow={'hidden'}
           height="100vh"
           sx={{
             flexDirection: 'column',
-            //暫時的
-            // overflow: asPath.includes('/courses/') ? 'hidden' : 'auto',
           }}
         >
           {asPath !== '/auth/signin' && <MainNavigation />}
