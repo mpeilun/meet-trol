@@ -75,17 +75,13 @@ function EditQuestionPage() {
   const [playing, setPlaying] = useState(false)
   const play = () => setPlaying(true)
   const pause = () => setPlaying(false)
-  const [playerProgress, setPlayerProgress] =
-    useState<PlayerProgress>(initPlayerProgress)
+  const [playerProgress, setPlayerProgress] = useState(initPlayerProgress)
 
   const [reactPlayer, setReactPlayer] = useState<ReactPlayerType>(null)
 
   const handlePlayerProgress = (props: OnProgressProps) => {
     setPlayerProgress((prev) => {
-      const fixedProps = Object.fromEntries(
-        Object.entries(props).map(([key, value]) => [key, value.toFixed(2)])
-      )
-      return { ...prev, ...fixedProps }
+      return { ...prev, ...props }
     })
   }
 

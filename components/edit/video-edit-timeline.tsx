@@ -45,18 +45,14 @@ function VideoRangeSlider(props: VideoRangeSliderProps) {
   const { sx, reactPlayer, playerProgress, start, end, onSelectRangeChange } =
     props
 
-  type CurrentProgressType = number | number[]
-  const [currentProgress, setCurrentProgress] = useState<CurrentProgressType>(0)
+  const [currentSeconds, setCurrentSeconds] = useState(0)
   const [selectRange, setSelectRange] = useState([start ?? 0, end ?? 40])
 
   useEffect(() => {
-    console.log(typeof playerProgress.playedSeconds)
-    console.log(typeof playerProgress.playedSeconds)
-    console.log(typeof playerProgress.playedSeconds)
-    console.log(typeof playerProgress.playedSeconds)
-    setCurrentProgress((prev) =>
-      typeof prev === 'number' ? playerProgress.playedSeconds : [0, 0]
-    )
+    if (playerProgress.playedSeconds == currentSeconds) return
+    startTransition(() => {
+      setCurrentSeconds(playerProgress.playedSeconds)
+    })
   }, [playerProgress.playedSeconds])
 
   const handleChange = (event, newValue, activeThumb) => {
@@ -99,9 +95,9 @@ function VideoRangeSlider(props: VideoRangeSliderProps) {
     <>
       <Box sx={sx} margin={'0 0 36px 0'}>
         <CustomizedSlider
-          value={currentProgress}
-          onChange={(event, newValue) => {
-            setCurrentProgress(newValue)
+          value={currentSeconds}
+          onChange={(event, newValue: number) => {
+            setCurrentSeconds(newValue)
             reactPlayer?.getInternalPlayer().seekTo(newValue)
           }}
           max={playerProgress.duration}
