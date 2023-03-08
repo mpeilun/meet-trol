@@ -162,7 +162,7 @@ function VideoRangeSlider({
                 covertToSecond(newValue) <= values[1] &&
                 covertToSecond(newValue) >= 0
               ) {
-                setValues([covertToSecond(newValue), values[0]])
+                setValues([covertToSecond(newValue), values[1]])
               }
             }}
             format="HH:mm:ss"
@@ -188,7 +188,7 @@ function VideoRangeSlider({
                 covertToSecond(newValue) <= duration &&
                 covertToSecond(newValue) >= values[0]
               ) {
-                setValues([covertToSecond(newValue), values[1]])
+                setValues([values[0], covertToSecond(newValue)])
               }
             }}
             format="HH:mm:ss"
