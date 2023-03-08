@@ -85,11 +85,9 @@ function VideoRangeSlider(props: VideoRangeSliderProps) {
     return time?.hour() * 3600 + time?.minute() * 60 + time?.second()
   }
 
-  //TODO 0307
-  //判斷 duration, now 型態
-  //Youtube Link 拉上來
-  //修復 consol.log 錯誤
-  //在devtools 看會跑版?
+  //TODO 0308
+  //Youtube Link 調整位置
+  //在 Devtools 會跑版
 
   return (
     <>

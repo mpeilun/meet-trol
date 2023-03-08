@@ -195,7 +195,7 @@ function MainNavigation() {
               <Tooltip title={'登入'}>
                 <IconButton
                   onClick={() => {
-                    window.open('auth/signin')
+                    window.open('/auth/signin')
                   }}
                   sx={{ p: 0 }}
                 >
