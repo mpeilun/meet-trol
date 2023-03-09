@@ -18,7 +18,6 @@ interface alert {
 export default function SingleChoice(props: { data: ChoiceData }) {
   const data = props.data
   const [value, setValue] = React.useState('')
-  const [error, setError] = React.useState(false)
   const [isReply, setIsReply] = React.useState(false)
 
   const [isAnsError, setIsAnsError] = React.useState<alert>({
@@ -30,12 +29,25 @@ export default function SingleChoice(props: { data: ChoiceData }) {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     console.log(value)
-    if (value === 'right') {
-      setIsReply(true)
 
-      console.log('correct')
+    if (value === '') {
       setIsAnsError({
         isShow: true,
+        text: '請選擇答案',
+        severity: 'warning',
+      })
+    } else if (!data.isShowAnswer) {
+      setIsReply(true)
+      setIsAnsError({
+        isShow: true,
+        text: '請繼續作答',
+        severity: 'info',
+      })
+    } else if (value === 'right') {
+      setIsReply(true)
+      console.log('correct')
+      setIsAnsError({
+        isShow: data.isShowAnswer,
         text: '正確',
         severity: 'success',
       })
@@ -46,12 +58,6 @@ export default function SingleChoice(props: { data: ChoiceData }) {
       // }).then(() => {
       //   // props.handleQuestionClose()
       // })
-    } else if (value === '') {
-      setIsAnsError({
-        isShow: true,
-        text: '請選擇答案',
-        severity: 'warning',
-      })
     } else {
       setIsReply(true)
       setIsAnsError({
@@ -59,14 +65,6 @@ export default function SingleChoice(props: { data: ChoiceData }) {
         text: '錯誤',
         severity: 'error',
       })
-    }
-
-    if (value === 'right') {
-      setError(false)
-    } else if (value === null) {
-      setError(true)
-    } else {
-      setError(true)
     }
   }
 
@@ -82,7 +80,7 @@ export default function SingleChoice(props: { data: ChoiceData }) {
   return (
     <form onSubmit={handleSubmit}>
       <FormControl sx={{ pt: 1, width: '100%' }} variant="standard">
-        <FormLabel id="demo-error-radios">{data.title}</FormLabel>
+        <FormLabel id="demo-error-radios">{data.content ?? ''}</FormLabel>
         <Box sx={{ height: 0 }}></Box>
         <RadioGroup
           aria-labelledby="demo-error-radios"
@@ -103,7 +101,7 @@ export default function SingleChoice(props: { data: ChoiceData }) {
           })}
         </RadioGroup>
         <Collapse in={isAnsError.isShow}>
-          <Alert severity={isAnsError.severity} sx={{ mb: 2 }}>
+          <Alert severity={isAnsError.severity} sx={{ mb: 1.5 }}>
             {isAnsError.text}
           </Alert>
         </Collapse>
@@ -115,11 +113,18 @@ export default function SingleChoice(props: { data: ChoiceData }) {
             justifyContent: 'space-between',
           }}
         >
-          {isReply && (
+          {isReply && data.note && (
             <Button
               disableElevation
               type="button"
               variant="contained"
+              onClick={() => {
+                setIsAnsError({
+                  isShow: true,
+                  text: data.note ?? '',
+                  severity: isAnsError.severity,
+                })
+              }}
               sx={{ width: 125, fontWeight: 'bold', borderRadius: 16 }}
             >
               詳解

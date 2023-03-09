@@ -29,7 +29,7 @@ const PopupFab = (props: {
   //   }
   // }
 
-  const [openQuestion, setOpenQuestion] = React.useState(false)
+  const [openQuestion, setOpenQuestion] = React.useState(true)
   const handleOpenQuestion = () => {
     setOpenQuestion(true)
     props.pause()
@@ -39,9 +39,15 @@ const PopupFab = (props: {
     props.play()
   }
 
+
+
   // console.log(props.data)
 
   if (playedSecond > props.data.start && playedSecond < props.data.end) {
+    if(openQuestion){
+      props.pause()
+    }
+    
     if (props.data.questionType == 'info') {
       return (
         <>

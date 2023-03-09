@@ -2,30 +2,41 @@ import React, { useState } from 'react'
 import { useDrop } from 'react-dnd'
 import { Box, Typography, Grid } from '@mui/material'
 
-function AnsItem(props: { ans: string }) {
+function AnsItem(props: {
+  ans: string
+  isReply: boolean
+  isShowAnswer: boolean
+}) {
   const [ansUser, setAns] = useState('答案拖曳至此')
   const [color, setColor] = useState('grey')
 
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'text',
-    drop: (item: { ans: string }) => setAnswer(item.ans),
+    drop: (item: { ans: string }) => {
+      setAnswer(item.ans)
+      setYourAnswer(item.ans)
+    },
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
     }),
   }))
-
+  const [yorAnswer, setYourAnswer] = React.useState('')
   const setAnswer = (title: string) => {
     setAns(title)
-    check(title)
   }
 
   const check = (ansUser: string) => {
-    if (props.ans == ansUser) {
-      setColor('green')
-    } else {
-      setColor('red')
+    if (props.isReply && props.isShowAnswer) {
+      if (props.ans == ansUser) {
+        setColor('green')
+      } else {
+        setColor('red')
+      }
     }
   }
+  React.useEffect(() => {
+    check(yorAnswer)
+  }, [props.isReply])
 
   // console.log(props.index)
   return (
@@ -41,11 +52,12 @@ function AnsItem(props: { ans: string }) {
           p: 0.5,
           px: 1,
           mx: 1,
-          fontSize: 20,
+          fontWeight: 'bold',
+          fontSize: '0.85rem',
           display: 'flex-inline',
           alignItems: 'center',
           border: 2,
-          borderColor: 'black',
+          borderColor: isOver ? 'red' : 'black',
           borderRadius: 2,
           // width: '50%',
           // height: '50%',
