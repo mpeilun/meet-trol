@@ -73,6 +73,7 @@ function EditQuestionPage() {
   const blockLeft = useRef<HTMLDivElement>(null)
   // const playerRef = useRef<ReactPlayerType>(null)
   const [playing, setPlaying] = useState(false)
+  const [ready, setReady] = useState(false)
   const play = () => setPlaying(true)
   const pause = () => setPlaying(false)
   const [playerProgress, setPlayerProgress] = useState(initPlayerProgress)
@@ -93,6 +94,7 @@ function EditQuestionPage() {
 
   const handelPlayerReady = (player: ReactPlayerType) => {
     {
+      setReady(true)
       setReactPlayer(player)
     }
   }
@@ -127,6 +129,18 @@ function EditQuestionPage() {
         >
           {/* 影片區塊 左側 */}
           <Box width="45%" ref={blockLeft}>
+            {/* 提示：請輸入正確的Youtube網址 */}
+            {/* {!ready && (
+              <Box
+                position={'absolute'}
+                width={'45%'}
+                height={'100%'}
+                display={'flex'}
+                justifyContent={'center'}
+              >
+                <CircularProgress />
+              </Box>
+            )} */}
             {/*播放器*/}
             <ReactPlayerDynamic
               fallback={<div>loading...</div>}
@@ -137,6 +151,7 @@ function EditQuestionPage() {
               onProgress={handlePlayerProgress}
               onDuration={handelPlayerDuration}
               onReady={handelPlayerReady}
+              onError={(e) => setReady(false)}
               width={'100%'}
               progressInterval={200}
               config={{
@@ -149,72 +164,23 @@ function EditQuestionPage() {
                 },
               }}
             />
-            {/* {reactPlayer?.getInternalPlayer().canPlay(video.url) ? (
-              <>
-                <ReactPlayerDynamic
-                  fallback={<div>loading...</div>}
-                  url={video.url}
-                  playing={playing}
-                  onPlay={play}
-                  onPause={pause}
-                  onProgress={handlePlayerProgress}
-                  onDuration={handelPlayerDuration}
-                  onReady={handelPlayerReady}
-                  width={'100%'}
-                  progressInterval={200}
-                  config={{
-                    youtube: {
-                      playerVars: {
-                        controls: 1,
-                        modestbranding: 1,
-                        rel: 0,
-                      },
-                    },
-                  }}
-                />
-              </>
-            ) : (
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  flexDirection: 'column',
-                }}
-              >
-                <Typography
-                  variant="h5"
-                  textAlign="center"
-                  sx={{ color: 'error.main' }}
-                >
-                  請輸入正確的網址！
-                </Typography>
-              </Box>
-            )} */}
             <Box>
               {/*時間軸*/}
               <TimeRangeSlider
                 sx={{ width: '100%', padding: '10px 0 10px 0' }}
                 reactPlayer={reactPlayer}
                 playerProgress={playerProgress}
+                url={video.url}
+                onUrlChange={(url) => {
+                  setVideo((prev) => {
+                    return { ...prev, url: url }
+                  })
+                }}
                 // start={500}
                 // end={600}
                 // onSelectRangeChange={(startTime, endTime) => {
                 // console.log(startTime, endTime)
                 // }}
-              />
-              {/*網址輸入框*/}
-              <TextField
-                fullWidth
-                label="Youtube Link"
-                variant="standard"
-                value={video.url}
-                size="small"
-                sx={{ m: '24px 0' }}
-                onChange={(event) => {
-                  setVideo((prev) => {
-                    return { ...prev, url: event.target.value }
-                  })
-                }}
               />
             </Box>
           </Box>
