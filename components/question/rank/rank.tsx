@@ -13,6 +13,7 @@ import {
   AlertColor,
   Collapse,
   Alert,
+  ListItemSecondaryAction,
 } from '@mui/material'
 import {
   DragDropContext,
@@ -23,6 +24,8 @@ import {
 import CloseIcon from '@mui/icons-material/Close'
 import MenuIcon from '@mui/icons-material/Menu'
 import { resetServerContext } from 'react-beautiful-dnd'
+import { RankData } from '../../../types/chapter'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 
 interface alert {
   isShow: boolean
@@ -32,49 +35,33 @@ interface alert {
 
 export default function RankQuestion(props: {
   handleQuestionClose: () => void
+  data: RankData
 }) {
-  //   React.useEffect(() => {
-  //     chrome.runtime.sendMessage(
-  //       {
-  //         contentScriptQuery: 'getOrderData',
-  //       },
-  //       function (response) {
-  //         // console.log(response[0].items[0].title)
-  //         // console.log(response[0].items[1].title)
-  //         // console.log(response[0].questionTitle)
-  //         // console.log(response[0]._id)
+  const data = props.data
 
-  //         setQuestionId(response[0]._id)
-  //         setItems(shuffle(response[0].items)) // 暫時從資料庫第一筆讀取
-  //         setQuestionTitle(response[0].questionTitle) // 未解決老師出哪一題 學生端就知道跳出哪一題
-  //       }
-  //     )
-  //   }, [])
+  const shuffle = (array: string[]): string[] => {
+    let arr = array.slice()
+    for (let i = arr.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1))
+      ;[arr[i], arr[j]] = [arr[j], arr[i]]
+    }
+    return arr
+  }
 
-  //   const shuffle = (array: Array<Items>): Array<Items> => {
-  //     for (let i = array.length - 1; i > 0; i--) {
-  //       let j = Math.floor(Math.random() * (i + 1))
-  //       ;[array[i], array[j]] = [array[j], array[i]]
-  //     }
-  //     return array
-  //   }
-
-  const initialItems: Array<{ title: string }> = [
-    { title: 'findViewById 綁定物件' },
-    { title: '建立物件變數' },
-    { title: '完成component介面' },
-  ]
-  const ans: Array<{ title: string }> = [
-    { title: '完成component介面' },
-    { title: '建立物件變數' },
-    { title: 'findViewById 綁定物件' },
-  ]
-  const [items, setItems] = useState(initialItems)
-
-  const [questionId, setQuestionId] = useState('')
-  const [questionTitle, setQuestionTitle] = useState('')
-
+  const newArray = shuffle(data.options)
+  const [items, setItems] = useState<string[]>(newArray)
+  const [isReply, setIsReply] = React.useState(false)
+  const [isAnsError, setIsAnsError] = useState<alert>({
+    isShow: false,
+    text: '',
+    severity: 'error',
+  })
   const handleOnDragEnd = (result: DropResult): void => {
+    setIsAnsError({
+      isShow: false,
+      text: '',
+      severity: isAnsError.severity,
+    })
     if (!result.destination) return
     let newItems = Array.from(items)
     const [reorderedItem] = newItems.splice(result.source.index, 1)
@@ -82,12 +69,12 @@ export default function RankQuestion(props: {
     setItems(newItems)
   }
 
-  const areArraysEqual = (
-    array1: Array<{ title: string }>,
-    array2: Array<{ title: string }>
-  ) => {
-    for (let i = 0; i < array1.length; i++) {
-      if (array1[i].title !== array2[i].title) {
+  const areArraysEqual = (array: string[]) => {
+    console.log(array)
+    const ans = data.options
+    console.log(ans)
+    for (let i = 0; i < array.length; i++) {
+      if (array[i] !== ans[i]) {
         return false
       }
     }
@@ -95,92 +82,46 @@ export default function RankQuestion(props: {
   }
 
   const checkAns = () => {
-    if (areArraysEqual(items, ans)) {
-      console.log('correct')
+    if (!data.isShowAnswer) {
+      setIsReply(true)
       setIsAnsError({
         isShow: true,
+        text: '請繼續作答',
+        severity: 'info',
+      })
+    } else if (areArraysEqual(items)) {
+      setIsReply(true)
+      setIsAnsError({
+        isShow: data.isShowAnswer,
         text: '正確',
         severity: 'success',
       })
-      new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve(true)
-        }, 750)
-      }).then(() => {
-        // props.handleQuestionClose()
-      })
     } else {
+      setIsReply(true)
       setIsAnsError({
-        isShow: true,
+        isShow: data.isShowAnswer,
         text: '錯誤',
         severity: 'error',
       })
     }
   }
 
-  //   const pushQ = () => {
-  //     chrome.runtime.sendMessage(
-  //       {
-  //         contentScriptQuery: 'postOrderAns',
-  //         questionId: questionId,
-  //         qTitle: questionTitle,
-  //         studentId: 'B0943005',
-  //         items: items,
-  //       },
-  //       function (response) {
-  //         // console.log(questionId), console.log(items), console.log(questionTitle)
-  //       }
-  //     )
-  //     // console.log(questionTitle)
-  //     // console.log(items)
-  //     setQuestionTitle('')
-  //     setItems([])
-  //     props.setCloseS()
-  //     props.setOpenR()
-  //   }
-
   resetServerContext()
 
-  const [isAnsError, setIsAnsError] = useState<alert>({
-    isShow: false,
-    text: '',
-    severity: 'error',
-  })
-
   return (
-    // <Box
-    //   sx={{
-    //     display: 'flex',
-    //     justifyContent: 'center',
-    //     alignItems: 'center',
-    //     height: '100%',
-    //   }}
-    // >
-    //   <Card
-    //     sx={{
-    //       width: '600px',
-
-    //       // minHeight: '0',
-    //       // position: 'absolute',
-    //       // display: props.displayQuestion ? 'block' : 'none',
-    //       // left: 0,
-    //       // right: 0,
-    //       // top: 0,
-    //       // bottom: 0,
-    //       // m: 'auto',
-    //       // boxShadow: 10,
-    //     }}
-    //   >
-    <Box>
+    <Box sx={{ minWidth: 450 }}>
       <Box minHeight={50} display="flex" alignItems="center">
-        <Typography variant="h5" sx={{ width: '100%' }}>
-          排出建立component的順序
+        <Typography variant="h5" sx={{ fontWeight: 'bold', width: '100%' }}>
+          {data.title}
         </Typography>
         <IconButton sx={{}} onClick={() => props.handleQuestionClose()}>
           <CloseIcon />
         </IconButton>
       </Box>
       <Divider />
+      <Typography variant="body2" sx={{ pt: 1 }}>
+        {data.content ?? ''}
+      </Typography>
 
       {/* 拖曳 */}
       <Box
@@ -189,29 +130,17 @@ export default function RankQuestion(props: {
           flexDirection: 'column',
         }}
       >
-        {/* <Typography textAlign="center" variant="h5">
-    排序問題
-  </Typography>
-  <Typography variant="h6" color="#9e9e9e">
-    題目
-  </Typography>
-  <Typography variant="h4" color="black">
-    {questionTitle}
-  </Typography>
-  <Typography variant="h6" color="#9e9e9e">
-    選項
-  </Typography> */}
-
         <DragDropContext onDragEnd={handleOnDragEnd}>
           <Droppable droppableId="items">
             {(provided) => (
               <List {...provided.droppableProps} ref={provided.innerRef}>
-                {items.map(({ title }, index) => {
+                {items.map((title, index) => {
                   return (
                     <Draggable
                       key={`${index}${title}`}
                       draggableId={`${index}${title}`}
                       index={index}
+                      isDragDisabled={isReply}
                     >
                       {(provided, snapshot) => (
                         <ListItem
@@ -219,7 +148,9 @@ export default function RankQuestion(props: {
                             transition: '.3s ease background-color',
                             bgcolor: snapshot.isDragging ? '#000' : '#fff',
                             position: 'relative',
-                            border: '1.5px solid #212121',
+                            border: isReply
+                              ? '1.5px solid grey'
+                              : '1.5px solid #212121',
                             mb: 1,
                             borderRadius: '8px',
                             '& .MuiTypography-root': {
@@ -234,16 +165,24 @@ export default function RankQuestion(props: {
                           <ListItemText>
                             <MenuIcon
                               sx={{
-                                p: 1,
+                                p: 0.75,
                                 mr: 1,
-                                color: snapshot.isDragging ? '#fff' : '#000',
+                                color: isReply
+                                  ? 'grey'
+                                  : snapshot.isDragging
+                                  ? '#fff'
+                                  : '#000',
                               }}
                             />
                             <Box
                               component="span"
                               width="100%"
                               sx={{
-                                color: snapshot.isDragging ? '#fff' : '#000',
+                                color: isReply
+                                  ? 'grey'
+                                  : snapshot.isDragging
+                                  ? '#fff'
+                                  : '#000',
                               }}
                             >
                               {title}
@@ -256,7 +195,11 @@ export default function RankQuestion(props: {
                               left="6px"
                               fontSize=".7rem"
                               sx={{
-                                color: snapshot.isDragging ? '#fff' : '#9e9e9e',
+                                color: isReply
+                                  ? 'grey'
+                                  : snapshot.isDragging
+                                  ? '#fff'
+                                  : '#9e9e9e',
                               }}
                             >
                               {index + 1}
@@ -277,16 +220,53 @@ export default function RankQuestion(props: {
             {isAnsError.text}
           </Alert>
         </Collapse>
-        <Button
-          size="medium"
-          variant="contained"
-          color="secondary"
-          fullWidth
-          onClick={checkAns}
-          disabled={items.length < 2 || items.length > 200}
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}
         >
-          送出
-        </Button>
+          {isReply && data.note && (
+            <Button
+              disableElevation
+              type="button"
+              variant="contained"
+              onClick={() => {
+                setIsAnsError({
+                  isShow: true,
+                  text: data.note ?? '',
+                  severity: 'info',
+                })
+              }}
+              sx={{ width: 125, fontWeight: 'bold', borderRadius: 16 }}
+            >
+              詳解
+            </Button>
+          )}
+          <Box></Box>
+          <Button
+            disableElevation
+            type="submit"
+            variant="contained"
+            disabled={isReply}
+            startIcon={<CheckCircleOutlineIcon />}
+            sx={{
+              bgcolor: '#82CD00',
+              '&:hover': {
+                backgroundColor: '#54B435',
+                color: 'white',
+              },
+              width: 125,
+              fontWeight: 'bold',
+              borderRadius: 16,
+            }}
+            onClick={checkAns}
+          >
+            送出
+          </Button>
+        </Box>
       </Box>
     </Box>
     //   </Card>

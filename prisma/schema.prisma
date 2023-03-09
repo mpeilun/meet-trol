@@ -131,6 +131,7 @@ model Choice {
   id           String           @id @default(auto()) @map("_id") @db.ObjectId
   questionType String
   title        String
+  content      String?
   isShowAnswer Boolean
   note         String?
   options      ChoiceOption[]
@@ -153,6 +154,7 @@ model Rank {
   id           String         @id @default(auto()) @map("_id") @db.ObjectId
   questionType String
   title        String
+  content      String?
   isShowAnswer Boolean
   note         String?
   options      String[]
@@ -175,6 +177,7 @@ model Fill {
   id           String         @id @default(auto()) @map("_id") @db.ObjectId
   questionType String
   title        String
+  content      String?
   isShowAnswer Boolean
   note         String?
   options      String[]
@@ -203,7 +206,8 @@ type Position {
 model Drag {
   id           String         @id @default(auto()) @map("_id") @db.ObjectId
   questionType String
-  title        String?
+  title        String
+  content      String?
   url          String?
   isShowAnswer Boolean
   note         String?

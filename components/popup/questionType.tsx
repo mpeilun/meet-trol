@@ -5,7 +5,7 @@ import Info from '../question/info/info'
 import FillIn from '../question/fillIn/fillIn'
 import Drag from '../question/drag/drag'
 import { ChoiceData, RankData, FillData, DragData } from '../../types/chapter'
-import { Info as InfoData} from '@prisma/client'
+import { Info as InfoData } from '@prisma/client'
 
 const QuestionType = (props: {
   setClose: () => void
@@ -16,30 +16,47 @@ const QuestionType = (props: {
     // info
     case 'info':
       return (
-        <>
-          <Info handleQuestionClose={props.setClose} data={props.data}></Info>
-        </>
+        <Info
+          handleQuestionClose={props.setClose}
+          data={props.data as InfoData}
+        ></Info>
       )
 
     // choice
     case 'choice':
-      return <Choice handleQuestionClose={props.setClose} data={props.data as ChoiceData}></Choice>
+      return (
+        <Choice
+          handleQuestionClose={props.setClose}
+          data={props.data as ChoiceData}
+        ></Choice>
+      )
 
     // FillIn
     case 'fill':
       return (
-        <>
-          <FillIn handleQuestionClose={props.setClose}></FillIn>
-        </>
+        <FillIn
+          handleQuestionClose={props.setClose}
+          data={props.data as FillData}
+        ></FillIn>
       )
 
     // rank
     case 'rank':
-      return <RankQuestion handleQuestionClose={props.setClose}></RankQuestion>
+      return (
+        <RankQuestion
+          handleQuestionClose={props.setClose}
+          data={props.data as RankData}
+        ></RankQuestion>
+      )
 
     // drag
     case 'drag':
-      return <Drag handleQuestionClose={props.setClose}></Drag>
+      return (
+        <Drag
+          handleQuestionClose={props.setClose}
+          data={props.data as DragData}
+        ></Drag>
+      )
 
     default:
       return <Typography>題目顯示失敗</Typography>

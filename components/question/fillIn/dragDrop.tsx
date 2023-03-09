@@ -1,98 +1,206 @@
 import React from 'react'
-import { Box, Typography, Grid } from '@mui/material'
-import { useDrag } from 'react-dnd'
+import {
+  Box,
+  Typography,
+  Grid,
+  Button,
+  Collapse,
+  Alert,
+  AlertColor,
+} from '@mui/material'
+import { DndProvider, useDrag } from 'react-dnd'
 import FillItem from './fillItems'
 import AnsItem from './ansItems'
+import { FillData } from '../../../types/chapter'
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  DropResult,
+} from 'react-beautiful-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 
-interface items {
-  id: number
-  title: string
-  url?: string
+interface alert {
+  isShow: boolean
+  text: string
+  severity: AlertColor
 }
-// 問題 list
 
-const question = '欲新增按鈕要使用(Button)，並新增(OnClickListener)監聽事件。'
-const regex = /(?<=\().+?(?=\))/g // 匹配所有單引號包含的文字
-const answers = question.match(regex) // 使用 match 方法匹配字串// const questionArray: Array<items> = [
-const questionElement = []
+const DragDrop = (props: { data: FillData }) => {
+  const data = props.data
+  const question = data.title
+  const regex = /(?<=\().+?(?=\))/g // 正則表達式 匹配所有括號內的文字
+  const answers = question.match(regex)
+  const options = data.options
+  const questionElement = []
 
-const questionComponent = () => {
-  let isInsideBracket = false
-  let answerIndex = 0
-  for (let i = 0; i < question.length; i++) {
-    const char = question[i]
-    if (char === '(') {
-      isInsideBracket = true
-    } else if (isInsideBracket) {
-      if (char === ')') {
-        questionElement.push(
-          <AnsItem key={`${i}ans`} ans={answers[answerIndex]}></AnsItem>
-        )
-        isInsideBracket = false
-        answerIndex++
-      }
+  const [isAnsError, setIsAnsError] = React.useState<alert>({
+    isShow: false,
+    text: '',
+    severity: 'error',
+  })
+  const [isReply, setIsReply] = React.useState(false)
+
+  const checkAns = () => {
+    if (!data.isShowAnswer) {
+      setIsReply(true)
+      setIsAnsError({
+        isShow: true,
+        text: '請繼續作答',
+        severity: 'info',
+      })
     } else {
-      questionElement.push(<span  key={`${i}text`}>{question[i]}</span>)
+      setIsReply(true)
+      setIsAnsError({
+        isShow: true,
+        text: '請檢查答案',
+        severity: 'info',
+      })
     }
   }
-}
-questionComponent()
-//   { id: 0, title: '欲新增按鈕要使用' },
-//   { id: 0, title: '並新增' },
-//   { id: 0, title: '監聽點擊事件' },
-// ]
-
-// 答案 list
-const ansArray = ['Button', 'OnClickListener', 'AlertDialog', 'Paper']
-
-// BUG 英文不會自動換行
-
-const DragDrop = () => {
-  return (
-    <>
-      {/* questions */}
-      <Box
-        sx={{
-          border: 2,
-          p: 2,
-          mr: 2,
-          borderRadius: 2,
-          lineHeight: 2,
-          // display: 'flex',
-          // flexDirection: 'row',
-          // justifyContent: 'space-around',
-          minWidth: 350,
-          minHeight: 300,
-        }}
-      >
-        {questionElement}
-      </Box>
-      {/* answer items */}
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-around',
-          alignItems: 'center',
-          height: '100%',
-          border: 2,
-          px: 1,
-          borderRadius: 2,
-          minWidth: 250,
-          minHeight: 300,
-        }}
-      >
-        {ansArray.map((title, index) => {
-          return (
-            <FillItem
-              key={`dragdrop-ans-${index}`}
-              title={title}
-              index={index}
-            ></FillItem>
+  const questionComponent = () => {
+    let isInsideBracket = false
+    let answerIndex = 0
+    for (let i = 0; i < question.length; i++) {
+      const char = question[i]
+      if (char === '(') {
+        isInsideBracket = true
+      } else if (isInsideBracket) {
+        if (char === ')') {
+          questionElement.push(
+            <AnsItem
+              key={`${i}ans`}
+              ans={answers[answerIndex]}
+              isReply={isReply}
+              isShowAnswer={data.isShowAnswer}
+            ></AnsItem>
           )
-        })}
+          isInsideBracket = false
+          answerIndex++
+        }
+      } else {
+        questionElement.push(<span key={`${i}text`}>{question[i]}</span>)
+      }
+    }
+  }
+  questionComponent()
+
+  // TO-DO 改成 beautiful-dnd
+  return (
+    <Box>
+      <Box
+        sx={{
+          overflow: 'hidden',
+          overflowY: 'auto',
+          pt: 1.5,
+          display: 'flex',
+          flexDirection: 'row',
+        }}
+      >
+        <DndProvider backend={HTML5Backend}>
+          {/* questions */}
+          <Box
+            sx={{
+              border: 2,
+              p: 2,
+              mr: 2,
+              borderRadius: 2,
+              lineHeight: 2,
+              // display: 'flex',
+              // flexDirection: 'row',
+              // justifyContent: 'space-around',
+              minWidth: 350,
+              minHeight: 250,
+            }}
+          >
+            {questionElement}
+          </Box>
+          {/* answer items */}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-around',
+              alignItems: 'center',
+              height: '100%',
+              border: 2,
+              px: 1,
+              borderRadius: 2,
+              minWidth: 200,
+              minHeight: 250,
+            }}
+          >
+            {options.map((title, index) => {
+              return (
+                <FillItem
+                  key={`dragdrop-ans-${index}`}
+                  title={title}
+                  index={index}
+                  isReply={isReply}
+                ></FillItem>
+              )
+            })}
+          </Box>
+        </DndProvider>
       </Box>
-    </>
+      {/* remark */}
+      <Collapse in={isAnsError.isShow}>
+        <Alert severity={isAnsError.severity} sx={{ mt: 1.5 }}>
+          {isAnsError.text}
+        </Alert>
+      </Collapse>
+
+      {/* submit */}
+      <Box
+        sx={{
+          pt: 1.5,
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+        }}
+      >
+        {isReply && data.note && (
+          <Button
+            disableElevation
+            type="button"
+            variant="contained"
+            onClick={() => {
+              setIsAnsError({
+                isShow: true,
+                text: data.note ?? '',
+                severity: 'info',
+              })
+            }}
+            sx={{ width: 125, fontWeight: 'bold', borderRadius: 16 }}
+          >
+            詳解
+          </Button>
+        )}
+        <Box></Box>
+        <Button
+          disableElevation
+          type="submit"
+          variant="contained"
+          disabled={isReply}
+          startIcon={<CheckCircleOutlineIcon />}
+          sx={{
+            bgcolor: '#82CD00',
+            '&:hover': {
+              backgroundColor: '#54B435',
+              color: 'white',
+            },
+            width: 125,
+            fontWeight: 'bold',
+            borderRadius: 16,
+          }}
+          onClick={checkAns}
+        >
+          送出
+        </Button>
+      </Box>
+    </Box>
   )
 }
 

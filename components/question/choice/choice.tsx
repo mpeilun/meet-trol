@@ -21,20 +21,21 @@ export default function Choice(props: {
     <Box>
       <Box minHeight={50} display="flex" alignItems="center">
         <Typography variant="h5" sx={{ width: '100%' }}>
-          問題
+          {data.title}
         </Typography>
         <IconButton onClick={() => props.handleQuestionClose()}>
           <CloseIcon />
         </IconButton>
       </Box>
       <Divider />
+
       {isSingleChoice ? (
         <Box sx={{ minWidth: 400 }}>
           <SingleChoice data={data} />
         </Box>
       ) : (
-        <Box>
-          <MultipleChoice></MultipleChoice>{' '}
+        <Box sx={{ minWidth: 400 }}>
+          <MultipleChoice data={data}></MultipleChoice>{' '}
         </Box>
       )}
     </Box>
