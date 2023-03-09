@@ -16,6 +16,7 @@ import {
   Card,
   CardActionArea,
   SliderThumb,
+  TextField,
 } from '@mui/material'
 import { TimeField } from '@mui/x-date-pickers'
 import dayjs, { Dayjs } from 'dayjs'
@@ -26,11 +27,7 @@ import ArrowDropUpOutlinedIcon from '@mui/icons-material/ArrowDropUpOutlined'
 import ArrowDropDownOutlinedIcon from '@mui/icons-material/ArrowDropDownOutlined'
 import CustomizedSlider from './customized-slider'
 import { PlayerProgress, ReactPlayerType } from '../../types/react-player'
-
-function formatTime(value) {
-  dayjs.extend(duration)
-  return dayjs.duration(value, 'seconds').format('HH:mm:ss')
-}
+import formatSeconds from '../../util/common'
 
 interface VideoRangeSliderProps {
   sx?: SxProps<Theme>
@@ -38,15 +35,30 @@ interface VideoRangeSliderProps {
   playerProgress: PlayerProgress
   start?: number
   end?: number
+  url: string
+  onUrlChange?: (url: string) => void
   onSelectRangeChange?: (start: number, end: number) => void
 }
 
 function VideoRangeSlider(props: VideoRangeSliderProps) {
-  const { sx, reactPlayer, playerProgress, start, end, onSelectRangeChange } =
-    props
+  const {
+    sx,
+    reactPlayer,
+    playerProgress,
+    start,
+    end,
+    url,
+    onUrlChange,
+    onSelectRangeChange,
+  } = props
 
+  const [inputUrl, setInputUrl] = useState('')
   const [currentSeconds, setCurrentSeconds] = useState(0)
   const [selectRange, setSelectRange] = useState([start ?? 0, end ?? 40])
+
+  useEffect(() => {
+    setInputUrl(url)
+  }, [url])
 
   useEffect(() => {
     if (playerProgress.playedSeconds == currentSeconds) return
@@ -96,11 +108,11 @@ function VideoRangeSlider(props: VideoRangeSliderProps) {
           value={currentSeconds}
           onChange={(event, newValue: number) => {
             setCurrentSeconds(newValue)
-            reactPlayer?.getInternalPlayer().seekTo(newValue)
+            reactPlayer?.getInternalPlayer()?.seekTo(newValue)
           }}
           max={playerProgress.duration}
           valueLabelDisplay="on"
-          valueLabelFormat={(value) => formatTime(value)}
+          valueLabelFormat={(value) => formatSeconds(value)}
           disableSwap
         />
         <Slider
@@ -130,13 +142,13 @@ function VideoRangeSlider(props: VideoRangeSliderProps) {
           onChange={handleChange}
           max={playerProgress.duration}
           valueLabelDisplay="auto"
-          valueLabelFormat={(value) => formatTime(value)}
+          valueLabelFormat={(value) => formatSeconds(value)}
           disableSwap
           marks={[
-            { value: 0, label: formatTime(0) },
+            { value: 0, label: formatSeconds(0) },
             {
               value: playerProgress.duration,
-              label: formatTime(playerProgress.duration),
+              label: formatSeconds(playerProgress.duration),
             },
           ]}
         />
@@ -192,6 +204,30 @@ function VideoRangeSlider(props: VideoRangeSliderProps) {
                 height: '30px',
                 width: '80px',
                 textAlign: 'center',
+              },
+            }}
+          />
+          {/*網址輸入框*/}
+          <TextField
+            label="Youtube Link"
+            value={inputUrl}
+            onChange={(event) => {
+              setInputUrl(event.target.value)
+              onUrlChange(event.target.value)
+            }}
+            sx={{
+              width: '32%',
+              maxWidth: '248px',
+              marginLeft: '16px',
+              '.MuiInputBase-input': {
+                padding: '8px',
+                height: '30px',
+                width: '100%',
+              },
+              '.MuiInputLabel-root': {
+                top: '-5px',
+                padding: '0px',
+                height: '30px',
               },
             }}
           />
