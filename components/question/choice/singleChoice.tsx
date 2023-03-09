@@ -28,8 +28,7 @@ export default function SingleChoice(props: { data: ChoiceData }) {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    console.log(value)
-
+    const correctIndex = data.options.findIndex((data) => data.isAnswer == true)
     if (value === '') {
       setIsAnsError({
         isShow: true,
@@ -43,9 +42,8 @@ export default function SingleChoice(props: { data: ChoiceData }) {
         text: '請繼續作答',
         severity: 'info',
       })
-    } else if (value === 'right') {
+    } else if (value == `${correctIndex}`) {
       setIsReply(true)
-      console.log('correct')
       setIsAnsError({
         isShow: data.isShowAnswer,
         text: '正確',
@@ -93,7 +91,7 @@ export default function SingleChoice(props: { data: ChoiceData }) {
               <FormControlLabel
                 disabled={isReply}
                 key={`${index}- ${option.option} option`}
-                value={option.isAnswer ? 'right' : `${index}-wrong`}
+                value={index}
                 control={<Radio />}
                 label={option.option}
               ></FormControlLabel>

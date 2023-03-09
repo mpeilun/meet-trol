@@ -34,15 +34,18 @@ const DragDrop = (props: { data: FillData }) => {
   const answers = question.match(regex)
   const options = data.options
   const questionElement = []
-
+  const [yourAns, setYourAns] = React.useState<boolean[]>(
+    new Array(answers.length).fill(false)
+  )
   const [isAnsError, setIsAnsError] = React.useState<alert>({
     isShow: false,
     text: '',
     severity: 'error',
   })
-  const [isReply, setIsReply] = React.useState(false)
+  const [isReply, setIsReply] = React.useState<boolean>(false)
 
   const checkAns = () => {
+    console.log(yourAns)
     if (!data.isShowAnswer) {
       setIsReply(true)
       setIsAnsError({
@@ -50,15 +53,27 @@ const DragDrop = (props: { data: FillData }) => {
         text: '請繼續作答',
         severity: 'info',
       })
+    } else if (yourAns.includes(false)) {
+      setIsReply(true)
+      setIsAnsError({
+        isShow: data.isShowAnswer,
+        text: '錯誤',
+        severity: 'error',
+      })
     } else {
       setIsReply(true)
       setIsAnsError({
-        isShow: true,
-        text: '請檢查答案',
-        severity: 'info',
+        isShow: data.isShowAnswer,
+        text: '正確',
+        severity: 'success',
       })
     }
   }
+
+  React.useEffect(() => {
+    // console.log(yourAns)
+    if(isReply){checkAns()}
+  }, [yourAns])
   const questionComponent = () => {
     let isInsideBracket = false
     let answerIndex = 0
@@ -71,9 +86,12 @@ const DragDrop = (props: { data: FillData }) => {
           questionElement.push(
             <AnsItem
               key={`${i}ans`}
+              index={answerIndex}
               ans={answers[answerIndex]}
               isReply={isReply}
               isShowAnswer={data.isShowAnswer}
+              setAns={setYourAns}
+              yourAns={yourAns}
             ></AnsItem>
           )
           isInsideBracket = false

@@ -144,7 +144,7 @@ model Choice {
 
 model ChoiceFeedback {
   id       String         @id @default(auto()) @map("_id") @db.ObjectId
-  answers  ChoiceOption[]
+  answers  Int[]
   userId   String         @db.ObjectId
   choice   Choice         @relation(fields: [choiceId], references: [id])
   choiceId String         @db.ObjectId

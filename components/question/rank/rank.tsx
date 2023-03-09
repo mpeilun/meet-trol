@@ -109,12 +109,12 @@ export default function RankQuestion(props: {
   resetServerContext()
 
   return (
-    <Box sx={{ minWidth: 450 }}>
+    <Box sx={{ minWidth: 450, overFlowX: 'hidden' }}>
       <Box minHeight={50} display="flex" alignItems="center">
         <Typography variant="h5" sx={{ fontWeight: 'bold', width: '100%' }}>
           {data.title}
         </Typography>
-        <IconButton sx={{}} onClick={() => props.handleQuestionClose()}>
+        <IconButton onClick={() => props.handleQuestionClose()}>
           <CloseIcon />
         </IconButton>
       </Box>

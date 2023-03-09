@@ -105,6 +105,7 @@ const PopupModal = (props: {
         >
           <Box
             sx={{
+              overFlowX: 'hidden',
               overflowY: 'auto',
               p: 2,
               display: 'flex',

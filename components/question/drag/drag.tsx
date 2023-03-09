@@ -134,7 +134,6 @@ const Drag = (props: { handleQuestionClose: () => void; data: DragData }) => {
   }
 
   const checkAns = () => {
-
     const check = isCorrect()
     if (!data.isShowAnswer) {
       setIsReply(true)
@@ -176,10 +175,11 @@ const Drag = (props: { handleQuestionClose: () => void; data: DragData }) => {
       <Typography variant="body2" sx={{ pt: 1.5 }}>
         {data.content ?? ''}
       </Typography>
-      <Box sx={{ overFlowY: 'auto' }}>
+      <Box >
         <Box
           ref={isReply ? emptyRef : boxRef}
           sx={{
+            width: 600,
             mt: 1.5,
             position: 'relative',
             border: 1.5,
@@ -195,13 +195,13 @@ const Drag = (props: { handleQuestionClose: () => void; data: DragData }) => {
           {/* 顯示圖片 */}
           <Box
             component="img"
-            src="/images/question.svg" // 變數替換 是否有圖片有則是網址
+            src={data.url} // 變數替換 是否有圖片有則是網址
             alt="Fail to load"
             sx={{
               backgroundSize: 'contain',
               backgroundRepeat: 'no-repeat',
               objectFit: 'contain',
-              borderRadius: 2,
+              borderRadius: 1.5,
               maxWidth: '100%',
               maxHeight: '100%',
             }}

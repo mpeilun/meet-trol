@@ -27,13 +27,13 @@ const Info = (props: { handleQuestionClose: () => void; data: InfoData }) => {
       <Box sx={{ pt: 1 }}>
         {data.content && <Typography>{data.content}</Typography>}
         {/* 顯示圖片 */}
-        <Box sx={{ width: '600px' }}>
+        <Box sx={{ width: '600px', mt: 1 }}>
           {isNoImage && (
             <Box
               component="img"
               src={props.data.url} // 變數替換 是否有圖片有則是網址
               alt="Failt to load image"
-              sx={{ borderRadius: 2, mt: 1, width: '100%' }}
+              sx={{ borderRadius: 2, width: '100%' }}
             ></Box>
           )}
         </Box>

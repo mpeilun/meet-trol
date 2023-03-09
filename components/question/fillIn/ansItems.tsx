@@ -6,6 +6,9 @@ function AnsItem(props: {
   ans: string
   isReply: boolean
   isShowAnswer: boolean
+  index: number
+  setAns: React.Dispatch<React.SetStateAction<boolean[]>>
+  yourAns: boolean[]
 }) {
   const [ansUser, setAns] = useState('答案拖曳至此')
   const [color, setColor] = useState('grey')
@@ -28,8 +31,15 @@ function AnsItem(props: {
   const check = (ansUser: string) => {
     if (props.isReply && props.isShowAnswer) {
       if (props.ans == ansUser) {
+        const newAns = [...props.yourAns]
+        newAns[props.index] = true
+        props.setAns(newAns)
+        console.log(newAns)
         setColor('green')
       } else {
+        const newAns = [...props.yourAns]
+        newAns[props.index] = false
+        props.setAns(newAns)
         setColor('red')
       }
     }
