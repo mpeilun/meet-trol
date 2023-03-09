@@ -1,5 +1,4 @@
 import { JSONTree } from 'react-json-tree'
-import ReactPlayer from 'react-player/lazy'
 import {
   Box,
   Button,
@@ -7,48 +6,44 @@ import {
   Typography,
   Tabs,
   Tab,
-  Card,
   Paper,
   CircularProgress,
 } from '@mui/material'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
-import { OnProgressProps } from 'react-player/base'
 import CreateChoice from '../../../components/question/choice/create'
 import { Video } from '../../../types/video-edit'
 import TimeRangeSlider from '../../../components/edit/video-edit-timeline'
+import dynamic from 'next/dynamic'
+import { PlayerProgress, ReactPlayerType } from '../../../types/react-player'
+import { OnProgressProps } from 'react-player/base'
 
-export interface PlayerProgress extends OnProgressProps {
-  duration: number
+const ReactPlayerDynamic = dynamic(() => import('react-player/lazy'), {
+  loading: () => (
+    <Box
+      width={'100%'}
+      height={'100%'}
+      display={'flex'}
+      justifyContent={'center'}
+    >
+      <CircularProgress />
+    </Box>
+  ),
+  ssr: false,
+})
+
+const initPlayerProgress: PlayerProgress = {
+  played: 0,
+  playedSeconds: 0,
+  loaded: 0,
+  loadedSeconds: 0,
+  duration: 0,
 }
 
 interface TabPanelProps {
   children?: React.ReactNode
   index: number
   value: number
-}
-
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-    </div>
-  )
-}
-
-function a11yProps(index: number) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  }
 }
 
 function EditQuestionPage() {
@@ -75,18 +70,18 @@ function EditQuestionPage() {
     setTabValue(newValue)
   }
 
-  const playerRef = useRef<ReactPlayer>(null)
+  const blockLeft = useRef<HTMLDivElement>(null)
+  // const playerRef = useRef<ReactPlayerType>(null)
   const [playing, setPlaying] = useState(false)
   const play = () => setPlaying(true)
   const pause = () => setPlaying(false)
-  const [playerProgress, setPlayerProgress] = useState<PlayerProgress>(null)
+  const [playerProgress, setPlayerProgress] = useState(initPlayerProgress)
 
-  const handlePlayerStatus = (props: OnProgressProps) => {
+  const [reactPlayer, setReactPlayer] = useState<ReactPlayerType>(null)
+
+  const handlePlayerProgress = (props: OnProgressProps) => {
     setPlayerProgress((prev) => {
-      const fixedProps = Object.fromEntries(
-        Object.entries(props).map(([key, value]) => [key, value.toFixed(2)])
-      )
-      return { ...prev, ...fixedProps }
+      return { ...prev, ...props }
     })
   }
 
@@ -94,6 +89,12 @@ function EditQuestionPage() {
     setPlayerProgress((prev) => {
       return { ...prev, duration }
     })
+  }
+
+  const handelPlayerReady = (player: ReactPlayerType) => {
+    {
+      setReactPlayer(player)
+    }
   }
 
   if (!video) {
@@ -113,7 +114,7 @@ function EditQuestionPage() {
 
   return (
     <>
-      <Box display="flex" flexDirection="column">
+      <Box display="flex" flexDirection="column" padding={2}>
         <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
           創建題目
         </Typography>
@@ -124,30 +125,54 @@ function EditQuestionPage() {
           alignItems="flex-start"
           // height="100%"
         >
-          <Box width="45%">
+          {/* 影片區塊 左側 */}
+          <Box width="45%" ref={blockLeft}>
             {/*播放器*/}
-            {ReactPlayer.canPlay(video.url) ? (
-              <ReactPlayer
-                fallback={<div>loading...</div>}
-                url={video.url}
-                playing={playing}
-                onPlay={play}
-                onPause={pause}
-                onProgress={handlePlayerStatus}
-                onDuration={handelPlayerDuration}
-                ref={playerRef}
-                width={'100%'}
-                progressInterval={200}
-                config={{
-                  youtube: {
-                    playerVars: {
-                      controls: 1,
-                      modestbranding: 1,
-                      rel: 0,
-                    },
+            <ReactPlayerDynamic
+              fallback={<div>loading...</div>}
+              url={video.url}
+              playing={playing}
+              onPlay={play}
+              onPause={pause}
+              onProgress={handlePlayerProgress}
+              onDuration={handelPlayerDuration}
+              onReady={handelPlayerReady}
+              width={'100%'}
+              progressInterval={200}
+              config={{
+                youtube: {
+                  playerVars: {
+                    controls: 1,
+                    modestbranding: 1,
+                    rel: 0,
                   },
-                }}
-              />
+                },
+              }}
+            />
+            {/* {reactPlayer?.getInternalPlayer().canPlay(video.url) ? (
+              <>
+                <ReactPlayerDynamic
+                  fallback={<div>loading...</div>}
+                  url={video.url}
+                  playing={playing}
+                  onPlay={play}
+                  onPause={pause}
+                  onProgress={handlePlayerProgress}
+                  onDuration={handelPlayerDuration}
+                  onReady={handelPlayerReady}
+                  width={'100%'}
+                  progressInterval={200}
+                  config={{
+                    youtube: {
+                      playerVars: {
+                        controls: 1,
+                        modestbranding: 1,
+                        rel: 0,
+                      },
+                    },
+                  }}
+                />
+              </>
             ) : (
               <Box
                 sx={{
@@ -164,28 +189,44 @@ function EditQuestionPage() {
                   請輸入正確的網址！
                 </Typography>
               </Box>
-            )}
-            {/*網址輸入框*/}
-            <TextField
-              fullWidth
-              label="Youtube Link"
-              variant="outlined"
-              value={video.url}
-              size="small"
-              sx={{ m: '24px 0' }}
-              onChange={(event) => {
-                setVideo((prev) => {
-                  return { ...prev, url: event.target.value }
-                })
-              }}
-            />
+            )} */}
+            <Box>
+              {/*時間軸*/}
+              <TimeRangeSlider
+                sx={{ width: '100%', padding: '10px 0 10px 0' }}
+                reactPlayer={reactPlayer}
+                playerProgress={playerProgress}
+                // start={500}
+                // end={600}
+                // onSelectRangeChange={(startTime, endTime) => {
+                // console.log(startTime, endTime)
+                // }}
+              />
+              {/*網址輸入框*/}
+              <TextField
+                fullWidth
+                label="Youtube Link"
+                variant="standard"
+                value={video.url}
+                size="small"
+                sx={{ m: '24px 0' }}
+                onChange={(event) => {
+                  setVideo((prev) => {
+                    return { ...prev, url: event.target.value }
+                  })
+                }}
+              />
+            </Box>
           </Box>
-          {/*出題區塊*/}
+          {/* 出題區塊 右側*/}
           <Paper
             sx={{
               display: 'flex',
               flexDirection: 'column',
               width: '45%',
+              minHeight: blockLeft?.current?.clientHeight ?? '480px',
+              maxHeight: blockLeft?.current?.clientHeight ?? '480px',
+              overflow: 'auto',
             }}
           >
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -229,40 +270,35 @@ function EditQuestionPage() {
           justifyContent="center"
           alignItems="center"
           flexDirection="column"
-          m={2}
-        >
-          {
-            <TimeRangeSlider
-              sx={{ width: '400px' }}
-              start={500}
-              end={600}
-              duration={playerRef?.current?.getDuration()}
-              onTimeChange={(startTime, endTime) => {
-                console.log(startTime, endTime)
-              }}
-            />
-          }
-          <Button
-            variant="contained"
-            size="small"
-            onClick={() => {
-              if (playerRef.current) {
-                playerRef.current.seekTo(50)
-              }
-            }}
-          >
-            setPlayerProgress
-          </Button>
-          <Box>
-            <Typography>秒數 {playerProgress?.playedSeconds}</Typography>
-            <Typography>進度 {playerProgress?.played}</Typography>
-            <Typography>影片時長 {playerProgress?.duration}</Typography>
-          </Box>
-        </Box>
+          m={3}
+        ></Box>
         <JSONTree data={video} />
       </Box>
     </>
   )
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3, mb: 1 }}>{children}</Box>}
+    </div>
+  )
+}
+
+function a11yProps(index: number) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  }
 }
 
 export default EditQuestionPage

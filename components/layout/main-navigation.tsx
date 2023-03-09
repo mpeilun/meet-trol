@@ -47,7 +47,7 @@ function MainNavigation() {
     { displayName: '我的課程', path: '/courses' },
     { displayName: '課程管理', path: '/courses' },
     { displayName: '關於我們', path: '/courses/search' },
-    { displayName: 'course title', path: 'course/courseid' },
+    // { displayName: 'course title', path: 'course/courseid' },
   ]
   const settings = [
     {
@@ -195,7 +195,7 @@ function MainNavigation() {
               <Tooltip title={'登入'}>
                 <IconButton
                   onClick={() => {
-                    window.open('auth/signin')
+                    window.open('/auth/signin')
                   }}
                   sx={{ p: 0 }}
                 >

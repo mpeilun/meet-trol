@@ -25,12 +25,10 @@ function Layout(props: { children: ReactNode }) {
         />
         <Box
           display="flex"
-          //TODO危險
-          // width="100vw"
-          // ?? 下面不確定要不要加上
-          // overflow={'hidden'}
           height="100vh"
-          sx={{ flexDirection: 'column', overflow:'hidden' }}
+          sx={{
+            flexDirection: 'column',
+          }}
         >
           {asPath !== '/auth/signin' && <MainNavigation />}
           <main style={{ height: '100%' }}>{props.children}</main>
