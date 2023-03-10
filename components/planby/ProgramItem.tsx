@@ -23,8 +23,8 @@ export const Program = ({ program, ...rest }: ProgramItem) => {
   // const sinceTime = formatTime(since, set12HoursTimeFormat()).toLowerCase()
   // const tillTime = formatTime(till, set12HoursTimeFormat()).toLowerCase()
 
-  const sinceTime = formatTime(since, set12HoursTimeFormat()).toLowerCase()
-  const tillTime = formatTime(till, set12HoursTimeFormat()).toLowerCase()
+  const sinceTime = formatTime(since).toLowerCase()
+  const tillTime = formatTime(till).toLowerCase()
 
   return (
     <ProgramBox width={styles.width} style={styles.position}>

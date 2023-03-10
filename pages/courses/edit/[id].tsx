@@ -17,6 +17,7 @@ import TimeRangeSlider from '../../../components/edit/video-edit-timeline'
 import dynamic from 'next/dynamic'
 import { PlayerProgress, ReactPlayerType } from '../../../types/react-player'
 import { OnProgressProps } from 'react-player/base'
+import VideoTimeLine from '../../../components/edit/video-timeline'
 
 const ReactPlayerDynamic = dynamic(() => import('react-player/lazy'), {
   loading: () => (
@@ -231,6 +232,12 @@ function EditQuestionPage() {
         </Box>
 
         {/*測試區塊*/}
+        {
+          <VideoTimeLine
+            allQuestion={video.question}
+            duration={playerProgress.duration}
+          />
+        }
         <Box
           display="flex"
           justifyContent="center"

@@ -27,7 +27,7 @@ import ArrowDropUpOutlinedIcon from '@mui/icons-material/ArrowDropUpOutlined'
 import ArrowDropDownOutlinedIcon from '@mui/icons-material/ArrowDropDownOutlined'
 import CustomizedSlider from './customized-slider'
 import { PlayerProgress, ReactPlayerType } from '../../types/react-player'
-import formatSeconds from '../../util/common'
+import { formatSeconds } from '../../util/common'
 
 interface VideoRangeSliderProps {
   sx?: SxProps<Theme>

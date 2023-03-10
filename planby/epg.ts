@@ -4,8 +4,8 @@ export const epg = [
     description: '內容...',
     title: '題目',
     // isYesterday: false,
-    since: '2022-10-17T23:50:00',
-    till: '2022-10-18T00:55:00',
+    since: '1970-01-01T00:01:00',
+    till: '1970-01-01T00:02:00',
     channelUuid: '16fdfefe-e466-4090-bc1a-57c43937f826', //對應 column id
     image:
       'https://www.themoviedb.org/t/p/w1066_and_h600_bestv2/sjx6zjQI2dLGtEL0HGWsnq6UyLU.jpg',

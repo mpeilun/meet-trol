@@ -9,12 +9,13 @@ import {
   Course,
 } from '@prisma/client'
 
+export type allQuestion = (Info | Choice | Rank | Fill | Drag)[]
 export interface Chapter extends ChapterPrisma {
   course: Course
 }
 
 export interface Video extends VideoPrisma {
-  question: (Info | Choice | Rank | Fill | Drag)[]
+  question: allQuestion
   chapter: Chapter
   message?: string
 }
