@@ -7,7 +7,7 @@ import { useVideoTimeline } from '../../hooks/planby'
 // Import components
 import { Timeline, ChannelItem, Program } from '../planby'
 import { allQuestion } from '../../types/video-edit'
-import { formatHourCeil } from '../../util/common'
+import { formatHoursCeil } from '../../util/common'
 
 function VideoTimeLine(props: { allQuestion: allQuestion; duration: number }) {
   const { allQuestion, duration } = props
@@ -21,15 +21,9 @@ function VideoTimeLine(props: { allQuestion: allQuestion; duration: number }) {
       <Epg isLoading={isLoading} {...getEpgProps()}>
         <Layout
           {...getLayoutProps()}
+          numberOfHoursInDay={formatHoursCeil(duration)}
           renderTimeline={(props) => (
-            <Timeline
-              {...props}
-              isBaseTimeFormat={false}
-              // numberOfHoursInDay={1}
-              numberOfHoursInDay={
-                formatHourCeil(duration) === 0 ? 1 : formatHourCeil(duration)
-              }
-            />
+            <Timeline {...props} isBaseTimeFormat={false} />
           )}
           renderProgram={({ program, ...rest }) => (
             <Program key={program.data.id} program={program} {...rest} />

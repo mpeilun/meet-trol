@@ -10,6 +10,17 @@ import PopupModal from './popupModel'
 import { ChoiceData, RankData, FillData, DragData } from '../../types/chapter'
 import { Info } from '@prisma/client'
 
+export function questionStyle(questionType: string) {
+  switch (questionType) {
+    case 'info':
+      return { icon: <InfoIcon color="warning" />, color: 'warning.main' }
+    case 'drag':
+      return { icon: <CameraIcon color="secondary" />, color: 'secondary.main' }
+    default: //'choice' | 'rank' | 'fill'
+      return { icon: <MenuIcon color="primary" />, color: 'primary.main' }
+  }
+}
+
 const PopupFab = (props: {
   pause: () => void
   play: () => void
@@ -39,15 +50,13 @@ const PopupFab = (props: {
     props.play()
   }
 
-
-
   // console.log(props.data)
 
   if (playedSecond > props.data.start && playedSecond < props.data.end) {
-    if(openQuestion){
+    if (openQuestion) {
       props.pause()
     }
-    
+
     if (props.data.questionType == 'info') {
       return (
         <>
@@ -71,7 +80,7 @@ const PopupFab = (props: {
               handleOpenQuestion()
             }}
           >
-            <InfoIcon />
+            {questionStyle('info').icon}
           </Fab>
           <PopupModal
             setClose={handleCloseQuestion}
@@ -109,7 +118,7 @@ const PopupFab = (props: {
               handleOpenQuestion()
             }}
           >
-            <MenuIcon />
+            {questionStyle('choice || rank || fill').icon}
           </Fab>
           <PopupModal
             setClose={handleCloseQuestion}
@@ -141,7 +150,7 @@ const PopupFab = (props: {
               handleOpenQuestion()
             }}
           >
-            <CameraIcon />
+            {questionStyle('drag').icon}
           </Fab>
           <PopupModal
             setClose={handleCloseQuestion}

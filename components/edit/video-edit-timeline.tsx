@@ -54,7 +54,7 @@ function VideoRangeSlider(props: VideoRangeSliderProps) {
 
   const [inputUrl, setInputUrl] = useState('')
   const [currentSeconds, setCurrentSeconds] = useState(0)
-  const [selectRange, setSelectRange] = useState([start ?? 0, end ?? 40])
+  const [selectRange, setSelectRange] = useState([start ?? 0, end ?? 30])
 
   useEffect(() => {
     setInputUrl(url)
@@ -67,30 +67,31 @@ function VideoRangeSlider(props: VideoRangeSliderProps) {
     })
   }, [playerProgress.playedSeconds])
 
+  const minDistance = 30
+
   const handleChange = (event, newValue, activeThumb) => {
     if (!Array.isArray(newValue)) {
       return
     }
 
-    if (activeThumb === 0) {
-      setSelectRange([Math.min(newValue[0], selectRange[1]), selectRange[1]])
+    if (newValue[1] - newValue[0] < minDistance) {
+      if (activeThumb === 0) {
+        const clamped = Math.min(
+          newValue[0],
+          playerProgress.duration - minDistance
+        )
+        setSelectRange([clamped, clamped + minDistance])
+      } else {
+        const clamped = Math.max(newValue[1], minDistance)
+        setSelectRange([clamped - minDistance, clamped])
+      }
     } else {
-      setSelectRange([selectRange[0], Math.max(newValue[1], selectRange[0])])
+      setSelectRange(newValue as number[])
     }
 
     if (onSelectRangeChange) {
       onSelectRangeChange(selectRange[0], selectRange[1])
     }
-  }
-
-  const timerButtonSx: SxProps<Theme> = {
-    height: '50%',
-    p: 0,
-    borderRadius: 0.5,
-    maxWidth: '20px',
-    minWidth: '20px',
-    maxHeight: '20px',
-    minHeight: '20px',
   }
 
   const covertToSecond = (time: Dayjs) => {

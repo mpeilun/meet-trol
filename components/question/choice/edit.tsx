@@ -11,30 +11,32 @@ import {
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { Choice as ChoicePrisma } from '@prisma/client'
-import { PlayerProgress } from '../../../pages/courses/edit/[id]'
+import { PlayerProgress } from '../../../types/react-player'
 
 interface Choice extends ChoicePrisma {
   id: string | null
   videoId: string | null
 }
 
-const initQuestion: Choice = {
+const defaultQuestion: Choice = {
   id: null,
-  questionType:'choice',
+  questionType: 'choice',
   title: '',
-  isShowAnswer: false,
-  note: null,
   options: [{ option: '', isAnswer: false }],
   start: 0,
   end: 0,
   videoId: null,
 }
 
-const CreateChoice = (props: {
+const EditChoice = (props: {
+  initQuestion?: ChoicePrisma
   playerProgress: PlayerProgress
   setPlayerProgress: Function
 }) => {
-  const [question, setQuestion] = useState<Choice>(initQuestion)
+  const { initQuestion, playerProgress, setPlayerProgress } = props
+  const [question, setQuestion] = useState<Choice>(
+    initQuestion ?? defaultQuestion
+  )
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuestion((prev) => ({ ...prev, title: event.target.value }))
@@ -139,4 +141,4 @@ const CreateChoice = (props: {
     </>
   )
 }
-export default CreateChoice
+export default EditChoice

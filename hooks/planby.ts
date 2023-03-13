@@ -7,7 +7,11 @@ import { Channel, Program, useEpg } from 'planby'
 // Import theme
 import { theme } from '../styles/planby-theme'
 import { allQuestion } from '../types/video-edit'
-import { formatHourCeil, formatSeconds } from '../util/common'
+import {
+  convertToHoursCeil,
+  formatHoursCeil,
+  formatSeconds,
+} from '../util/common'
 import { epg } from '../planby/epg'
 import { channels } from '../planby/channels'
 
@@ -49,12 +53,13 @@ export function useVideoTimeline(props: {
     const epgList: Program[] = []
     allQuestion.forEach((question) => {
       const channel: Channel = {
+        // question.id
         uuid: question.id,
-        id: question.id,
         logo: 'https://cdn-icons-png.flaticon.com/512/5184/5184592.png',
         position: { top: 0, height: 0 },
       }
       const program: Program = {
+        // channelUuid: '1',
         channelUuid: question.id,
         id: question.id,
         title: question.title,
@@ -79,26 +84,28 @@ export function useVideoTimeline(props: {
   }, [planbyDataMemo])
 
   React.useEffect(() => {
-    console.log(formatHourCeil(duration) * 30)
+    console.log(formatHoursCeil(duration) * 30)
   }, [duration])
 
   const { getEpgProps, getLayoutProps } = useEpg({
-    // channels: planbyDataMemo.channels,
-    // epg: planbyDataMemo.egp,
-    channels: channels as unknown as Channel[],
-    epg: epg as Program[],
+    channels: planbyDataMemo.channels,
+    epg: planbyDataMemo.egp,
+    // channels: channels as unknown as Channel[],
+    // epg: epg as Program[],
     // dayWidth:
     //   formatHourCeil(duration) == 0 ? 300 : formatHourCeil(duration) * 300,
-    dayWidth: 300,
+    // dayWidth: (formatHourCeil(duration + 2000) + 1) * 300,
+    // dayWidth: formatHourCeil(duration + 2000) * 300 * 20,
+    dayWidth: formatHoursCeil(duration) * 4000,
     sidebarWidth: 100,
     itemHeight: 80,
     isSidebar: true,
     isTimeline: true,
     isLine: true,
     startDate: '1970-01-01T00:00:00',
-    // endDate: `1970-01-01T${formatSeconds(duration)}`,
     // startDate: '1970-01-01T00:00:00',
-    endDate: '1970-01-01T01:00:00',
+    // endDate: '1970-01-01T01:00:00',
+    endDate: `1970-01-01T${convertToHoursCeil(duration)}:00:00`,
     isBaseTimeFormat: true,
     theme,
   })

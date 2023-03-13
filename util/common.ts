@@ -6,6 +6,12 @@ export function formatSeconds(value: number) {
   return dayjs.duration(value, 'seconds').format('HH:mm:ss')
 }
 
-export function formatHourCeil(value: number) {
+export function formatHoursCeil(value: number) {
   return Math.ceil(value / 3600)
+}
+
+export function convertToHoursCeil(seconds) {
+  return Math.ceil(seconds / 3600)
+    .toString()
+    .padStart(2, '0')
 }

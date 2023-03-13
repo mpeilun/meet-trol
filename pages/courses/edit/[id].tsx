@@ -11,13 +11,16 @@ import {
 } from '@mui/material'
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
-import CreateChoice from '../../../components/question/choice/create'
+import CreateChoice from '../../../components/question/choice/edit'
 import { Video } from '../../../types/video-edit'
 import TimeRangeSlider from '../../../components/edit/video-edit-timeline'
 import dynamic from 'next/dynamic'
 import { PlayerProgress, ReactPlayerType } from '../../../types/react-player'
 import { OnProgressProps } from 'react-player/base'
 import VideoTimeLine from '../../../components/edit/video-timeline'
+import VideoTimeLineTest from '../../../components/edit/vide-timeline-test'
+import EditInfo from '../../../components/question/info/edit'
+import EditChoice from '../../../components/question/choice/edit'
 
 const ReactPlayerDynamic = dynamic(() => import('react-player/lazy'), {
   loading: () => (
@@ -65,6 +68,8 @@ function EditQuestionPage() {
     }
     fetchVideo()
   }, [router.isReady])
+
+  const [select, setSelect] = useState<number>(null)
 
   const [tabValue, setTabValue] = useState(0)
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -211,10 +216,14 @@ function EditQuestionPage() {
             </Box>
             <TabPanel value={tabValue} index={0}>
               #資訊卡
+              <EditInfo
+                playerProgress={playerProgress}
+                setPlayerProgress={setPlayerProgress}
+              />
             </TabPanel>
             <TabPanel value={tabValue} index={1}>
               #選擇題
-              <CreateChoice
+              <EditChoice
                 playerProgress={playerProgress}
                 setPlayerProgress={setPlayerProgress}
               />
@@ -231,13 +240,13 @@ function EditQuestionPage() {
           </Paper>
         </Box>
 
-        {/*測試區塊*/}
-        {
-          <VideoTimeLine
+        <Box padding={3}>
+          <VideoTimeLineTest
             allQuestion={video.question}
             duration={playerProgress.duration}
           />
-        }
+        </Box>
+        {/*測試區塊*/}
         <Box
           display="flex"
           justifyContent="center"
