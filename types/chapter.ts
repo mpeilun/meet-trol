@@ -44,7 +44,7 @@ export interface DragData extends Drag {
   feedback: DragFeedback[]
 }
 
-interface LastViewData {
+export interface LastViewData {
   videoId: string
   videoTime: number
   viewTime: string
