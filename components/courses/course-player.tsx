@@ -20,6 +20,9 @@ import {
   FullscreenExit,
   KeyboardDoubleArrowDown,
   KeyboardDoubleArrowUp,
+  VolumeOff,
+  VolumeDown,
+  VolumeUp,
 } from '@mui/icons-material'
 
 import PopupModal from '../popup/popupModel'
@@ -163,6 +166,7 @@ function CoursePlayer( props:{courseId: string}) {
               handleTimeSliderChange={handleTimeSliderChange}
               handleVolumeSliderChange={handleVolumeSliderChange}
               volume={volume}
+              setVolume={setVolume}
               showPlayerBar={showPlayerBar}
               playing={playing}
               play={play}
@@ -264,6 +268,7 @@ interface PlayerBarProps {
   playerRef: React.MutableRefObject<ReactPlayerType | null>
   playing: boolean
   volume: number
+  setVolume: (value: number) => void
   play: () => void
   pause: () => void
   handleFullScreen: FullScreenHandle
@@ -284,9 +289,26 @@ const PlayerBar = (props: PlayerBarProps) => {
     pause,
     handleFullScreen,
     volume,
+    setVolume,
     playbackRate,
     setPlaybackRate,
   } = props
+  const handleVolumeButtonClick = () => {
+    if (volume == 0) {
+      setVolume(1)
+    } else {
+      setVolume(0)
+    }
+  }
+  const volumnIcon = (volume: number) => {
+    if (volume == 0) {
+      return <VolumeOff sx={{ fontSize: 30 }} />
+    } else if (volume < 0.5) {
+      return <VolumeDown sx={{ fontSize: 30 }} />
+    } else {
+      return <VolumeUp sx={{ fontSize: 30 }} />
+    }
+  }
 
   return (
     <Box
@@ -337,8 +359,14 @@ const PlayerBar = (props: PlayerBarProps) => {
               >
                 {playing ? <Pause /> : <PlayArrow />}
               </ButtonBase>
+              <ButtonBase
+                sx={{ ...buttonSize }}
+                onClick={handleVolumeButtonClick}
+                >
+                  {volumnIcon(volume)}
+                </ButtonBase>
               <Slider
-                sx={{ width: 100, alignSelf: 'center' }}
+                sx={{ width: 100, alignSelf: 'center', ml:1 }}
                 value={volume}
                 onChange={handleVolumeSliderChange}
                 min={0}
