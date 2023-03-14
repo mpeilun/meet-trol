@@ -25,7 +25,6 @@ interface alert {
 
 export default function MultipleChoice(props: { data: ChoiceData }) {
   const data = props.data
-
   const [checked, setChecked] = React.useState<boolean[]>(
     new Array(data.options.length).fill(false)
   )
@@ -40,49 +39,53 @@ export default function MultipleChoice(props: { data: ChoiceData }) {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const answers = data.options.map(({ isAnswer }) => isAnswer)
-    // console.log(answers)
-    console.log(checked)
-    const yourAns = []
+    const yourAns: number[] = []
     checked.map((ans, index) => {
       if (ans) {
         yourAns.push(index)
       }
     })
-    console.log(yourAns)
+
     if (!checked.includes(true)) {
       setIsAnsError({
         isShow: true,
         text: '請選擇答案',
         severity: 'warning',
       })
-    } else if (!data.isShowAnswer) {
-      setIsReply(true)
-      setIsAnsError({
-        isShow: true,
-        text: '請繼續作答',
-        severity: 'info',
-      })
-    } else if (answers.every((value, index) => value === checked[index])) {
-      setIsReply(true)
-      setIsAnsError({
-        isShow: data.isShowAnswer,
-        text: '正確',
-        severity: 'success',
-      })
-      // new Promise((resolve, reject) => {
-      //   setTimeout(() => {
-      //     resolve(true)
-      //   }, 750)
-      // }).then(() => {
-      //   // props.handleQuestionClose()
-      // })
     } else {
-      setIsReply(true)
-      setIsAnsError({
-        isShow: data.isShowAnswer,
-        text: '錯誤',
-        severity: 'error',
+      fetch('/api/interactiveData/choice/pushAns', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ answers: yourAns, choiceId: data.id }),
       })
+        .then((response) => response.json())
+        .then((data) => console.log(data))
+        .catch((error) => console.error(error))
+
+      if (!data.isShowAnswer) {
+        setIsReply(true)
+        setIsAnsError({
+          isShow: true,
+          text: '請繼續作答',
+          severity: 'info',
+        })
+      } else if (answers.every((value, index) => value === checked[index])) {
+        setIsReply(true)
+        setIsAnsError({
+          isShow: data.isShowAnswer,
+          text: '正確',
+          severity: 'success',
+        })
+      } else {
+        setIsReply(true)
+        setIsAnsError({
+          isShow: data.isShowAnswer,
+          text: '錯誤',
+          severity: 'error',
+        })
+      }
     }
   }
 

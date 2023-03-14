@@ -29,7 +29,7 @@ interface alert {
 
 const DragDrop = (props: { data: FillData }) => {
   const data = props.data
-  const question = data.title
+  const question = data.content
   const regex = /(?<=\().+?(?=\))/g // 正則表達式 匹配所有括號內的文字
   const answers = question.match(regex)
   const options = data.options

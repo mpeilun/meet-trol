@@ -5,16 +5,16 @@ import { authOptions } from '../../../api/auth/[...nextauth]'
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
-    const { answers, choiceId } = req.body
+    const { answers, fillId } = req.body
     const session = await getServerSession(req, res, authOptions)
     if (session) {
-      const data = await prisma.choiceFeedback.create({
+      const data = await prisma.fillFeedback.create({
         data: {
           answers: answers,
           userId: session.user.id,
-          choice: {
+          fill: {
             connect: {
-              id: choiceId,
+              id: fillId,
             },
           },
         },

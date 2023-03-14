@@ -23,7 +23,7 @@ const FillIn = (props: { handleQuestionClose: () => void; data: FillData }) => {
     <Box>
       <Box minHeight={50} display="flex" alignItems="center">
         <Typography variant="h5" sx={{ width: '100%' }}>
-          {data.title}
+          {data.title??'填充題'}
         </Typography>
         <IconButton onClick={() => props.handleQuestionClose()}>
           <CloseIcon />

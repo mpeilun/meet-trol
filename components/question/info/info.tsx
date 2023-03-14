@@ -17,7 +17,7 @@ const Info = (props: { handleQuestionClose: () => void; data: InfoData }) => {
     <>
       <Box minHeight={50} display="flex" alignItems="center">
         <Typography variant="h5" sx={{ width: '100%' }}>
-          {data.title}
+          {data.title??'資訊卡'}
         </Typography>
         <IconButton onClick={() => props.handleQuestionClose()}>
           <CloseIcon />
