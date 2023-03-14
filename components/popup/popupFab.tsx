@@ -116,7 +116,6 @@ const PopupFab = (props: {
             setClose={handleCloseQuestion}
             open={openQuestion}
             data={props.data}
-            // data={props.data}
           ></PopupModal>
         </>
       )

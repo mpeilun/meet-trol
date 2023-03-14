@@ -1,53 +1,56 @@
 import { Box, Card, Divider, Icon, Typography } from '@mui/material'
-import { useRouter } from 'next/router'
-import { GetServerSideProps, GetStaticPropsContext } from 'next'
-
-// import CoursePlayer from '../../components/courses/course-player'
-// import CourseTab from '../../components/courses/course-tab'
-
+import { GetServerSideProps } from 'next'
 import CustomizedAccordions from '../../components/chapter/chapter'
 import dynamic from 'next/dynamic'
 import * as React from 'react'
-import {
-  Chapter,
-  Video,
-  LastView,
-  Info,
-  Choice,
-  ChoiceFeedback,
-  Rank,
-  RankFeedback,
-  Fill,
-  FillFeedback,
-  Drag,
-  DragFeedback,
-} from '@prisma/client'
-import { ChapterListData } from '../../types/chapter'
+import { parse } from 'cookie'
 
-// const CoursePlayer = dynamic(
-//   () => import('../../components/courses/course-player')
-import CoursePlayer from '../../components/courses/course-player'
-const CourseTab = dynamic(() => import('../../components/courses/course-tab'), {
-  ssr: false,
-})
+import { ChapterListData, LastViewData } from '../../types/chapter'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '../api/auth/[...nextauth]'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
 
-function CourseInnerPage(props: { chapter: ChapterListData[] }) {
+const CoursePlayer = dynamic(
+  () => import('../../components/courses/course-player')
+)
+const CourseTab = dynamic(() => import('../../components/courses/course-tab'))
+// import CoursePlayer from '../../components/courses/course-player'
+// import CourseTab from '../../components/courses/course-tab'
+
+function CourseInnerPage(props: {
+  chapter: ChapterListData[]
+  error: boolean
+  record: { lastView: LastViewData[] }[]
+}) {
+  const router = useRouter()
+  const pid = router.query.id as string
   const data = props.chapter
-  console.log('fetch chapter data')
-  console.log(data)
-  const [chapter, setChapter] = React.useState<ChapterListData[]>(data)
-  if (chapter == undefined) {
-    console.log('ID not found')
-    console.log(chapter)
 
+  const [chapter, setChapter] = React.useState<ChapterListData[]>(data)
+  if (
+    chapter == undefined ||
+    chapter.length < 1 ||
+    props.error == true ||
+    props.record == undefined ||
+    props.record.length < 1
+  ) {
     return (
       <>
-        <p>Page not found. Check the course ID, please.</p>
+        <p>
+          Page not found. Please Checking the course ID or confirming you are
+          logged.
+        </p>
       </>
     )
   } else {
-    console.log('load course')
-    console.log(chapter)
+    const lastView: LastViewData[] = props.record[0].lastView
+    const lastViewVideo = lastView.reduce((earliest, current) => {
+      const earliestTime = new Date(earliest.viewTime)
+      const currentTime = new Date(current.viewTime)
+      return earliestTime > currentTime ? earliest : current
+    }, lastView[0])
+
     return (
       <Box
         className="course-main-div"
@@ -69,7 +72,10 @@ function CourseInnerPage(props: { chapter: ChapterListData[] }) {
               overflowY: 'auto',
             }}
           >
-            <CustomizedAccordions chapterData={chapter}></CustomizedAccordions>
+            <CustomizedAccordions
+              chapterData={chapter}
+              lastViewVideo={lastViewVideo}
+            ></CustomizedAccordions>
             <Divider />
           </Card>
         </Box>
@@ -79,7 +85,7 @@ function CourseInnerPage(props: { chapter: ChapterListData[] }) {
           overflow="scroll"
           sx={{ overflowX: 'hidden' }}
         >
-          <CoursePlayer></CoursePlayer>
+          <CoursePlayer courseId={pid}></CoursePlayer>
           <CourseTab
             id={''}
             url={''}
@@ -94,62 +100,47 @@ function CourseInnerPage(props: { chapter: ChapterListData[] }) {
   }
 }
 
-export async function getStaticPaths() {
-  const response = await fetch(`http://localhost:3000/api/course/getId`)
-  const json: Array<Chapter> = await response.json()
-
-  const paths = json.map((item) => ({
-    params: { id: item.id },
-  }))
-  return {
-    paths,
-    fallback: true,
-    //true(沒有pre-render時，render, 此時還沒有資料, 需要有fallback) false blocking
-  }
-}
-
-export const getStaticProps = async (context: GetStaticPropsContext) => {
-  const courseId = context.params?.id as string
-  const chapterResponse = await fetch(
-    `http://localhost:3000/api/chapter/${courseId}`
-  )
-
-  // const lastViewResponse = await fetch(
-  //   `http://localhost:3000/api/record/${courseId}`
-  // )
-  // const record = await lastViewResponse.json()
-  // const lastView: LastViewData[] = record[0].lastView
-
-  if (chapterResponse.status === 200) {
-    const chapter: Array<ChapterListData> = await chapterResponse.json()
-    // const record = await lastViewResponse.json()
-    // const lastView: LastViewData[] = record[0].lastView
-    return { props: { chapter } }
-  } else {
-    return { props: { chapter: null } }
-  }
-}
-
-// export const getServerSideProps: GetServerSideProps = async (context) => {
-//   const session = await getServerSession(context.req, context.res, authOptions)
-//   const courseId = context.params?.id as string
-//   if (!session) {
-//     return {
-//       props: { record: null },
-//     }
-//   }
-
+// export const getStaticProps = async (context: GetStaticPropsContext) => {
 //   const lastViewResponse = await fetch(
 //     `http://localhost:3000/api/record/${courseId}`
 //   )
-
-//   if (lastViewResponse.status === 200) {
-//     const record = await lastViewResponse.json()
-//     const lastView: LastViewData[] = record[0].lastView
-//     return { props: { record } }
-//   } else {
-//     return { props: { record: null } }
-//   }
+//   const record = await lastViewResponse.json()
+//   const lastView: LastViewData[] = record[0].lastView
 // }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getServerSession(context.req, context.res, authOptions)
+  const courseId = context.params?.id as string
+
+  // Retrieve the value of a cookie
+  if (session) {
+    const chapterResponse = await fetch(
+      `http://localhost:3000/api/chapter/${courseId}`
+    )
+    const lastViewResponse = await fetch(
+      `http://localhost:3000/api/record/${courseId}`,
+      {
+        method: 'GET',
+        headers: {
+          Cookie: context.req.headers.cookie,
+        },
+      }
+    )
+    if (chapterResponse.status === 200 && lastViewResponse.status === 200) {
+      const chapter: Array<ChapterListData> = await chapterResponse.json()
+      const record: Array<LastViewData> = await lastViewResponse.json()
+
+      return { props: { chapter, error: false, record } }
+    } else {
+      return {
+        props: { chapter: null, error: true, record: null },
+      }
+    }
+  } else {
+    return {
+      props: { chapter: null, error: true, record: null },
+    }
+  }
+}
 
 export default CourseInnerPage

@@ -18,7 +18,7 @@ import {
 import { Chapter, Video, LastView } from '@prisma/client'
 import { useAppSelector, useAppDispatch } from '../../hooks/redux'
 import { setVideoId, setVideoTime } from '../../store/course-data'
-import { ChapterListData } from '../../types/chapter'
+import { ChapterListData, LastViewData } from '../../types/chapter'
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -61,88 +61,60 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 
 export default function CustomizedAccordions(props: {
   chapterData: ChapterListData[]
+  lastViewVideo: LastViewData
 }) {
   const data = props.chapterData
-  console.log('get chapter data from course')
-  console.log(data)
+  const lastVideo = props.lastViewVideo
 
   const dispatch = useAppDispatch()
-  // const setSelected = (
-  //   index: number,
-  //   indexOne: number = -1,
-  //   indexTwo: number = -1,
-  //   videoId: string = ''
-  // ): boolean[][] | boolean[] => {
-  //   let isSelectedOne: Array<Array<boolean>> = []
-  //   let expandedArray: Array<boolean> = []
-  //   for (let i = 0; i < data.length; i++) {
-  //     let isSelectedTwo: Array<boolean> = []
-  //     for (let j = 0; j < data[i].videos.length; j++) {
-  //       if (indexOne == i && indexTwo == j) {
-  //         isSelectedTwo.push(true)
-  //       } else if (videoId == data[i].videos[j].id) {
-  //         isSelectedTwo.push(true)
-  //       } else {
-  //         isSelectedTwo.push(false)
-  //       }
-  //     }
-  //     isSelectedOne.push(isSelectedTwo)
-  //     if (isSelectedOne[i].includes(true)) {
-  //       expandedArray.push(true)
-  //     } else {
-  //       expandedArray.push(false)
-  //     }
-  //   }
+  const initialSelectVideo = React.useCallback((): boolean[][] => {
+    let chapterList = []
+    const initialSelected = () => {
+      data.map((chapter, index) => {
+        let videoList = []
+        chapter.videos.map((video, index) => {
+          if (video.id == lastVideo.videoId) {
+            videoList.push(true)
+          } else {
+            videoList.push(false)
+          }
+        })
+        chapterList.push(videoList)
+      })
+    }
+    initialSelected()
+    return chapterList
+  }, [])
+  const [selectedVideo, setSelectedVideo] = React.useState<boolean[][]>(
+    initialSelectVideo()
+  )
 
-  //   if (index == 0) {
-  //     return isSelectedOne
-  //   } else if (index == 1) {
-  //     return expandedArray
-  //   }
-  // }
-
-  // const [videoSelect, setVideoSelect] = React.useState<boolean[][] | boolean[]>(
-  //   setSelected(0)
-  // )
-
-  // const [expanded, setExpanded] = React.useState<boolean[][] | boolean[]>(
-  //   setSelected(1)
-  // )
-
-  React.useEffect(() => {
-    // const fetchData = async () => {
-    //   const [data] = await Promise.all([fetchRecord()])
-    //   if (data.length > 0) {
-    //     const lastViewVideo = data.reduce((earliest, current) => {
-    //       const earliestTime = new Date(earliest.viewTime)
-    //       const currentTime = new Date(current.viewTime)
-
-    //       return earliestTime > currentTime ? earliest : current
-    //     }, data[0])
-    //     const id = lastViewVideo.videoId
-    //     const time = lastViewVideo.videoTime
-    //     setVideoSelect(setSelected(0, -1, -1, id))
-    //     dispatch(setVideoId(id))
-    //     dispatch(setVideoTime(time))
-    //   }
-    // }
-    // fetchData()
-    console.log('set initial video')
-    dispatch(setVideoId(data[0].videos[0].id))
+  const initialExpanded = React.useCallback((): boolean[] => {
+    let expandedList = []
+    selectedVideo.map((selected, index) => {
+      if (selected.includes(true)) {
+        expandedList.push(true)
+      } else {
+        expandedList.push(false)
+      }
+    })
+    
+    return expandedList
   }, [])
 
-  // const fetchRecord = async () => {
-  //   if (data != undefined) {
-  //     return fetch(`http://localhost:3000/api/record/${data[0].courseId}`)
-  //       .then((response) => response.json())
-  //       .then((data) => {
-  //         if (data.length > 0) {
-  //           const lastView: LastView[] = data[0].lastView
-  //           return lastView
-  //         } else return []
-  //       })
-  //   }
-  // }
+  const [isExpanded, setIsExpanded] = React.useState<boolean[]>(
+    initialExpanded()
+  )
+  const handleChange =
+    (index: number) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+      let expanded = [...isExpanded]
+      expanded[index] = !expanded[index]
+      setIsExpanded(expanded)
+    }
+
+  React.useEffect(() => {
+    dispatch(setVideoId(lastVideo.videoId))
+  }, [])
 
   if (data == undefined) {
     return <></>
@@ -159,7 +131,11 @@ export default function CustomizedAccordions(props: {
       <div>
         {data.map(({ title, videos }, indexOne) => {
           return (
-            <Accordion key={indexOne} onChange={() => {}}>
+            <Accordion
+              key={indexOne}
+              expanded={isExpanded[indexOne]}
+              onChange={handleChange(indexOne)}
+            >
               <AccordionSummary
                 aria-controls={`panel${indexOne + 1}d-content`}
                 id={`panel${indexOne + 1}d-header`}
@@ -188,7 +164,13 @@ export default function CustomizedAccordions(props: {
                       >
                         <CardActionArea
                           onClick={() => {
-                            // setVideoSelect(setSelected(0, indexOne, indexTwo))
+                            let selected = [...selectedVideo]
+                            selected.map((ele) => {
+                              ele.fill(false)
+                            })
+                            selected[indexOne][indexTwo] = true
+                            console.log(selected)
+                            setSelectedVideo(selected)
                             dispatch(setVideoId(id))
                           }}
                         >
@@ -200,16 +182,16 @@ export default function CustomizedAccordions(props: {
                             }}
                           >
                             <Box
-                            // sx={{
-                            //   backgroundColor: videoSelect[indexOne][
-                            //     indexTwo
-                            //   ]
-                            //     ? '#67a1f3'
-                            //     : 'white',
-                            //   color: videoSelect[indexOne][indexTwo]
-                            //     ? '#67a1f3'
-                            //     : 'white',
-                            // }}
+                              sx={{
+                                backgroundColor: selectedVideo[indexOne][
+                                  indexTwo
+                                ]
+                                  ? '#67a1f3'
+                                  : 'white',
+                                color: selectedVideo[indexOne][indexTwo]
+                                  ? '#67a1f3'
+                                  : 'white',
+                              }}
                             >
                               {`.`}
                             </Box>
@@ -231,46 +213,6 @@ export default function CustomizedAccordions(props: {
             </Accordion>
           )
         })}
-        {/* <Accordion>
-          <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-            <Box sx={{ pl: 1 }}>
-              <Typography sx={{ fontWeight: 'bold' }}>章節一</Typography>
-            </Box>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Box py={1.5} display="flex" justifyContent="space-between">
-              <Typography variant="body2">TQC+ 101</Typography>
-            </Box>
-            <Divider />
-            <Box py={1.6} display="flex" justifyContent="space-between">
-              <Typography variant="body2">TQC+ 102</Typography>
-            </Box>
-            <Divider />
-            <Box py={1.5} display="flex" justifyContent="space-between">
-              <Typography variant="body2">TQC+ 103</Typography>
-            </Box>
-          </AccordionDetails>
-        </Accordion>
-        <Accordion>
-          <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
-            <Box sx={{ pl: 1 }}>
-              <Typography sx={{ fontWeight: 'bold' }}>章節二</Typography>
-            </Box>{' '}
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography>test</Typography>
-          </AccordionDetails>
-        </Accordion>
-        <Accordion>
-          <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
-            <Box sx={{ pl: 1 }}>
-              <Typography sx={{ fontWeight: 'bold' }}>章節三</Typography>
-            </Box>{' '}
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography>test</Typography>
-          </AccordionDetails>
-        </Accordion> */}
       </div>
     )
   }

@@ -57,7 +57,7 @@ interface questionList {
   isAnswer: boolean
 }
 
-function CoursePlayer() {
+function CoursePlayer( props:{courseId: string}) {
   //ReactPlayer
   const playerRef = React.useRef<ReactPlayerType>(null) //ReactPlayer 的參照
   const [showPlayerBar, setShowPlayerBar] = React.useState(false) //是否顯示播放器控制列
@@ -78,6 +78,7 @@ function CoursePlayer() {
     }
   }, [])
 
+  const courseId = props.courseId
   //redux
   const videoId = useAppSelector((state) => state.course.videoId)
   const videoTime = useAppSelector((state) => state.course.videoTime)
@@ -85,11 +86,9 @@ function CoursePlayer() {
   const [videoData, setVideoData] = React.useState<VideoData>(null)
 
   React.useEffect(() => {
-    console.log('fetch video data')
     const fetchData = async () => {
       const response = await fetch(`http://localhost:3000/api/video/${videoId}`)
       const data: VideoData = await response.json()
-      console.log(data)
       setVideoData(data)
     }
     fetchData()
@@ -129,10 +128,12 @@ function CoursePlayer() {
       setVolume(newValue)
     }
   }
+  const [loading, setLoading] = React.useState(true)
 
   let onPlayerReady = (player: ReactPlayerType) => {
     if (playerRef) {
       playerRef.current = player
+      setLoading(false)
       // var availableQualityLevels=player.getInternalPlayer().getAvailableQualityLevels()
       // console.log(availableQualityLevels)
     }
@@ -205,6 +206,20 @@ function CoursePlayer() {
             questionType={questionType}
           ></PopupFab>
         )} */}
+          {loading && (
+            <Box
+              sx={{
+                width: '100%',
+                height: '100%',
+                position: 'absolute',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          )}
           <ReactPlayerDynamic
             url={videoData == undefined ? '' : videoData.url}
             playing={playing}
@@ -270,7 +285,7 @@ const PlayerBar = (props: PlayerBarProps) => {
     handleFullScreen,
     volume,
     playbackRate,
-    setPlaybackRate
+    setPlaybackRate,
   } = props
 
   return (
@@ -336,18 +351,22 @@ const PlayerBar = (props: PlayerBarProps) => {
               
             </Box> */}
             <div>
-              <ButtonBase sx={{ ...buttonSize }}
+              <ButtonBase
+                sx={{ ...buttonSize }}
                 disabled={playbackRate <= 0.25}
-                onClick={() => { setPlaybackRate(playbackRate - 0.25) }
-
-                }
+                onClick={() => {
+                  setPlaybackRate(playbackRate - 0.25)
+                }}
               >
                 <KeyboardDoubleArrowDown />
               </ButtonBase>
               {playbackRate.toFixed(2)}
-              <ButtonBase sx={{ ...buttonSize }}
+              <ButtonBase
+                sx={{ ...buttonSize }}
                 disabled={playbackRate >= 2}
-                onClick={() => { setPlaybackRate(playbackRate + 0.25) }}
+                onClick={() => {
+                  setPlaybackRate(playbackRate + 0.25)
+                }}
               >
                 <KeyboardDoubleArrowUp />
               </ButtonBase>
@@ -361,7 +380,6 @@ const PlayerBar = (props: PlayerBarProps) => {
               >
                 {handleFullScreen.active ? <FullscreenExit /> : <Fullscreen />}
               </ButtonBase>
-
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
@@ -26,7 +26,7 @@ interface alert {
 export default function MultipleChoice(props: { data: ChoiceData }) {
   const data = props.data
 
-  const [checked, setChecked] = React.useState(
+  const [checked, setChecked] = React.useState<boolean[]>(
     new Array(data.options.length).fill(false)
   )
   const [isReply, setIsReply] = React.useState(false)
@@ -41,7 +41,14 @@ export default function MultipleChoice(props: { data: ChoiceData }) {
     event.preventDefault()
     const answers = data.options.map(({ isAnswer }) => isAnswer)
     // console.log(answers)
-    // console.log(checked)
+    console.log(checked)
+    const yourAns = []
+    checked.map((ans, index) => {
+      if (ans) {
+        yourAns.push(index)
+      }
+    })
+    console.log(yourAns)
     if (!checked.includes(true)) {
       setIsAnsError({
         isShow: true,
