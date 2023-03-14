@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, Dispatch, SetStateAction, useEffect } from 'react'
 import {
   Box,
   TextField,
@@ -10,18 +10,17 @@ import {
   Theme,
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { Choice as ChoicePrisma } from '@prisma/client'
-import { PlayerProgress } from '../../../types/react-player'
-
-interface Choice extends ChoicePrisma {
-  id: string | null
-  videoId: string | null
-}
+import { Choice } from '@prisma/client'
+import { Video } from '../../../types/video-edit'
+import { SelectType } from '../../../pages/courses/edit/[id]'
 
 const defaultQuestion: Choice = {
   id: null,
   questionType: 'choice',
   title: '',
+  content: null,
+  note: null,
+  isShowAnswer: false,
   options: [{ option: '', isAnswer: false }],
   start: 0,
   end: 0,
@@ -29,14 +28,21 @@ const defaultQuestion: Choice = {
 }
 
 const EditChoice = (props: {
-  initQuestion?: ChoicePrisma
-  playerProgress: PlayerProgress
-  setPlayerProgress: Function
+  video: Video
+  setVideo: Dispatch<SetStateAction<Video>>
+  select: SelectType
+  setSelect: Dispatch<SetStateAction<SelectType>>
 }) => {
-  const { initQuestion, playerProgress, setPlayerProgress } = props
+  const { video, setVideo, select, setSelect } = props
   const [question, setQuestion] = useState<Choice>(
-    initQuestion ?? defaultQuestion
+    (select.initQuestion as Choice) ?? defaultQuestion
   )
+
+  useEffect(() => {
+    if (select.value) {
+      setQuestion(select.initQuestion as Choice)
+    }
+  }, [select])
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuestion((prev) => ({ ...prev, title: event.target.value }))
@@ -130,7 +136,7 @@ const EditChoice = (props: {
             新增選項
           </Button>
           <Button
-            sx={{ m: '1', width: '7rem', height: '3rem' }}
+            sx={{ m: 1, width: '7rem', height: '3rem' }}
             variant="outlined"
             onClick={handleQuestionSubmit}
           >

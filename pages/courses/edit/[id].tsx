@@ -8,19 +8,25 @@ import {
   Tab,
   Paper,
   CircularProgress,
+  Select,
 } from '@mui/material'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, SetStateAction, Dispatch } from 'react'
 import { useRouter } from 'next/router'
 import CreateChoice from '../../../components/question/choice/edit'
-import { Video } from '../../../types/video-edit'
+import { Question, Video } from '../../../types/video-edit'
 import TimeRangeSlider from '../../../components/edit/video-edit-timeline'
 import dynamic from 'next/dynamic'
 import { PlayerProgress, ReactPlayerType } from '../../../types/react-player'
 import { OnProgressProps } from 'react-player/base'
-import VideoTimeLine from '../../../components/edit/video-timeline'
-import VideoTimeLineTest from '../../../components/edit/vide-timeline-test'
 import EditInfo from '../../../components/question/info/edit'
 import EditChoice from '../../../components/question/choice/edit'
+import { Choice, Drag, Fill, Info, Rank } from '@prisma/client'
+import VideoTimeLine from '../../../components/edit/vide-timeline'
+
+export interface SelectType {
+  value: number
+  initQuestion: Question
+}
 
 const ReactPlayerDynamic = dynamic(() => import('react-player/lazy'), {
   loading: () => (
@@ -69,7 +75,10 @@ function EditQuestionPage() {
     fetchVideo()
   }, [router.isReady])
 
-  const [select, setSelect] = useState<number>(null)
+  const [select, setSelect] = useState<SelectType>({
+    value: null,
+    initQuestion: null,
+  })
 
   const [tabValue, setTabValue] = useState(0)
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -201,51 +210,56 @@ function EditQuestionPage() {
               overflow: 'auto',
             }}
           >
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <Tabs
-                value={tabValue}
-                onChange={handleTabChange}
-                aria-label="basic tabs example"
-              >
-                <Tab label="資訊" {...a11yProps(0)} />
-                <Tab label="選擇" {...a11yProps(1)} />
-                <Tab label="填空" {...a11yProps(2)} />
-                <Tab label="排序" {...a11yProps(3)} />
-                <Tab label="圖選" {...a11yProps(4)} />
-              </Tabs>
-            </Box>
-            <TabPanel value={tabValue} index={0}>
-              #資訊卡
-              <EditInfo
-                playerProgress={playerProgress}
-                setPlayerProgress={setPlayerProgress}
-              />
-            </TabPanel>
-            <TabPanel value={tabValue} index={1}>
-              #選擇題
-              <EditChoice
-                playerProgress={playerProgress}
-                setPlayerProgress={setPlayerProgress}
-              />
-            </TabPanel>
-            <TabPanel value={tabValue} index={2}>
-              #填空題
-            </TabPanel>
-            <TabPanel value={tabValue} index={3}>
-              #排序題
-            </TabPanel>
-            <TabPanel value={tabValue} index={4}>
-              #圖片選答
-            </TabPanel>
+            {select.value != null ? (
+              <Box padding={'16px 24px 24px 24px'}>
+                {editQuestion(video, setVideo, select, setSelect)}
+              </Box>
+            ) : (
+              <Box>
+                <Tabs value={tabValue} onChange={handleTabChange}>
+                  <Tab label="資訊" {...a11yProps(0)} />
+                  <Tab label="選擇" {...a11yProps(1)} />
+                  <Tab label="填空" {...a11yProps(2)} />
+                  <Tab label="排序" {...a11yProps(3)} />
+                  <Tab label="圖選" {...a11yProps(4)} />
+                </Tabs>
+
+                <TabPanel value={tabValue} index={0}>
+                  <EditInfo
+                    video={video}
+                    setVideo={setVideo}
+                    select={select}
+                    setSelect={setSelect}
+                  />
+                </TabPanel>
+                <TabPanel value={tabValue} index={1}>
+                  <EditChoice
+                    video={video}
+                    setVideo={setVideo}
+                    select={select}
+                    setSelect={setSelect}
+                  />
+                </TabPanel>
+                <TabPanel value={tabValue} index={2}>
+                  #填空題
+                </TabPanel>
+                <TabPanel value={tabValue} index={3}>
+                  #排序題
+                </TabPanel>
+                <TabPanel value={tabValue} index={4}>
+                  #圖片選答
+                </TabPanel>
+              </Box>
+            )}
           </Paper>
         </Box>
 
-        <Box padding={3}>
-          <VideoTimeLineTest
-            allQuestion={video.question}
-            duration={playerProgress.duration}
-          />
-        </Box>
+        <VideoTimeLine
+          allQuestion={video.question}
+          duration={playerProgress.duration}
+          select={select}
+          setSelect={setSelect}
+        />
         {/*測試區塊*/}
         <Box
           display="flex"
@@ -280,6 +294,49 @@ function a11yProps(index: number) {
   return {
     id: `simple-tab-${index}`,
     'aria-controls': `simple-tabpanel-${index}`,
+  }
+}
+
+//EditQuestion
+function editQuestion(
+  video: Video,
+  setVideo: Dispatch<SetStateAction<Video>>,
+  select: SelectType,
+  setSelect: Dispatch<SetStateAction<SelectType>>
+) {
+  switch (video.question[select.value].questionType) {
+    case 'info': {
+      return (
+        <EditInfo
+          video={video}
+          setVideo={setVideo}
+          select={select}
+          setSelect={setSelect}
+        />
+      )
+    }
+    case 'choice': {
+      return (
+        <EditChoice
+          video={video}
+          setVideo={setVideo}
+          select={select}
+          setSelect={setSelect}
+        />
+      )
+    }
+    case 'fill': {
+      return <></>
+    }
+    case 'rank': {
+      return <></>
+    }
+    case 'drag': {
+      return <></>
+    }
+    default: {
+      return <></>
+    }
   }
 }
 

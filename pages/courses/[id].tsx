@@ -45,11 +45,7 @@ function CourseInnerPage(props: {
     )
   } else {
     const lastView: LastViewData[] = props.record[0].lastView
-    const lastViewVideo = lastView.reduce((earliest, current) => {
-      const earliestTime = new Date(earliest.viewTime)
-      const currentTime = new Date(current.viewTime)
-      return earliestTime > currentTime ? earliest : current
-    }, lastView[0])
+    
 
     return (
       <Box
@@ -74,7 +70,7 @@ function CourseInnerPage(props: {
           >
             <CustomizedAccordions
               chapterData={chapter}
-              lastViewVideo={lastViewVideo}
+              lastView={lastView}
             ></CustomizedAccordions>
             <Divider />
           </Card>

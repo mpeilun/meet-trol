@@ -165,7 +165,7 @@ const Drag = (props: { handleQuestionClose: () => void; data: DragData }) => {
     <>
       <Box minHeight={50} display="flex" alignItems="center">
         <Typography variant="h5" sx={{ width: '100%' }}>
-          {data.title}
+          {data.title??'圖選題'}
         </Typography>
         <IconButton onClick={() => props.handleQuestionClose()}>
           <CloseIcon />

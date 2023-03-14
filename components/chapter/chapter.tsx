@@ -61,10 +61,16 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 
 export default function CustomizedAccordions(props: {
   chapterData: ChapterListData[]
-  lastViewVideo: LastViewData
+  lastView: LastViewData[]
 }) {
   const data = props.chapterData
-  const lastVideo = props.lastViewVideo
+  const lastView = props.lastView
+  // 獲得最後觀看的影片
+  const lastViewVideo = lastView.reduce((earliest, current) => {
+    const earliestTime = new Date(earliest.viewTime)
+    const currentTime = new Date(current.viewTime)
+    return earliestTime > currentTime ? earliest : current
+  }, lastView[0])
 
   const dispatch = useAppDispatch()
   const initialSelectVideo = React.useCallback((): boolean[][] => {
@@ -73,7 +79,7 @@ export default function CustomizedAccordions(props: {
       data.map((chapter, index) => {
         let videoList = []
         chapter.videos.map((video, index) => {
-          if (video.id == lastVideo.videoId) {
+          if (video.id == lastViewVideo.videoId) {
             videoList.push(true)
           } else {
             videoList.push(false)
@@ -98,7 +104,7 @@ export default function CustomizedAccordions(props: {
         expandedList.push(false)
       }
     })
-    
+
     return expandedList
   }, [])
 
@@ -113,7 +119,8 @@ export default function CustomizedAccordions(props: {
     }
 
   React.useEffect(() => {
-    dispatch(setVideoId(lastVideo.videoId))
+    dispatch(setVideoId(lastViewVideo.videoId))
+    dispatch(setVideoTime(lastViewVideo.videoTime))
   }, [])
 
   if (data == undefined) {
@@ -169,8 +176,15 @@ export default function CustomizedAccordions(props: {
                               ele.fill(false)
                             })
                             selected[indexOne][indexTwo] = true
-                            console.log(selected)
                             setSelectedVideo(selected)
+                            const video = lastView.find(
+                              (lastView) => lastView.videoId == id
+                            )
+                            if (video) {
+                              dispatch(setVideoTime(video.videoTime))
+                            } else {
+                              dispatch(setVideoTime(0))
+                            }
                             dispatch(setVideoId(id))
                           }}
                         >

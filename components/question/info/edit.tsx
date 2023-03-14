@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, SetStateAction, Dispatch, useEffect } from 'react'
 import {
   Box,
   TextField,
@@ -10,15 +10,12 @@ import {
   Theme,
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { Info as InfoPrisma } from '@prisma/client'
+import { Info } from '@prisma/client'
 import { PlayerProgress } from '../../../types/react-player'
+import { Video } from '../../../types/video-edit'
+import { SelectType } from '../../../pages/courses/edit/[id]'
 
-interface Info extends InfoPrisma {
-  id: string | null
-  videoId: string | null
-}
-
-const defaultInfo: Info = {
+const defaultQuestion: Info = {
   id: null,
   questionType: 'info',
   title: '',
@@ -30,12 +27,21 @@ const defaultInfo: Info = {
 }
 
 const EditInfo = (props: {
-  initInfo?: Info
-  playerProgress: PlayerProgress
-  setPlayerProgress: Function
+  video: Video
+  setVideo: Dispatch<SetStateAction<Video>>
+  select: SelectType
+  setSelect: Dispatch<SetStateAction<SelectType>>
 }) => {
-  const { initInfo, playerProgress, setPlayerProgress } = props
-  const [question, setQuestion] = useState<Info>(initInfo ?? defaultInfo)
+  const { video, setVideo, select, setSelect } = props
+  const [question, setQuestion] = useState<Info>(
+    (select.initQuestion as Info) ?? defaultQuestion
+  )
+
+  useEffect(() => {
+    if (select.value != null) {
+      setQuestion(select.initQuestion as Info)
+    }
+  }, [select])
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuestion((prev) => ({ ...prev, title: event.target.value }))
@@ -66,6 +72,13 @@ const EditInfo = (props: {
           onChange={handleUrlChange}
         />
         <img src={question.url} />
+        <Button
+          sx={{ m: '16px auto 0 auto', width: '7rem', height: '3rem' }}
+          variant="outlined"
+          onClick={handleInfoSubmit}
+        >
+          送出
+        </Button>
       </Box>
     </>
   )

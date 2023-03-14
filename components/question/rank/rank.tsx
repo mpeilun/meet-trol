@@ -70,9 +70,9 @@ export default function RankQuestion(props: {
   }
 
   const areArraysEqual = (array: string[]) => {
-    console.log(array)
+    // console.log(array)
     const ans = data.options
-    console.log(ans)
+    // console.log(ans)
     for (let i = 0; i < array.length; i++) {
       if (array[i] !== ans[i]) {
         return false
@@ -82,6 +82,17 @@ export default function RankQuestion(props: {
   }
 
   const checkAns = () => {
+
+    fetch('/api/interactiveData/rank/pushAns', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ answers: items, rankId: data.id }),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error(error))
     if (!data.isShowAnswer) {
       setIsReply(true)
       setIsAnsError({
@@ -112,7 +123,7 @@ export default function RankQuestion(props: {
     <Box sx={{ minWidth: 450, overFlowX: 'hidden' }}>
       <Box minHeight={50} display="flex" alignItems="center">
         <Typography variant="h5" sx={{ fontWeight: 'bold', width: '100%' }}>
-          {data.title}
+          {data.title??'排序題'}
         </Typography>
         <IconButton onClick={() => props.handleQuestionClose()}>
           <CloseIcon />
