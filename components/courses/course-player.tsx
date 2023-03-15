@@ -95,8 +95,8 @@ function CoursePlayer( props:{courseId: string}) {
   }, [videoId])
 
   let handlePlayerStatus = (props: OnProgressProps) => {
-    setPlayedSeconds(props.playedSeconds)
-    dispatch(setPlayedSecond(props.playedSeconds))
+    // setPlayedSeconds(props.playedSeconds)
+    // dispatch(setPlayedSecond(props.playedSeconds))
 
     // if (videoData != undefined) {
     //   // console.log(interactionData)

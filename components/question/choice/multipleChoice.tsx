@@ -103,7 +103,7 @@ export default function MultipleChoice(props: { data: ChoiceData }) {
   return (
     <form onSubmit={handleSubmit}>
       <FormControl sx={{ pt: 1, width: '100%' }} variant="standard">
-        <FormLabel id="demo-error-radios">{data.content ?? ''}</FormLabel>
+        <FormLabel id="demo-error-radios">{data.question ?? ''}</FormLabel>
         <Box sx={{ height: 0 }}></Box>
         <FormGroup>
           {data.options.map((option, index) => {
