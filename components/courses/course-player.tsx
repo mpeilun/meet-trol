@@ -94,13 +94,14 @@ function CoursePlayer(props: { courseId: string }) {
       const response = await fetch(`http://localhost:3000/api/video/${videoId}`)
       const data: VideoData = await response.json()
       setVideoData(data)
+      console.log(data)
     }
     fetchData()
   }, [videoId])
 
   let handlePlayerStatus = (props: OnProgressProps) => {
-    // setPlayedSeconds(props.playedSeconds)
-    // dispatch(setPlayedSecond(props.playedSeconds))
+    setPlayedSeconds(props.playedSeconds)
+    dispatch(setPlayedSecond(props.playedSeconds))
 
     // if (videoData != undefined) {
     //   // console.log(interactionData)
