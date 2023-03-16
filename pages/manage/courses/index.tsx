@@ -4,7 +4,6 @@ import dayjs, { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Button, Box, Card,TextField,Typography } from "@mui/material";
-// import { DateRangePicker, DateRange } from '@mui/x-date-pickers-pro/DateRangePicker';
 import { borderRadius } from "@mui/system";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
@@ -21,12 +20,6 @@ export default function Home() {
     setInfo(event.target.value);
   }
 
-  
-  // const history = useHistory();
-
-  // const handleClick = () => {
-  //   history.push('/other-page');
-  // };
 
   return (
     <Card  style={{ backgroundColor: "#F9F5E3"}} sx={{ mt: "1%",mr:"10%",ml:"10%"}}>
@@ -66,12 +59,13 @@ export default function Home() {
                 label="開始日期"
                 value={startDate}
                 onChange={(newStart) => setStartDate(newStart)}
-                sx={{mr:2}}
+                sx={{mr:2,backgroundColor:"#F4F2F3"}}
               />
               <DatePicker
                 label="結束日期"
                 value={endDate}
                 onChange={(newEnd) => setEndDate(newEnd)}
+                sx={{backgroundColor:"#F4F2F3"}}
               />
 
             </LocalizationProvider>
