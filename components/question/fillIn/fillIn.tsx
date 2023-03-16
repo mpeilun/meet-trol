@@ -30,9 +30,9 @@ const FillIn = (props: { handleQuestionClose: () => void; data: FillData }) => {
         </IconButton>
       </Box>
       <Divider />
-      <Typography variant="body2" sx={{ pt: 1.5 }}>
-        {data.content ?? ''}
-      </Typography>
+      {data.question && (<Typography variant="body2" sx={{ pt: 1.5 }}>
+        {data.question ?? ''}
+      </Typography>)}
       <DragDrop data={data}></DragDrop>
     </Box>
     //   </Card>

@@ -20,6 +20,10 @@ import {
   FullscreenExit,
   KeyboardDoubleArrowDown,
   KeyboardDoubleArrowUp,
+  VolumeOff,
+  VolumeDown,
+  VolumeUp,
+  Camera,
 } from '@mui/icons-material'
 
 import PopupModal from '../popup/popupModel'
@@ -57,7 +61,7 @@ interface questionList {
   isAnswer: boolean
 }
 
-function CoursePlayer( props:{courseId: string}) {
+function CoursePlayer(props: { courseId: string }) {
   //ReactPlayer
   const playerRef = React.useRef<ReactPlayerType>(null) //ReactPlayer 的參照
   const [showPlayerBar, setShowPlayerBar] = React.useState(false) //是否顯示播放器控制列
@@ -90,6 +94,7 @@ function CoursePlayer( props:{courseId: string}) {
       const response = await fetch(`http://localhost:3000/api/video/${videoId}`)
       const data: VideoData = await response.json()
       setVideoData(data)
+      console.log(data)
     }
     fetchData()
   }, [videoId])
@@ -163,6 +168,7 @@ function CoursePlayer( props:{courseId: string}) {
               handleTimeSliderChange={handleTimeSliderChange}
               handleVolumeSliderChange={handleVolumeSliderChange}
               volume={volume}
+              setVolume={setVolume}
               showPlayerBar={showPlayerBar}
               playing={playing}
               play={play}
@@ -264,6 +270,7 @@ interface PlayerBarProps {
   playerRef: React.MutableRefObject<ReactPlayerType | null>
   playing: boolean
   volume: number
+  setVolume: (value: number) => void
   play: () => void
   pause: () => void
   handleFullScreen: FullScreenHandle
@@ -271,8 +278,14 @@ interface PlayerBarProps {
   setPlaybackRate: (value: number) => void
 }
 const PlayerBar = (props: PlayerBarProps) => {
+  interface Mark {
+    value: number
+    // label: string
+  }
   const buttonSize = { width: 50, height: 50 }
   const containerRef = React.useRef<HTMLDivElement>(null)
+  const [marks, setMarks] = React.useState<Array<Mark>>([])
+  const [thumbnailUrl, setThumbnailUrl] = React.useState<string>('')
   const {
     showPlayerBar,
     playedSeconds,
@@ -284,9 +297,39 @@ const PlayerBar = (props: PlayerBarProps) => {
     pause,
     handleFullScreen,
     volume,
+    setVolume,
     playbackRate,
     setPlaybackRate,
   } = props
+  const handleVolumeButtonClick = () => {
+    if (volume == 0) {
+      setVolume(1)
+    } else {
+      setVolume(0)
+    }
+  }
+  const volumnIcon = (volume: number) => {
+    if (volume == 0) {
+      return <VolumeOff sx={{ fontSize: 30 }} />
+    } else if (volume < 0.5) {
+      return <VolumeDown sx={{ fontSize: 30 }} />
+    } else {
+      return <VolumeUp sx={{ fontSize: 30 }} />
+    }
+  }
+  const handleScreenshotButtonClick = () => {
+    setMarks([...marks, { value: playedSeconds }])
+    console.log(marks)
+    // generateImage()
+  }
+  // const generateImage = async() => {
+  //   const player = playerRef.current.getInternalPlayer();
+  //   const currentTime = player.getCurrentTime();
+  //   const videoId = player.getVideoData().video_id;
+  //   setThumbnailUrl(`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg?time=${currentTime}`)
+  //   document.createElement('img').src = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg?time=${currentTime}`
+  //   open(thumbnailUrl)
+  // }
 
   return (
     <Box
@@ -313,6 +356,7 @@ const PlayerBar = (props: PlayerBarProps) => {
               onChange={handleTimeSliderChange}
               min={0}
               max={playerRef.current ? playerRef.current.getDuration() : 0}
+              marks={marks}
               step={0.1}
             />
           </div>
@@ -337,8 +381,14 @@ const PlayerBar = (props: PlayerBarProps) => {
               >
                 {playing ? <Pause /> : <PlayArrow />}
               </ButtonBase>
+              <ButtonBase
+                sx={{ ...buttonSize }}
+                onClick={handleVolumeButtonClick}
+              >
+                {volumnIcon(volume)}
+              </ButtonBase>
               <Slider
-                sx={{ width: 100, alignSelf: 'center' }}
+                sx={{ width: 100, alignSelf: 'center', ml: 1 }}
                 value={volume}
                 onChange={handleVolumeSliderChange}
                 min={0}
@@ -351,6 +401,12 @@ const PlayerBar = (props: PlayerBarProps) => {
               
             </Box> */}
             <div>
+              <ButtonBase
+                sx={{ ...buttonSize }}
+                onClick={handleScreenshotButtonClick}
+              >
+                <Camera />
+              </ButtonBase>
               <ButtonBase
                 sx={{ ...buttonSize }}
                 disabled={playbackRate <= 0.25}

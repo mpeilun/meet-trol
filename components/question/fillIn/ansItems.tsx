@@ -7,46 +7,24 @@ function AnsItem(props: {
   isReply: boolean
   isShowAnswer: boolean
   index: number
-  setAns: React.Dispatch<React.SetStateAction<boolean[]>>
-  yourAns: boolean[]
+  setMyAnswer: React.Dispatch<React.SetStateAction<string[]>>
+  myAnswer: string[]
 }) {
-  const [ansUser, setAns] = useState('答案拖曳至此')
-  const [color, setColor] = useState('grey')
-
+  const [answers, setAnswer] = useState('答案拖曳至此')
+  const [color, setColor] = useState<string>('grey')
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'text',
     drop: (item: { ans: string }) => {
       setAnswer(item.ans)
-      setYourAnswer(item.ans)
+      let newAnswer: string[] = props.myAnswer
+      newAnswer[props.index] = item.ans
+      console.log(newAnswer)
+      props.setMyAnswer(newAnswer)
     },
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
     }),
   }))
-  const [yorAnswer, setYourAnswer] = React.useState('')
-  const setAnswer = (title: string) => {
-    setAns(title)
-  }
-
-  const check = (ansUser: string) => {
-    if (props.isReply && props.isShowAnswer) {
-      if (props.ans == ansUser) {
-        const newAns = [...props.yourAns]
-        newAns[props.index] = true
-        props.setAns(newAns)
-        console.log(newAns)
-        setColor('green')
-      } else {
-        const newAns = [...props.yourAns]
-        newAns[props.index] = false
-        props.setAns(newAns)
-        setColor('red')
-      }
-    }
-  }
-  React.useEffect(() => {
-    check(yorAnswer)
-  }, [props.isReply])
 
   // console.log(props.index)
   return (
@@ -74,7 +52,7 @@ function AnsItem(props: {
           // bgcolor: 'primary.light',
         }}
       >
-        {ansUser}
+        {answers}
       </Box>
     </Box>
   )

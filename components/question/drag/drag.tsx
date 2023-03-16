@@ -62,17 +62,12 @@ const Drag = (props: { handleQuestionClose: () => void; data: DragData }) => {
         coords.current.lastY = button.offsetTop
         coords.current.startX = e.clientX
         coords.current.startY = e.clientY
-        //   console.log(`起始X: ${coords.current.startX}`)
-        //   console.log(`起始Y: ${coords.current.startY}`)
       }
 
       const onMouseUp = (e: MouseEvent) => {
         isClicked.current = false
         coords.current.lastX = button.offsetLeft
         coords.current.lastY = button.offsetTop
-
-        console.log(`結束X: ${coords.current.lastX}`)
-        console.log(`結束Y: ${coords.current.lastY}`)
       }
 
       const onMouseMove = (e: MouseEvent) => {
@@ -82,15 +77,7 @@ const Drag = (props: { handleQuestionClose: () => void; data: DragData }) => {
         // 要扣掉原本 button 所在的 XY 值
         const nextX = e.clientX - coords.current.startX + coords.current.lastX
         const nextY = e.clientY - coords.current.startY + coords.current.lastY
-        //   console.log(`移動時滑鼠X: ${e.clientX}`)
-        //   console.log(`移動時滑鼠Y: ${e.clientY}`)
-        //   console.log(`移動時初始X: ${coords.current.startX}`)
-        //   console.log(`移動時初始Y: ${coords.current.startY}`)
-        // console.log(`移動時最後X: ${coords.current.lastX}`)
-        // console.log(`移動時最後Y: ${coords.current.lastY}`)
 
-        //   console.log(nextX)
-        //   console.log(nextY)
         button.style.top = `${nextY}px`
         button.style.left = `${nextX}px`
       }
@@ -105,7 +92,6 @@ const Drag = (props: { handleQuestionClose: () => void; data: DragData }) => {
         button.removeEventListener('mouseup', onMouseUp)
         box.removeEventListener('mousemove', onMouseMove)
         box.removeEventListener('mouseleave', onMouseUp)
-        //   console.log('button cleanup')
       }
       //  30, 140
       //  210, 170
@@ -114,14 +100,9 @@ const Drag = (props: { handleQuestionClose: () => void; data: DragData }) => {
   }, [isReply])
 
   const isCorrect = (): boolean => {
-    console.log('checkAns')
     const isCorrect: boolean[] = data.options.map(({ x, y, width, height }) => {
       const X = coords.current.lastX
       const Y = coords.current.lastY
-      console.log(X)
-      console.log(Y)
-      console.log(x)
-      console.log(y)
       if (X > x && X < x + width && Y > y && Y < y + height) {
         return true
       } else {
@@ -165,17 +146,19 @@ const Drag = (props: { handleQuestionClose: () => void; data: DragData }) => {
     <>
       <Box minHeight={50} display="flex" alignItems="center">
         <Typography variant="h5" sx={{ width: '100%' }}>
-          {data.title??'圖選題'}
+          {data.title ?? '圖選題'}
         </Typography>
         <IconButton onClick={() => props.handleQuestionClose()}>
           <CloseIcon />
         </IconButton>
       </Box>
       <Divider />
-      <Typography variant="body2" sx={{ pt: 1.5 }}>
-        {data.content ?? ''}
-      </Typography>
-      <Box >
+      {data.question && (
+        <Typography variant="body2" sx={{ pt: 1.5 }}>
+          {data.question ?? ''}
+        </Typography>
+      )}
+      <Box>
         <Box
           ref={isReply ? emptyRef : boxRef}
           sx={{

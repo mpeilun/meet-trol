@@ -29,14 +29,14 @@ interface alert {
 
 const DragDrop = (props: { data: FillData }) => {
   const data = props.data
-  const question = data.content
+  const question = data.question
   const regex = /(?<=\().+?(?=\))/g // 正則表達式 匹配所有括號內的文字
-  const answers = question.match(regex)
+  const answers: string[] = question.match(regex)
   const options = data.options
   const questionElement = []
-  const [yourAns, setYourAns] = React.useState<boolean[]>(
-    new Array(answers.length).fill(false)
-  )
+  const optionElement = []
+  const [myAnswer, setMyAnswer] = React.useState<string[]>([])
+
   const [isAnsError, setIsAnsError] = React.useState<alert>({
     isShow: false,
     text: '',
@@ -44,8 +44,28 @@ const DragDrop = (props: { data: FillData }) => {
   })
   const [isReply, setIsReply] = React.useState<boolean>(false)
 
+  const isCorrect = (answers: string[], myAnswer: string[]): boolean => {
+    if (answers.length !== myAnswer.length) {
+      return false
+    }
+    const isIdentical = answers.every((element, index) => {
+      return element === myAnswer[index]
+    })
+    return isIdentical
+  }
+
   const checkAns = () => {
-    console.log(yourAns)
+
+    fetch('/api/interactiveData/fill/pushAns', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ answers: myAnswer, fillId: data.id }),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error(error))
     if (!data.isShowAnswer) {
       setIsReply(true)
       setIsAnsError({
@@ -53,27 +73,23 @@ const DragDrop = (props: { data: FillData }) => {
         text: '請繼續作答',
         severity: 'info',
       })
-    } else if (yourAns.includes(false)) {
-      setIsReply(true)
-      setIsAnsError({
-        isShow: data.isShowAnswer,
-        text: '錯誤',
-        severity: 'error',
-      })
-    } else {
+    } else if (isCorrect(answers, myAnswer)) {
       setIsReply(true)
       setIsAnsError({
         isShow: data.isShowAnswer,
         text: '正確',
         severity: 'success',
       })
+    } else {
+      setIsReply(true)
+      setIsAnsError({
+        isShow: data.isShowAnswer,
+        text: '錯誤',
+        severity: 'error',
+      })
     }
   }
 
-  React.useEffect(() => {
-    // console.log(yourAns)
-    if(isReply){checkAns()}
-  }, [yourAns])
   const questionComponent = () => {
     let isInsideBracket = false
     let answerIndex = 0
@@ -90,8 +106,8 @@ const DragDrop = (props: { data: FillData }) => {
               ans={answers[answerIndex]}
               isReply={isReply}
               isShowAnswer={data.isShowAnswer}
-              setAns={setYourAns}
-              yourAns={yourAns}
+              setMyAnswer={setMyAnswer}
+              myAnswer={myAnswer}
             ></AnsItem>
           )
           isInsideBracket = false
@@ -104,6 +120,21 @@ const DragDrop = (props: { data: FillData }) => {
   }
   questionComponent()
 
+  const optionComponent = () => {
+    const element = options.map((title, index) => {
+      return (
+        <FillItem
+          key={`dragdrop-ans-${index}`}
+          title={title}
+          index={index}
+          isReply={isReply}
+        ></FillItem>
+      )
+    })
+    optionElement.push(element)
+  }
+
+  optionComponent()
   // TO-DO 改成 beautiful-dnd
   return (
     <Box>
@@ -149,16 +180,7 @@ const DragDrop = (props: { data: FillData }) => {
               minHeight: 250,
             }}
           >
-            {options.map((title, index) => {
-              return (
-                <FillItem
-                  key={`dragdrop-ans-${index}`}
-                  title={title}
-                  index={index}
-                  isReply={isReply}
-                ></FillItem>
-              )
-            })}
+            {optionElement}
           </Box>
         </DndProvider>
       </Box>
