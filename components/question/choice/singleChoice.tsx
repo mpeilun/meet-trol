@@ -88,7 +88,7 @@ export default function SingleChoice(props: { data: ChoiceData }) {
   return (
     <form onSubmit={handleSubmit}>
       <FormControl sx={{ pt: 1, width: '100%' }} variant="standard">
-        <FormLabel id="demo-error-radios">{data.content ?? ''}</FormLabel>
+        <FormLabel id="demo-error-radios">{data.question ?? ''}</FormLabel>
         <Box sx={{ height: 0 }}></Box>
         <RadioGroup
           aria-labelledby="demo-error-radios"

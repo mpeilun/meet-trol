@@ -8,19 +8,23 @@ import {
   Typography,
   alpha,
 } from '@mui/material'
-import { Dispatch, ReactNode, SetStateAction } from 'react'
+import { Dispatch, ReactNode, SetStateAction, useEffect } from 'react'
 import { SelectType } from '../../pages/courses/edit/[id]'
-import { allQuestion } from '../../types/video-edit'
-import { formatSeconds } from '../../util/common'
-import { questionStyle } from '../popup/popupFab'
+import { allQuestion, Video } from '../../types/video-edit'
+import { formatSeconds, questionStyle } from '../../util/common'
 
 function VideoTimeLine(props: {
+  video: Video
   allQuestion: allQuestion
   duration: number
   select: SelectType
   setSelect: Dispatch<SetStateAction<SelectType>>
 }) {
-  const { allQuestion, duration, select, setSelect } = props
+  const { video, allQuestion, duration, select, setSelect } = props
+
+  useEffect(() => {
+    console.log('new value', allQuestion)
+  }, [allQuestion])
 
   return (
     <Box padding={3}>
@@ -49,7 +53,7 @@ function VideoTimeLine(props: {
               justifyContent={'center'}
             >
               {icon}
-              <Typography>{displayName}</Typography>
+              <Typography>{displayName.substring(0, 2)}</Typography>
             </Box>
             <Card
               sx={{
@@ -71,45 +75,49 @@ function VideoTimeLine(props: {
                 }
                 placement={'right'}
               >
-                <Tooltip
-                  title={
-                    <Typography variant="body2">
-                      {formatSeconds(question.start)}
-                    </Typography>
-                  }
-                  placement={'left'}
-                >
+                <>
                   <Tooltip
                     title={
-                      <Box>
-                        <Typography
-                          maxWidth={'100px'}
-                          textOverflow={'ellipsis'}
-                          overflow={'hidden'}
-                          sx={{
-                            display: '-webkit-box',
-                            WebkitLineClamp: 1,
-                            WebkitBoxOrient: 'vertical',
-                          }}
-                        >
-                          {question.title}
-                        </Typography>
-                      </Box>
+                      <Typography variant="body2">
+                        {formatSeconds(question.start)}
+                      </Typography>
                     }
-                    arrow
+                    placement={'left'}
                   >
-                    <Card
-                      sx={{
-                        height: '60px',
-                        position: 'relative',
-                        left: `${left}%`,
-                        width: `${width}%`,
-                        boxShadow: 'none',
-                        bgcolor: color,
-                      }}
-                    />
+                    <>
+                      <Tooltip
+                        title={
+                          <Box>
+                            <Typography
+                              maxWidth={'100px'}
+                              textOverflow={'ellipsis'}
+                              overflow={'hidden'}
+                              sx={{
+                                display: '-webkit-box',
+                                WebkitLineClamp: 1,
+                                WebkitBoxOrient: 'vertical',
+                              }}
+                            >
+                              {question.title}
+                            </Typography>
+                          </Box>
+                        }
+                        arrow
+                      >
+                        <Card
+                          sx={{
+                            height: '60px',
+                            position: 'relative',
+                            left: `${left}%`,
+                            width: `${width}%`,
+                            boxShadow: 'none',
+                            bgcolor: color,
+                          }}
+                        />
+                      </Tooltip>
+                    </>
                   </Tooltip>
-                </Tooltip>
+                </>
               </Tooltip>
             </Card>
           </Box>

@@ -17,9 +17,9 @@ import { SelectType } from '../../../pages/courses/edit/[id]'
 const defaultQuestion: Choice = {
   id: null,
   questionType: 'choice',
-  title: '',
-  content: null,
-  note: null,
+  title: '選擇題',
+  question: '',
+  note: '',
   isShowAnswer: false,
   options: [{ option: '', isAnswer: false }],
   start: 0,
@@ -32,10 +32,11 @@ const EditChoice = (props: {
   setVideo: Dispatch<SetStateAction<Video>>
   select: SelectType
   setSelect: Dispatch<SetStateAction<SelectType>>
+  selectRange: number[]
 }) => {
-  const { video, setVideo, select, setSelect } = props
+  const { video, setVideo, select, setSelect, selectRange } = props
   const [question, setQuestion] = useState<Choice>(
-    (select.initQuestion as Choice) ?? defaultQuestion
+    (select.initQuestion as Choice) ?? { ...defaultQuestion, videoId: video.id }
   )
 
   useEffect(() => {
@@ -47,7 +48,66 @@ const EditChoice = (props: {
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuestion((prev) => ({ ...prev, title: event.target.value }))
   }
-  const handleQuestionSubmit = () => {}
+
+  const handleQuestionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setQuestion((prev) => ({ ...prev, question: event.target.value }))
+  }
+
+  const handleNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setQuestion((prev) => {
+      prev.note = event.target.value
+      return { ...prev }
+    })
+  }
+
+  const handleQuestionSubmit = () => {
+    //TODO 可能需要提取成一個function
+    if (select.value == null) {
+      const { id, ...addData } = question
+      fetch('/api/question', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          question: {
+            ...addData,
+            start: selectRange[0],
+            end: selectRange[1],
+          },
+        }),
+      })
+        .then((response) => response.json())
+        .then((data: Choice) => {
+          console.log(data)
+          setVideo((prev) => ({ ...prev, question: [data, ...prev.question] }))
+          setSelect({ value: 0, initQuestion: data })
+        })
+    } else {
+      const updateData = question
+      fetch('/api/question', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          question: {
+            ...updateData,
+            start: selectRange[0],
+            end: selectRange[1],
+          },
+        }),
+      })
+        .then((response) => response.json())
+        .then((data: Choice) => {
+          console.log(data)
+          setVideo((prev) => {
+            prev.question[select.value] = data
+            return { ...prev }
+          })
+        })
+    }
+  }
 
   const addOption = () => {
     setQuestion((prev) => {
@@ -65,6 +125,15 @@ const EditChoice = (props: {
     })
   }
 
+  const handleIsShowAnswerChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setQuestion((prev) => {
+      prev.isShowAnswer = event.target.checked
+      return { ...prev }
+    })
+  }
+
   //選項 Component
   const Options = question.options.map((item, index) => {
     const handleOptionChange =
@@ -76,7 +145,7 @@ const EditChoice = (props: {
         })
       }
 
-    const handleCheckedChange =
+    const handleIsAnswerChange =
       (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
         setQuestion((prev) => {
           const prevOptions = prev.options
@@ -84,6 +153,7 @@ const EditChoice = (props: {
           return { ...prev, options: prevOptions }
         })
       }
+
     return (
       <Box sx={{ flexDirection: 'row' }} key={`option-${index}`}>
         <TextField
@@ -97,7 +167,7 @@ const EditChoice = (props: {
           <Checkbox
             sx={{ mt: 2 }}
             checked={item.isAnswer}
-            onChange={handleCheckedChange(index)}
+            onChange={handleIsAnswerChange(index)}
           />
         </Tooltip>
         <Button
@@ -117,14 +187,35 @@ const EditChoice = (props: {
   return (
     <>
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <Typography sx={{ mt: 2 }}>題目</Typography>
         <TextField
           sx={{ m: 1 }}
           variant="standard"
-          label="輸入題目"
+          label="標題"
           value={question.title}
           onChange={handleTitleChange}
         />
+        <TextField
+          sx={{ m: 1 }}
+          variant="standard"
+          label="問題"
+          value={question.question}
+          onChange={handleQuestionChange}
+        />
+        <TextField
+          sx={{ m: 1 }}
+          variant="standard"
+          label="提示"
+          value={question.note}
+          onChange={handleNoteChange}
+        />
+        <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
+          <Typography sx={{ mt: 2 }}>顯示答案</Typography>
+          <Checkbox
+            sx={{ mt: 2 }}
+            checked={question.isShowAnswer}
+            onChange={handleIsShowAnswerChange}
+          />
+        </Box>
         <Typography sx={{ mt: 2 }}>選項</Typography>
         {Options}
         <Box display="flex" justifyContent="space-between">
@@ -140,7 +231,7 @@ const EditChoice = (props: {
             variant="outlined"
             onClick={handleQuestionSubmit}
           >
-            送出
+            {select.value != null ? '更新' : '新增'}
           </Button>
         </Box>
       </Box>

@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 import courseReducer from './course-data'
+import notificationReducer from './notification'
 
 export const store = configureStore({
   reducer: {
     course: courseReducer,
+    notification: notificationReducer,
   },
 })
 

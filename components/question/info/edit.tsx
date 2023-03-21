@@ -14,11 +14,14 @@ import { Info } from '@prisma/client'
 import { PlayerProgress } from '../../../types/react-player'
 import { Video } from '../../../types/video-edit'
 import { SelectType } from '../../../pages/courses/edit/[id]'
+import Notification from '../../notification/notification'
+import { useAppDispatch } from '../../../hooks/redux'
+import { sendMessage } from '../../../store/notification'
 
 const defaultQuestion: Info = {
   id: null,
   questionType: 'info',
-  title: '',
+  title: '資訊卡',
   content: '',
   url: '',
   start: 0,
@@ -31,10 +34,13 @@ const EditInfo = (props: {
   setVideo: Dispatch<SetStateAction<Video>>
   select: SelectType
   setSelect: Dispatch<SetStateAction<SelectType>>
+  selectRange: number[]
 }) => {
-  const { video, setVideo, select, setSelect } = props
+  const dispatch = useAppDispatch()
+
+  const { video, setVideo, select, setSelect, selectRange } = props
   const [question, setQuestion] = useState<Info>(
-    (select.initQuestion as Info) ?? defaultQuestion
+    (select.initQuestion as Info) ?? { ...defaultQuestion, videoId: video.id }
   )
 
   useEffect(() => {
@@ -47,27 +53,90 @@ const EditInfo = (props: {
     setQuestion((prev) => ({ ...prev, title: event.target.value }))
   }
 
+  const handleContentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setQuestion((prev) => ({ ...prev, content: event.target.value }))
+  }
+
   const handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuestion((prev) => ({ ...prev, url: event.target.value }))
   }
-  const handleInfoSubmit = () => {}
 
+  const handleInfoSubmit = () => {
+    //TODO 可能需要提取成一個function
+    //TODO Choice 也需要通知
+    if (select.value == null) {
+      const { id, ...addData } = question
+      fetch('/api/question', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          question: {
+            ...addData,
+            start: selectRange[0],
+            end: selectRange[1],
+          },
+        }),
+      })
+        .then((response) => response.json())
+        .then((data: Info) => {
+          setVideo((prev) => ({ ...prev, question: [data, ...prev.question] }))
+          setSelect({ value: 0, initQuestion: data })
+          dispatch(sendMessage({ severity: 'success', message: '新增成功' }))
+        })
+        .catch((err) => {
+          dispatch(sendMessage({ severity: 'error', message: err }))
+        })
+    } else {
+      const updateData = question
+      fetch('/api/question', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          question: {
+            ...updateData,
+            start: selectRange[0],
+            end: selectRange[1],
+          },
+        }),
+      })
+        .then((response) => response.json())
+        .then((data: Info) => {
+          setVideo((prev) => {
+            prev.question[select.value] = data
+            return { ...prev }
+          })
+          dispatch(sendMessage({ severity: 'success', message: '更新成功' }))
+        })
+        .catch((err) => {
+          dispatch(sendMessage({ severity: 'error', message: err }))
+        })
+    }
+  }
   return (
     <>
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <Typography sx={{ mt: 2 }}>資訊卡</Typography>
+        <TextField
+          sx={{ m: 1 }}
+          variant="standard"
+          label="標題"
+          value={question.title}
+          onChange={handleTitleChange}
+        />
         <TextField
           sx={{ m: 1 }}
           variant="standard"
           label="內容"
-          value={question.title}
-          onChange={handleTitleChange}
+          value={question.content}
+          onChange={handleContentChange}
         />
-        <Typography sx={{ mt: 2 }}>新增圖片</Typography>
         <TextField
           sx={{ m: 1 }}
           variant="standard"
-          label="圖片網址"
+          label="附加圖片"
           value={question.url}
           onChange={handleUrlChange}
         />
@@ -77,7 +146,7 @@ const EditInfo = (props: {
           variant="outlined"
           onClick={handleInfoSubmit}
         >
-          送出
+          {select.value != null ? '更新' : '新增'}
         </Button>
       </Box>
     </>
