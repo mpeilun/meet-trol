@@ -1,11 +1,48 @@
 import * as React from 'react'
 import Fab from '@mui/material/Fab'
+import InfoIcon from '@mui/icons-material/Info'
+import MenuIcon from '@mui/icons-material/Menu'
+import CameraIcon from '@mui/icons-material/Camera'
 import { Typography } from '@mui/material'
 import { useAppSelector, useAppDispatch } from '../../hooks/redux'
 import PopupModal from './popupModel'
 import { ChoiceData, RankData, FillData, DragData } from '../../types/chapter'
 import { Info } from '@prisma/client'
-import { questionStyle } from '../../util/common'
+
+export function questionStyle(questionType: string) {
+  switch (questionType) {
+    case 'info':
+      return {
+        icon: <InfoIcon color="warning" />,
+        displayName: '資訊',
+      }
+    case 'drag':
+      return {
+        icon: <CameraIcon color="secondary" />,
+        displayName: '圖選',
+      }
+    case 'choice':
+      return {
+        icon: <CameraIcon color="primary" />,
+        displayName: '選擇',
+      }
+    case 'rank':
+      return {
+        icon: <CameraIcon color="primary" />,
+        displayName: '排序',
+      }
+    case 'fill':
+      return {
+        icon: <CameraIcon color="primary" />,
+        displayName: '填充',
+      }
+    default: //'choice' | 'rank' | 'fill'
+      return {
+        icon: <MenuIcon color="primary" />,
+        displayName: '題目',
+      }
+  }
+}
 
 const PopupFab = (props: {
   pause: () => void

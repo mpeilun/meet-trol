@@ -63,6 +63,7 @@ interface questionList {
 
 function CoursePlayer(props: { courseId: string }) {
   //ReactPlayer
+  // console.log('playerRender')
   const playerRef = React.useRef<ReactPlayerType>(null) //ReactPlayer 的參照
   const [showPlayerBar, setShowPlayerBar] = React.useState(false) //是否顯示播放器控制列
   // const [mouseEnter, setMouseEnter] = React.useState(false)
@@ -94,10 +95,20 @@ function CoursePlayer(props: { courseId: string }) {
       const response = await fetch(`http://localhost:3000/api/video/${videoId}`)
       const data: VideoData = await response.json()
       setVideoData(data)
-      console.log(data)
+      // console.log(data)
     }
-    fetchData()
+    const isValidObjectId =
+      typeof videoId === 'string' &&
+      videoId.length === 24 &&
+      /^[a-f0-9]+$/i.test(videoId)
+    if (isValidObjectId) {
+      fetchData()
+    }
+   
   }, [videoId])
+
+
+
 
   let handlePlayerStatus = (props: OnProgressProps) => {
     setPlayedSeconds(props.playedSeconds)
