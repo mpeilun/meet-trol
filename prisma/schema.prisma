@@ -82,8 +82,8 @@ model Course {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   chapters    Chapter[]
-  mebers      User[]    @relation("meber", fields: [mebersId], references: [id])
-  mebersId    String[]  @db.ObjectId
+  members     User[]    @relation("meber", fields: [membersId], references: [id])
+  membersId   String[]  @db.ObjectId
   ownerId     String[]  @db.ObjectId
 }
 

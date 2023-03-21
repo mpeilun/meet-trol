@@ -66,6 +66,7 @@ export default function CustomizedAccordions(props: {
   const data = props.chapterData
   const lastView = props.lastView
   // 獲得最後觀看的影片
+
   const lastViewVideo = lastView.reduce((earliest, current) => {
     const earliestTime = new Date(earliest.viewTime)
     const currentTime = new Date(current.viewTime)

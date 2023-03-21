@@ -10,6 +10,7 @@ import {
   Theme,
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { LoadingButton } from '@mui/lab'
 import { Choice } from '@prisma/client'
 import { Video } from '../../../types/video-edit'
 import { SelectType } from '../../../pages/courses/edit/[id]'
@@ -38,6 +39,8 @@ const EditChoice = (props: {
   const [question, setQuestion] = useState<Choice>(
     (select.initQuestion as Choice) ?? { ...defaultQuestion, videoId: video.id }
   )
+  const [isSubmit, setIsSubmit] = useState(false)
+  const [isDelete, setIsDelete] = useState(false)
 
   useEffect(() => {
     if (select.value) {
@@ -218,21 +221,30 @@ const EditChoice = (props: {
         </Box>
         <Typography sx={{ mt: 2 }}>選項</Typography>
         {Options}
-        <Box display="flex" justifyContent="space-between">
-          <Button
-            sx={{ m: 1, width: '7rem', height: '3rem' }}
-            variant="outlined"
-            onClick={addOption}
-          >
-            新增選項
-          </Button>
-          <Button
-            sx={{ m: 1, width: '7rem', height: '3rem' }}
+        <Button
+          sx={{ m: 1, width: '7rem', height: '3rem' }}
+          variant="outlined"
+          onClick={addOption}
+        >
+          新增選項
+        </Button>
+        <Box mr={'auto'}>
+          {select.value && (
+            <LoadingButton
+              sx={{ width: '7rem', height: '3rem' }}
+              variant="outlined"
+              onClick={handleQuestionSubmit}
+            >
+              {'刪除'}
+            </LoadingButton>
+          )}
+          <LoadingButton
+            sx={{ width: '7rem', height: '3rem' }}
             variant="outlined"
             onClick={handleQuestionSubmit}
           >
             {select.value != null ? '更新' : '新增'}
-          </Button>
+          </LoadingButton>
         </Box>
       </Box>
     </>
