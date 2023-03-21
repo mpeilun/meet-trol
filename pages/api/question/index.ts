@@ -10,6 +10,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await getServerSession(req, res, authOptions)
   //判斷是否登入
   if (session) {
+    //新增問題
     //判斷 Method 為 POST
     if (req.method === 'POST') {
       let { question } = req.body as { question: Question }
@@ -80,6 +81,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       } else {
         res.status(403).json({ message: 'Forbidden' })
       }
+      //更新問題
       //判斷 Method 為 PUT
     } else if (req.method === 'PUT') {
       let { question } = req.body as { question: Question }
@@ -109,16 +111,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 ...(questionDropId as Info),
               },
             })
-            // const updateInfo = await prisma.video.update({
-            //   where: { id: question.videoId },
-            //   data: {
-            //     [question.questionType]: {
-            //       connect: {
-            //         id: info.id,
-            //       },
-            //     },
-            //   },
-            // })
             res.status(200).json(info)
             break
           //Choice
@@ -129,16 +121,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 ...(questionDropId as Choice),
               },
             })
-            // const updateChoice = await prisma.video.update({
-            //   where: { id: question.videoId },
-            //   data: {
-            //     [question.questionType]: {
-            //       connect: {
-            //         id: choice.id,
-            //       },
-            //     },
-            //   },
-            // })
             res.status(200).json(choice)
             break
           //Fill
@@ -149,16 +131,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 ...(questionDropId as Fill),
               },
             })
-            // const updateFill = await prisma.video.update({
-            //   where: { id: question.videoId },
-            //   data: {
-            //     [question.questionType]: {
-            //       connect: {
-            //         id: fill.id,
-            //       },
-            //     },
-            //   },
-            // })
             res.status(200).json(fill)
             break
           //Drag
@@ -169,16 +141,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 ...(questionDropId as Drag),
               },
             })
-            // const updateDrag = await prisma.video.update({
-            //   where: { id: question.videoId },
-            //   data: {
-            //     [question.questionType]: {
-            //       connect: {
-            //         id: drag.id,
-            //       },
-            //     },
-            //   },
-            // })
             res.status(200).json(drag)
             break
           //Rank
@@ -189,16 +151,65 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 ...(questionDropId as Rank),
               },
             })
-            // const updateRank = await prisma.video.update({
-            //   where: { id: question.videoId },
-            //   data: {
-            //     [question.questionType]: {
-            //       connect: {
-            //         id: rank.id,
-            //       },
-            //     },
-            //   },
-            // })
+            res.status(200).json(rank)
+            break
+          default:
+            res.status(404).json({ message: 'Error Question Type' })
+        }
+      } else {
+        res.status(403).json({ message: 'Forbidden' })
+      }
+    } else if (req.method === 'DELETE') {
+      let { question } = req.body as { question: Question }
+      const video = await prisma.video.findUnique({
+        where: { id: question.videoId },
+        select: {
+          chapter: {
+            select: {
+              course: {
+                select: {
+                  ownerId: true,
+                },
+              },
+            },
+          },
+        },
+      })
+      if (video.chapter.course.ownerId.includes(session.user.id)) {
+        switch (question.questionType) {
+          //Info
+          case 'info':
+            const info = await prisma.info.delete({
+              where: { id: question.id },
+            })
+            res.status(200).json(info)
+            break
+          //Choice
+          case 'choice':
+            const choice = await prisma.choice.delete({
+              where: { id: question.id },
+            })
+            res.status(200).json(choice)
+            break
+          //Fill
+          case 'fill':
+            const fill = await prisma.fill.delete({
+              where: { id: question.id },
+            })
+            res.status(200).json(fill)
+            break
+          //Drag
+          case 'drag':
+            const drag = await prisma.drag.delete({
+              where: { id: question.id },
+            })
+            res.status(200).json(drag)
+            break
+          //Rank
+          case 'rank':
+            const rank = await prisma.rank.delete({
+              where: { id: question.id },
+            })
             res.status(200).json(rank)
             break
           default:
