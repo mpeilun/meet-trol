@@ -67,7 +67,7 @@ function MainNavigation() {
 
   return (
     <AppBar component="nav" position="sticky">
-      <Container maxWidth="xl">
+      <Container maxWidth="md">
         <Toolbar disableGutters>
           {/* 手機尺寸 */}
           <RemoveRedEyeIcon

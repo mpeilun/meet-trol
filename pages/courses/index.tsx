@@ -20,6 +20,7 @@ import {
 import Grid from '@mui/material/Unstable_Grid2' // Grid version 2
 import { grey } from '@mui/material/colors'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import Link from 'next/link'
 import * as React from 'react'
 import { Course } from '@prisma/client'
@@ -69,6 +70,9 @@ function AllCoursesPage() {
           <Button variant="contained" sx={{ ml: '1rem', height: '95%' }}>
             <ArrowForwardIcon />
           </Button>
+          <Link href="/manage/courses">
+          <Button startIcon={<AddCircleOutlineIcon />} variant="contained" sx={{ml:'1rem',height:"95%",fontSize:"20"}} >新增課程</Button>
+          </Link>
         </Grid>
         <Grid md={12} xs={12}>
           <Box display="flex" flexDirection="column" m={2}>

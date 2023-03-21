@@ -5,9 +5,13 @@ import theme, { themeFont } from '../../styles/material-theme'
 import Head from 'next/head'
 import { grey } from '@mui/material/colors'
 import { useRouter } from 'next/router'
+import Notification from '../notification/notification'
+import { useAppSelector, useAppDispatch } from '../../hooks/redux'
 
 function Layout(props: { children: ReactNode }) {
   const { asPath } = useRouter()
+
+  const notification = useAppSelector((state) => state.notification)
 
   return (
     <>
@@ -32,6 +36,12 @@ function Layout(props: { children: ReactNode }) {
         >
           {asPath !== '/auth/signin' && <MainNavigation />}
           <main style={{ height: '100%' }}>{props.children}</main>
+          <Notification
+            open={notification.open}
+            severity={notification.severity}
+            message={notification.message}
+            duration={notification.duration}
+          />
         </Box>
       </ThemeProvider>
     </>
