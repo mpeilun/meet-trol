@@ -43,9 +43,9 @@ function AllCoursesPage() {
         width: { md: '80%', xs: ' 100%' },
         height: '100%',
         maxWidth: 'xl',
-        m: { md: '5rem auto', xs: '0' },
+        m: { md: '1rem auto', xs: '0' },
         p: '2rem',
-        backgroundColor: '#FFF',
+        backgroundColor: '#F9F5E3',
       }}
     >
       <Grid
@@ -63,8 +63,8 @@ function AllCoursesPage() {
           m={2}
         >
           <TextField
-            placeholder="加入課程"
-            sx={{ width: '50%', minWidth: '100px' }}
+            placeholder="加入課程  請輸入課程ID"
+            sx={{ width: '50%', minWidth: '100px',bgcolor:"#FFF" }}
           ></TextField>
           {/*TODO 考慮使用ICON Button */}
           <Button variant="contained" sx={{ ml: '1rem', height: '95%' }}>
@@ -75,19 +75,20 @@ function AllCoursesPage() {
           </Link>
         </Grid>
         <Grid md={12} xs={12}>
-          <Box display="flex" flexDirection="column" m={2}>
-            <Typography variant="h5" m={'0 auto'}>
+          <Typography variant="h4" m={'0 auto'} fontWeight="bold" sx={{ml:15}}>
               我的課程
-            </Typography>
+          </Typography>
+          <Box display="flex" flex={"center"} flexDirection="column" m={2}>
             <Grid
               container
               spacing={2}
-              mt={1}
+              mt={2}
               justifyContent={{ md: 'center', xs: 'center' }}
             >
               {courseData.map(({ id, title, description }, index) => {
                 return (
                   <Grid md={4} key={index.toString()}>
+                    <img style={{margin:"auto"}} src="https://i.imgur.com/uCSOvTI.png" width={180} height={180}></img>
                     <Box m={'auto'} width={'100%'} maxWidth="200px">
                       <Link href={`/courses/${id}`}>
                         <Typography textAlign={'center'} bgcolor={grey[400]}>
