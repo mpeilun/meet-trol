@@ -18,8 +18,7 @@ export interface ChapterListData {
   videos: { id: string; title: string }[]
 }
 
-export interface VideoData {
-  url: string
+export interface VideoData extends Video {
   question: (Info | ChoiceData | RankData | FillData | DragData)[]
 }
 

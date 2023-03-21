@@ -5,7 +5,6 @@ import MenuIcon from '@mui/icons-material/Menu'
 import CameraIcon from '@mui/icons-material/Camera'
 import { Typography } from '@mui/material'
 import { useAppSelector, useAppDispatch } from '../../hooks/redux'
-import { blue, yellow, purple } from '@mui/material/colors'
 import PopupModal from './popupModel'
 import { ChoiceData, RankData, FillData, DragData } from '../../types/chapter'
 import { Info } from '@prisma/client'
@@ -15,37 +14,31 @@ export function questionStyle(questionType: string) {
     case 'info':
       return {
         icon: <InfoIcon color="warning" />,
-        color: yellow[500],
         displayName: '資訊',
       }
     case 'drag':
       return {
         icon: <CameraIcon color="secondary" />,
-        color: purple[500],
         displayName: '圖選',
       }
     case 'choice':
       return {
         icon: <CameraIcon color="primary" />,
-        color: blue[500],
         displayName: '選擇',
       }
     case 'rank':
       return {
         icon: <CameraIcon color="primary" />,
-        color: blue[500],
         displayName: '排序',
       }
     case 'fill':
       return {
         icon: <CameraIcon color="primary" />,
-        color: blue[500],
         displayName: '填充',
       }
     default: //'choice' | 'rank' | 'fill'
       return {
         icon: <MenuIcon color="primary" />,
-        color: blue[500],
         displayName: '題目',
       }
   }

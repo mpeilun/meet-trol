@@ -9,6 +9,7 @@ import {
   Paper,
   CircularProgress,
   Select,
+  IconButton,
 } from '@mui/material'
 import { useState, useEffect, useRef, SetStateAction, Dispatch } from 'react'
 import { useRouter } from 'next/router'
@@ -22,6 +23,8 @@ import EditInfo from '../../../components/question/info/edit'
 import EditChoice from '../../../components/question/choice/edit'
 import { Choice, Drag, Fill, Info, Rank } from '@prisma/client'
 import VideoTimeLine from '../../../components/edit/vide-timeline'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import { questionStyle } from '../../../util/common'
 
 export interface SelectType {
   value: number
@@ -79,6 +82,7 @@ function EditQuestionPage() {
     value: null,
     initQuestion: null,
   })
+  const [selectRange, setSelectRange] = useState([0, 30])
 
   const [tabValue, setTabValue] = useState(0)
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -193,9 +197,9 @@ function EditQuestionPage() {
                 }}
                 // start={500}
                 // end={600}
-                // onSelectRangeChange={(startTime, endTime) => {
-                // console.log(startTime, endTime)
-                // }}
+                onSelectRangeChange={(startTime, endTime) => {
+                  setSelectRange([startTime, endTime])
+                }}
               />
             </Box>
           </Box>
@@ -211,9 +215,54 @@ function EditQuestionPage() {
             }}
           >
             {select.value != null ? (
-              <Box padding={'16px 24px 24px 24px'}>
-                {editQuestion(video, setVideo, select, setSelect)}
-              </Box>
+              // 返回按鈕
+              <>
+                <Box
+                  display={'flex'}
+                  justifyContent={'center'}
+                  alignItems={'center'}
+                  minHeight={'60px'}
+                >
+                  <IconButton
+                    color="primary"
+                    sx={{
+                      marginLeft: '10px',
+                      marginRight: 'auto',
+                      width: 40,
+                      height: 40,
+                      borderRadius: '10%',
+                      border: '1px solid',
+                      borderColor: 'primary.main',
+                      '& .MuiTouchRipple-root .MuiTouchRipple-child': {
+                        borderRadius: '10%',
+                      },
+                    }}
+                    onClick={() => {
+                      setSelect({
+                        value: null,
+                        initQuestion: null,
+                      })
+                    }}
+                  >
+                    <ArrowBackIcon />
+                  </IconButton>
+                  <Typography variant="h6" sx={{ position: 'absolute' }}>
+                    {
+                      questionStyle(select.initQuestion.questionType)
+                        .displayName
+                    }
+                  </Typography>
+                </Box>
+                <Box padding={'0 24px 24px 24px'}>
+                  {editQuestion(
+                    video,
+                    setVideo,
+                    select,
+                    setSelect,
+                    selectRange
+                  )}
+                </Box>
+              </>
             ) : (
               <Box>
                 <Tabs value={tabValue} onChange={handleTabChange}>
@@ -230,6 +279,7 @@ function EditQuestionPage() {
                     setVideo={setVideo}
                     select={select}
                     setSelect={setSelect}
+                    selectRange={selectRange}
                   />
                 </TabPanel>
                 <TabPanel value={tabValue} index={1}>
@@ -238,6 +288,7 @@ function EditQuestionPage() {
                     setVideo={setVideo}
                     select={select}
                     setSelect={setSelect}
+                    selectRange={selectRange}
                   />
                 </TabPanel>
                 <TabPanel value={tabValue} index={2}>
@@ -255,6 +306,7 @@ function EditQuestionPage() {
         </Box>
 
         <VideoTimeLine
+          video={video}
           allQuestion={video.question}
           duration={playerProgress.duration}
           select={select}
@@ -302,7 +354,8 @@ function editQuestion(
   video: Video,
   setVideo: Dispatch<SetStateAction<Video>>,
   select: SelectType,
-  setSelect: Dispatch<SetStateAction<SelectType>>
+  setSelect: Dispatch<SetStateAction<SelectType>>,
+  selectRange: number[]
 ) {
   switch (video.question[select.value].questionType) {
     case 'info': {
@@ -312,6 +365,7 @@ function editQuestion(
           setVideo={setVideo}
           select={select}
           setSelect={setSelect}
+          selectRange={selectRange}
         />
       )
     }
@@ -322,6 +376,7 @@ function editQuestion(
           setVideo={setVideo}
           select={select}
           setSelect={setSelect}
+          selectRange={selectRange}
         />
       )
     }
