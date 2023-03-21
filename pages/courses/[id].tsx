@@ -45,7 +45,6 @@ function CourseInnerPage(props: {
     )
   } else {
     const lastView: LastViewData[] = props.record[0].lastView
-    
 
     return (
       <Box
@@ -83,12 +82,8 @@ function CourseInnerPage(props: {
         >
           <CoursePlayer courseId={pid}></CoursePlayer>
           <CourseTab
-            id={''}
-            url={''}
-            title={''}
-            description={''}
-            material={''}
-            chapterId={''}
+            chapterData={chapter}
+            lastView={lastView}
           ></CourseTab>
         </Box>
       </Box>

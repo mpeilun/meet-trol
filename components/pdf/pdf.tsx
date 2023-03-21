@@ -41,7 +41,7 @@ function PDF(props: { path: string }) {
         position: 'relative',
         height: pageHeight
       }} onMouseEnter={() => setHoverPDF(true)} onMouseLeave={() => setHoverPDF(false)}>
-      <Document file={path} onLoadSuccess={onDocumentLoadSuccess}>
+      <Document file={props.path} onLoadSuccess={onDocumentLoadSuccess}>
         <Page key={`page_${page + 1}`}
           pageNumber={page}
           renderAnnotationLayer={true}

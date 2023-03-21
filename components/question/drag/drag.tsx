@@ -116,6 +116,19 @@ const Drag = (props: { handleQuestionClose: () => void; data: DragData }) => {
 
   const checkAns = () => {
     const check = isCorrect()
+    fetch('/api/interactiveData/drag/pushAns', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        answers: { x: coords.current.lastX, y: coords.current.lastY },
+        dragId: data.id,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error(error))
     if (!data.isShowAnswer) {
       setIsReply(true)
       setIsAnsError({

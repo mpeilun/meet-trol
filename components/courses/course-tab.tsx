@@ -9,6 +9,10 @@ import { KeyboardArrowDown, OpenInNew, FileDownload } from '@mui/icons-material'
 import EyesTracking from '../eyetracking/eyetracking'
 import Link from 'next/link'
 import { Video } from '@prisma/client'
+import ReplyLog from '../replyLog'
+import CustomizedAccordions from '../chapter/chapter'
+import { ChapterListData, LastViewData, VideoData } from '../../types/chapter'
+import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -28,7 +32,7 @@ function TabPanel(props: TabPanelProps) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: 2 }}>
           <Typography component="span">{children}</Typography>
         </Box>
       )}
@@ -43,7 +47,10 @@ function a11yProps(index: number) {
   }
 }
 
-export default function CourseTabs(props: Video) {
+export default function CourseTabs(props: {
+  chapterData: ChapterListData[]
+  lastView: LastViewData[]
+}) {
   const [value, setValue] = React.useState(0)
   const [windowWidth, setWindowWidth] = React.useState(1000)
   React.useEffect(() => {
@@ -57,12 +64,28 @@ export default function CourseTabs(props: Video) {
       window.removeEventListener('resize', handleWindowResize)
     }
   }, [])
+  const videoId = useAppSelector((state) => state.course.videoId)
+  const [videoData, setVideoData] = React.useState<VideoData>(null)
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch(`http://localhost:3000/api/video/${videoId}`)
+      const data: VideoData = await response.json()
+      setVideoData(data)
+    }
+    const isValidObjectId =
+      typeof videoId === 'string' &&
+      videoId.length === 24 &&
+      /^[a-f0-9]+$/i.test(videoId)
+    if (isValidObjectId) {
+      fetchData()
+    }
+  }, [videoId])
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
   }
-  const materal = props.material as unknown as { url: string }
-
+  const material = ''
   return (
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -74,55 +97,65 @@ export default function CourseTabs(props: Video) {
           <Tab label="總覽" {...a11yProps(0)} />
           <Tab label="教材" {...a11yProps(1)} />
           <Tab label="學習紀錄" {...a11yProps(2)} />
+          <Tab label="作答紀錄" {...a11yProps(3)} />
           <Tab
             label="目錄"
-            {...a11yProps(3)}
+            {...a11yProps(4)}
             sx={{ display: { md: 'none' } }}
           />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
-        <ul>
-          <li>{props.title}</li>
-          <li>{props.description}</li>
-          <li>{props.description}</li>
-          <li>{props.description}</li>
-          <li>{props.description}</li>
-          <li>{props.description}</li>
-          <li>{props.description}</li>
-        </ul>
+        {videoData && (
+          <ul>
+            <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
+              {videoData?.title}
+            </Typography>
+            <Typography
+              variant="body1"
+              paragraph={true}
+              style={{ textIndent: '2em' }}
+            >
+              {videoData?.description}
+            </Typography>
+          </ul>
+        )}
       </TabPanel>
 
+      {/* PDF Path 還需要修正 */}
       <TabPanel value={value} index={1}>
-        {props.material && (
-          <>
-            <Button
-              sx={{ height: '40px', width: 'auto' }}
-              onClick={() => {
-                window.open(materal.url)
-              }}
-            >
-              <OpenInNew /> <Typography sx={{ mx: 1 }}>新分頁</Typography>
-            </Button>
-            <Button
-              sx={{ height: '40px', width: 'auto' }}
-              onClick={() => {
-                document.getElementById('course-pdf-downlaod-path')?.click()
-              }}
-            >
-              <FileDownload /> <Typography sx={{ mx: 1 }}>下載</Typography>
-            </Button>
-            <a
-              id="course-pdf-downlaod-path"
-              href={props.material}
-              download
-              style={{ display: 'none' }}
-            >
-              下載
-            </a>
-            <PDF path={props.material}></PDF>
-          </>
-        )}
+        {videoData &&
+          (videoData.material ? (
+            <div>
+              <Button
+                sx={{ height: '40px', width: 'auto' }}
+                onClick={() => {
+                  window.open(videoData.material ?? '')
+                }}
+              >
+                <OpenInNew /> <Typography sx={{ mx: 1 }}>新分頁</Typography>
+              </Button>
+              <Button
+                sx={{ height: '40px', width: 'auto' }}
+                onClick={() => {
+                  document.getElementById('course-pdf-download-path')?.click()
+                }}
+              >
+                <FileDownload /> <Typography sx={{ mx: 1 }}>下載</Typography>
+              </Button>
+              <a
+                id="course-pdf-download-path"
+                href={videoData.material ?? ''}
+                download
+                style={{ display: 'none' }}
+              >
+                下載
+              </a>
+              <PDF path={videoData.material ?? ''}></PDF>
+            </div>
+          ) : (
+            <h3>沒有教材</h3>
+          ))}
       </TabPanel>
 
       <TabPanel value={value} index={2}>
@@ -130,27 +163,16 @@ export default function CourseTabs(props: Video) {
       </TabPanel>
 
       <TabPanel value={value} index={3}>
-        <Box p={3} display="flex" justifyContent="space-between">
-          <Typography sx={{ fontWeight: 'bold' }}>章節1</Typography>
-          <Icon>
-            <KeyboardArrowDown />
-          </Icon>
-        </Box>
-        <Divider />
-        <Box p={3} display="flex" justifyContent="space-between">
-          <Typography sx={{ fontWeight: 'bold' }}>章節2</Typography>
-          <Icon>
-            <KeyboardArrowDown />
-          </Icon>
-        </Box>
-        <Divider />
-        <Box p={3} display="flex" justifyContent="space-between">
-          <Typography sx={{ fontWeight: 'bold' }}>章節3</Typography>
-          <Icon>
-            <KeyboardArrowDown />
-          </Icon>
-        </Box>
-        <Divider />
+        <ReplyLog></ReplyLog>
+      </TabPanel>
+
+      {/* 已知BUG 左側和下方tab的目錄不會同步 */}
+      {/* 視窗拉大 tab 頁面還是目錄 */}
+      <TabPanel value={value} index={4}>
+        <CustomizedAccordions
+          chapterData={props.chapterData}
+          lastView={props.lastView}
+        ></CustomizedAccordions>
       </TabPanel>
     </Box>
   )

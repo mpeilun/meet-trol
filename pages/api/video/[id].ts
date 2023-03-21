@@ -15,8 +15,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         where: {
           id: query.id,
         },
-        select: {
-          url: true,
+        include: {
           info: true,
           choice: { include: { feedback: true } },
           rank: { include: { feedback: true } },

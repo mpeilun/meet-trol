@@ -14,37 +14,37 @@ export function questionStyle(questionType: string) {
   switch (questionType) {
     case 'info':
       return {
-        icon: <InfoIcon color="warning" />,
+        icon: <InfoIcon />,
         color: yellow[500],
         displayName: '資訊',
       }
     case 'drag':
       return {
-        icon: <CameraIcon color="secondary" />,
+        icon: <CameraIcon />,
         color: purple[500],
         displayName: '圖選',
       }
     case 'choice':
       return {
-        icon: <CameraIcon color="primary" />,
+        icon: <CameraIcon />,
         color: blue[500],
         displayName: '選擇',
       }
     case 'rank':
       return {
-        icon: <CameraIcon color="primary" />,
+        icon: <CameraIcon/>,
         color: blue[500],
         displayName: '排序',
       }
     case 'fill':
       return {
-        icon: <CameraIcon color="primary" />,
+        icon: <CameraIcon/>,
         color: blue[500],
         displayName: '填充',
       }
     default: //'choice' | 'rank' | 'fill'
       return {
-        icon: <MenuIcon color="primary" />,
+        icon: <MenuIcon />,
         color: blue[500],
         displayName: '題目',
       }
