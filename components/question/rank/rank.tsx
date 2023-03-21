@@ -82,7 +82,6 @@ export default function RankQuestion(props: {
   }
 
   const checkAns = () => {
-
     fetch('/api/interactiveData/rank/pushAns', {
       method: 'POST',
       headers: {
@@ -123,16 +122,18 @@ export default function RankQuestion(props: {
     <Box sx={{ minWidth: 450, overFlowX: 'hidden' }}>
       <Box minHeight={50} display="flex" alignItems="center">
         <Typography variant="h5" sx={{ fontWeight: 'bold', width: '100%' }}>
-          {data.title??'排序題'}
+          {data.title ?? '排序題'}
         </Typography>
         <IconButton onClick={() => props.handleQuestionClose()}>
           <CloseIcon />
         </IconButton>
       </Box>
       <Divider />
-      <Typography variant="body2" sx={{ pt: 1 }}>
-        {data.content ?? ''}
-      </Typography>
+      {data.question && (
+        <Typography variant="body2" sx={{ pt: 1 }}>
+          {data.question ?? ''}
+        </Typography>
+      )}
 
       {/* 拖曳 */}
       <Box

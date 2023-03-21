@@ -39,8 +39,6 @@ export default function SingleChoice(props: { data: ChoiceData }) {
       })
     } else {
       const ans: number = parseInt(value)
-      yourAns.push(ans)
-      debugger
       fetch('/api/interactiveData/choice/pushAns', {
         method: 'POST',
         headers: {
