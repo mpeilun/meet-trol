@@ -158,6 +158,7 @@ const EditInfo = (props: {
           onChange={handleTitleChange}
         />
         <TextField
+          multiline
           sx={{ m: 1 }}
           variant="standard"
           label="內容"

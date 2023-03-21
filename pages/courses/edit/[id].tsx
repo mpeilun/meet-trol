@@ -313,14 +313,14 @@ function EditQuestionPage() {
           setSelect={setSelect}
         />
         {/*測試區塊*/}
-        <Box
+        {/* <Box
           display="flex"
           justifyContent="center"
           alignItems="center"
           flexDirection="column"
           m={3}
         ></Box>
-        <JSONTree data={video} />
+        <JSONTree data={video} /> */}
       </Box>
     </>
   )
