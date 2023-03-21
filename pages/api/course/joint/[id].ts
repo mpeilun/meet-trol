@@ -10,7 +10,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     //判斷是否登入
     if (session) {
       const query = req.query as { id: string }
-      const preSearch = await prisma.course.findUnique({
+      const check = await prisma.course.findUnique({
         where: {
           id: query.id,
         },
@@ -19,7 +19,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         },
       })
 
-      if (preSearch.membersId.includes(session.user.id)) {
+      if (check.membersId.includes(session.user.id)) {
         res.status(409).json({ message: '已經在課程成員中!' })
       } else {
         const update = await prisma.course.update({
@@ -32,6 +32,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             },
           },
         })
+
+        //TODO 預先加入 ViewRecord
         res.status(201).json({
           ...update,
           message: 'Success',

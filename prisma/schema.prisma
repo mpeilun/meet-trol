@@ -91,7 +91,7 @@ model Chapter {
   id       String  @id @default(auto()) @map("_id") @db.ObjectId
   title    String
   videos   Video[]
-  course   Course  @relation(fields: [courseId], references: [id])
+  course   Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId String  @db.ObjectId
 }
 
@@ -106,7 +106,7 @@ model Video {
   rank        Rank[]
   fill        Fill[]
   drag        Drag[]
-  chapter     Chapter  @relation(fields: [chapterId], references: [id])
+  chapter     Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   chapterId   String   @db.ObjectId
 }
 
