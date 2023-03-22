@@ -34,6 +34,20 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         })
 
         //TODO 預先加入 ViewRecord
+
+        await prisma.user.update({
+          where: {
+            id: session.user.id,
+          },
+          data: {
+            records: {
+              create: {
+                courseId: query.id,
+              },
+            },
+          },
+        })
+
         res.status(201).json({
           ...update,
           message: 'Success',
