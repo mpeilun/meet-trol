@@ -15,7 +15,10 @@ interface alert {
   severity: AlertColor
 }
 
-export default function SingleChoice(props: { data: ChoiceData }) {
+export default function SingleChoice(props: {
+  data: ChoiceData
+  isLog: boolean
+}) {
   const data = props.data
   const [value, setValue] = React.useState('')
   const [isReply, setIsReply] = React.useState(false)
@@ -30,6 +33,7 @@ export default function SingleChoice(props: { data: ChoiceData }) {
     event.preventDefault()
     const correctIndex = data.options.findIndex((data) => data.isAnswer == true)
     let yourAns: number[] = []
+  
 
     if (value === '') {
       setIsAnsError({
@@ -39,6 +43,7 @@ export default function SingleChoice(props: { data: ChoiceData }) {
       })
     } else {
       const ans: number = parseInt(value)
+      yourAns.push(ans)
       fetch('/api/interactiveData/choice/pushAns', {
         method: 'POST',
         headers: {
@@ -76,13 +81,13 @@ export default function SingleChoice(props: { data: ChoiceData }) {
 
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue((event.target as HTMLInputElement).value)
+    console.log((event.target as HTMLInputElement).value)
     setIsAnsError({
       isShow: false,
       text: '',
       severity: 'info',
     })
   }
-
   return (
     <form onSubmit={handleSubmit}>
       <FormControl sx={{ pt: 1, width: '100%' }} variant="standard">
@@ -100,7 +105,7 @@ export default function SingleChoice(props: { data: ChoiceData }) {
                 disabled={isReply}
                 key={`${index}- ${option.option} option`}
                 value={index}
-                control={<Radio />}
+                control={<Radio  />}
                 label={option.option}
               ></FormControlLabel>
             )
@@ -137,25 +142,27 @@ export default function SingleChoice(props: { data: ChoiceData }) {
             </Button>
           )}
           <Box></Box>
-          <Button
-            disableElevation
-            type="submit"
-            variant="contained"
-            disabled={isReply}
-            startIcon={<CheckCircleOutlineIcon />}
-            sx={{
-              bgcolor: '#82CD00',
-              '&:hover': {
-                backgroundColor: '#54B435',
-                color: 'white',
-              },
-              width: 125,
-              fontWeight: 'bold',
-              borderRadius: 16,
-            }}
-          >
-            送出
-          </Button>
+          {!props.isLog && (
+            <Button
+              disableElevation
+              type="submit"
+              variant="contained"
+              disabled={isReply}
+              startIcon={<CheckCircleOutlineIcon />}
+              sx={{
+                bgcolor: '#82CD00',
+                '&:hover': {
+                  backgroundColor: '#54B435',
+                  color: 'white',
+                },
+                width: 125,
+                fontWeight: 'bold',
+                borderRadius: 16,
+              }}
+            >
+              送出
+            </Button>
+          )}
         </Box>
       </FormControl>
     </form>

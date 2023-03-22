@@ -22,7 +22,11 @@ interface alert {
   severity: AlertColor
 }
 
-const Drag = (props: { handleQuestionClose: () => void; data: DragData }) => {
+const Drag = (props: {
+  handleQuestionClose: () => void
+  isLog: boolean
+  data: DragData
+}) => {
   const boxRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLDivElement>(null)
   const isClicked = useRef<boolean>(false)
@@ -262,7 +266,7 @@ const Drag = (props: { handleQuestionClose: () => void; data: DragData }) => {
               </Button>
             )}
             <Box></Box>
-            <Button
+            {!props.isLog && (<Button
               disableElevation
               type="submit"
               variant="contained"
@@ -282,7 +286,7 @@ const Drag = (props: { handleQuestionClose: () => void; data: DragData }) => {
               onClick={checkAns}
             >
               送出
-            </Button>
+            </Button>)}
           </Box>
         </Box>
       </Box>

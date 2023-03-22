@@ -13,32 +13,32 @@ export function questionStyle(questionType: string) {
   switch (questionType) {
     case 'info':
       return {
-        icon: <InfoIcon color="warning" />,
+        icon: <InfoIcon />,
         displayName: '資訊',
       }
     case 'drag':
       return {
-        icon: <CameraIcon color="secondary" />,
+        icon: <CameraIcon />,
         displayName: '圖選',
       }
     case 'choice':
       return {
-        icon: <CameraIcon color="primary" />,
+        icon: <CameraIcon/>,
         displayName: '選擇',
       }
     case 'rank':
       return {
-        icon: <CameraIcon color="primary" />,
+        icon: <CameraIcon  />,
         displayName: '排序',
       }
     case 'fill':
       return {
-        icon: <CameraIcon color="primary" />,
+        icon: <CameraIcon  />,
         displayName: '填充',
       }
     default: //'choice' | 'rank' | 'fill'
       return {
-        icon: <MenuIcon color="primary" />,
+        icon: <MenuIcon />,
         displayName: '題目',
       }
   }
@@ -48,6 +48,7 @@ const PopupFab = (props: {
   pause: () => void
   play: () => void
   data: Info | ChoiceData | RankData | FillData | DragData
+  
 }) => {
   const playedSecond = useAppSelector((state) => state.course.playedSecond)
 

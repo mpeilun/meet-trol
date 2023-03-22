@@ -27,7 +27,7 @@ interface alert {
   severity: AlertColor
 }
 
-const DragDrop = (props: { data: FillData }) => {
+const DragDrop = (props: { data: FillData; isLog: boolean }) => {
   const data = props.data
   const question = data.question
   const regex = /(?<=\().+?(?=\))/g // 正則表達式 匹配所有括號內的文字
@@ -55,7 +55,6 @@ const DragDrop = (props: { data: FillData }) => {
   }
 
   const checkAns = () => {
-
     fetch('/api/interactiveData/fill/pushAns', {
       method: 'POST',
       headers: {
@@ -219,26 +218,28 @@ const DragDrop = (props: { data: FillData }) => {
           </Button>
         )}
         <Box></Box>
-        <Button
-          disableElevation
-          type="submit"
-          variant="contained"
-          disabled={isReply}
-          startIcon={<CheckCircleOutlineIcon />}
-          sx={{
-            bgcolor: '#82CD00',
-            '&:hover': {
-              backgroundColor: '#54B435',
-              color: 'white',
-            },
-            width: 125,
-            fontWeight: 'bold',
-            borderRadius: 16,
-          }}
-          onClick={checkAns}
-        >
-          送出
-        </Button>
+        {!props.isLog && (
+          <Button
+            disableElevation
+            type="submit"
+            variant="contained"
+            disabled={isReply}
+            startIcon={<CheckCircleOutlineIcon />}
+            sx={{
+              bgcolor: '#82CD00',
+              '&:hover': {
+                backgroundColor: '#54B435',
+                color: 'white',
+              },
+              width: 125,
+              fontWeight: 'bold',
+              borderRadius: 16,
+            }}
+            onClick={checkAns}
+          >
+            送出
+          </Button>
+        )}
       </Box>
     </Box>
   )

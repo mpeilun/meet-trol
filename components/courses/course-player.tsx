@@ -131,6 +131,11 @@ function CoursePlayer(props: { courseId: string }) {
     // console.log(playerRef.current.props.width)
   }
 
+
+  const setSecond = React.useCallback((seconds?: number) => {
+    setPlayedSeconds(seconds!)
+  },[])
+
   //Slider
   const [playedSeconds, setPlayedSeconds] = React.useState(0)
   const handleTimeSliderChange = (event: any, newValue: any) => {
@@ -190,7 +195,7 @@ function CoursePlayer(props: { courseId: string }) {
             />
           )}
 
-          {playerRef?.current && videoData?.question && (
+          {playerRef?.current && videoData?.questions && (
             <Box
               sx={{
                 visibility: 'hidden',
@@ -203,7 +208,7 @@ function CoursePlayer(props: { courseId: string }) {
                 flexDirection: 'column',
               }}
             >
-              {videoData?.question.map((data, index) => {
+              {videoData?.questions.map((data, index) => {
                 return (
                   <PopupFab
                     key={`popupfab-${index}`}

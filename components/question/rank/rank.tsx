@@ -36,6 +36,7 @@ interface alert {
 export default function RankQuestion(props: {
   handleQuestionClose: () => void
   data: RankData
+  isLog: boolean
 }) {
   const data = props.data
 
@@ -258,26 +259,28 @@ export default function RankQuestion(props: {
             </Button>
           )}
           <Box></Box>
-          <Button
-            disableElevation
-            type="submit"
-            variant="contained"
-            disabled={isReply}
-            startIcon={<CheckCircleOutlineIcon />}
-            sx={{
-              bgcolor: '#82CD00',
-              '&:hover': {
-                backgroundColor: '#54B435',
-                color: 'white',
-              },
-              width: 125,
-              fontWeight: 'bold',
-              borderRadius: 16,
-            }}
-            onClick={checkAns}
-          >
-            送出
-          </Button>
+          {!props.isLog && (
+            <Button
+              disableElevation
+              type="submit"
+              variant="contained"
+              disabled={isReply}
+              startIcon={<CheckCircleOutlineIcon />}
+              sx={{
+                bgcolor: '#82CD00',
+                '&:hover': {
+                  backgroundColor: '#54B435',
+                  color: 'white',
+                },
+                width: 125,
+                fontWeight: 'bold',
+                borderRadius: 16,
+              }}
+              onClick={checkAns}
+            >
+              送出
+            </Button>
+          )}
         </Box>
       </Box>
     </Box>
