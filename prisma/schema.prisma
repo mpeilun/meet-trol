@@ -82,8 +82,8 @@ model Course {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   chapters    Chapter[]
-  mebers      User[]    @relation("meber", fields: [mebersId], references: [id])
-  mebersId    String[]  @db.ObjectId
+  members     User[]    @relation("meber", fields: [membersId], references: [id])
+  membersId   String[]  @db.ObjectId
   ownerId     String[]  @db.ObjectId
 }
 
@@ -91,7 +91,7 @@ model Chapter {
   id       String  @id @default(auto()) @map("_id") @db.ObjectId
   title    String
   videos   Video[]
-  course   Course  @relation(fields: [courseId], references: [id])
+  course   Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId String  @db.ObjectId
 }
 
@@ -106,7 +106,7 @@ model Video {
   rank        Rank[]
   fill        Fill[]
   drag        Drag[]
-  chapter     Chapter  @relation(fields: [chapterId], references: [id])
+  chapter     Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   chapterId   String   @db.ObjectId
 }
 
@@ -146,7 +146,7 @@ model ChoiceFeedback {
   id       String @id @default(auto()) @map("_id") @db.ObjectId
   answers  Int[]
   userId   String @db.ObjectId
-  choice   Choice @relation(fields: [choiceId], references: [id])
+  choice   Choice @relation(fields: [choiceId], references: [id], onDelete: Cascade)
   choiceId String @db.ObjectId
 }
 
@@ -169,7 +169,7 @@ model RankFeedback {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   answers String[]
   userId  String   @db.ObjectId
-  rank    Rank     @relation(fields: [rankId], references: [id])
+  rank    Rank     @relation(fields: [rankId], references: [id], onDelete: Cascade)
   rankId  String   @db.ObjectId
 }
 
@@ -192,7 +192,7 @@ model FillFeedback {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   answers String[]
   userId  String   @db.ObjectId
-  fill    Fill     @relation(fields: [fillId], references: [id])
+  fill    Fill     @relation(fields: [fillId], references: [id], onDelete: Cascade)
   fillId  String   @db.ObjectId
 }
 
@@ -224,6 +224,6 @@ model DragFeedback {
   id      String     @id @default(auto()) @map("_id") @db.ObjectId
   answers Position[]
   userId  String     @db.ObjectId
-  drag    Drag       @relation(fields: [dragId], references: [id])
+  drag    Drag       @relation(fields: [dragId], references: [id], onDelete: Cascade)
   dragId  String     @db.ObjectId
 }

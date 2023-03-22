@@ -8,11 +8,15 @@ import {
   Tooltip,
   SxProps,
   Theme,
+  ButtonGroup,
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { LoadingButton } from '@mui/lab'
 import { Choice } from '@prisma/client'
 import { Video } from '../../../types/video-edit'
 import { SelectType } from '../../../pages/courses/edit/[id]'
+import { sendMessage } from '../../../store/notification'
+import { useAppDispatch } from '../../../hooks/redux'
 
 const defaultQuestion: Choice = {
   id: null,
@@ -34,10 +38,14 @@ const EditChoice = (props: {
   setSelect: Dispatch<SetStateAction<SelectType>>
   selectRange: number[]
 }) => {
+  const dispatch = useAppDispatch()
+
   const { video, setVideo, select, setSelect, selectRange } = props
   const [question, setQuestion] = useState<Choice>(
     (select.initQuestion as Choice) ?? { ...defaultQuestion, videoId: video.id }
   )
+  const [isQuestionSubmit, setIsQuestionSubmit] = useState(false)
+  const [isQuestionDelete, setIsQuestionDelete] = useState(false)
 
   useEffect(() => {
     if (select.value) {
@@ -60,8 +68,32 @@ const EditChoice = (props: {
     })
   }
 
+  const handleQuestionDelete = () => {
+    setIsQuestionDelete(true)
+    fetch(`/api/question`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ question: question }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setVideo((prev) => ({
+          ...prev,
+          question: prev.question.filter((q) => q.id !== question.id),
+        }))
+        setIsQuestionDelete(false)
+        setSelect({ value: null, initQuestion: null })
+        dispatch(sendMessage({ severity: 'success', message: '刪除成功' }))
+      })
+      .catch((err) => {
+        dispatch(sendMessage({ severity: 'error', message: err }))
+      })
+  }
   const handleQuestionSubmit = () => {
     //TODO 可能需要提取成一個function
+    setIsQuestionSubmit(true)
     if (select.value == null) {
       const { id, ...addData } = question
       fetch('/api/question', {
@@ -81,7 +113,12 @@ const EditChoice = (props: {
         .then((data: Choice) => {
           console.log(data)
           setVideo((prev) => ({ ...prev, question: [data, ...prev.question] }))
+          setIsQuestionSubmit(false)
           setSelect({ value: 0, initQuestion: data })
+          dispatch(sendMessage({ severity: 'success', message: '新增成功' }))
+        })
+        .catch((err) => {
+          dispatch(sendMessage({ severity: 'error', message: err }))
         })
     } else {
       const updateData = question
@@ -105,6 +142,11 @@ const EditChoice = (props: {
             prev.question[select.value] = data
             return { ...prev }
           })
+          setIsQuestionSubmit(false)
+          dispatch(sendMessage({ severity: 'success', message: '更新成功' }))
+        })
+        .catch((err) => {
+          dispatch(sendMessage({ severity: 'success', message: err }))
         })
     }
   }
@@ -218,21 +260,34 @@ const EditChoice = (props: {
         </Box>
         <Typography sx={{ mt: 2 }}>選項</Typography>
         {Options}
-        <Box display="flex" justifyContent="space-between">
-          <Button
-            sx={{ m: 1, width: '7rem', height: '3rem' }}
-            variant="outlined"
-            onClick={addOption}
-          >
-            新增選項
-          </Button>
-          <Button
-            sx={{ m: 1, width: '7rem', height: '3rem' }}
-            variant="outlined"
-            onClick={handleQuestionSubmit}
-          >
-            {select.value != null ? '更新' : '新增'}
-          </Button>
+        <Button
+          sx={{ m: 1, width: '7rem', height: '3rem' }}
+          variant="outlined"
+          onClick={addOption}
+        >
+          新增選項
+        </Button>
+        <Box ml={'auto'}>
+          <ButtonGroup>
+            {select.value ? (
+              <LoadingButton
+                loading={isQuestionDelete}
+                sx={{ width: '7rem', height: '3rem' }}
+                variant="outlined"
+                onClick={handleQuestionDelete}
+              >
+                {'刪除'}
+              </LoadingButton>
+            ) : null}
+            <LoadingButton
+              loading={isQuestionSubmit}
+              sx={{ width: '7rem', height: '3rem' }}
+              variant="outlined"
+              onClick={handleQuestionSubmit}
+            >
+              {select.value != null ? '更新' : '新增'}
+            </LoadingButton>
+          </ButtonGroup>
         </Box>
       </Box>
     </>

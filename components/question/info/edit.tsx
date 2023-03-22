@@ -8,7 +8,9 @@ import {
   Tooltip,
   SxProps,
   Theme,
+  ButtonGroup,
 } from '@mui/material'
+import { LoadingButton } from '@mui/lab'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { Info } from '@prisma/client'
 import { PlayerProgress } from '../../../types/react-player'
@@ -43,6 +45,9 @@ const EditInfo = (props: {
     (select.initQuestion as Info) ?? { ...defaultQuestion, videoId: video.id }
   )
 
+  const [isQuestionSubmit, setIsQuestionSubmit] = useState(false)
+  const [isQuestionDelete, setIsQuestionDelete] = useState(false)
+
   useEffect(() => {
     if (select.value != null) {
       setQuestion(select.initQuestion as Info)
@@ -61,9 +66,33 @@ const EditInfo = (props: {
     setQuestion((prev) => ({ ...prev, url: event.target.value }))
   }
 
-  const handleInfoSubmit = () => {
+  const handleQuestionDelete = () => {
+    setIsQuestionDelete(true)
+    fetch(`/api/question`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ question: question }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setVideo((prev) => ({
+          ...prev,
+          question: prev.question.filter((q) => q.id !== question.id),
+        }))
+        setIsQuestionDelete(false)
+        setSelect({ value: null, initQuestion: null })
+        dispatch(sendMessage({ severity: 'success', message: '刪除成功' }))
+      })
+      .catch((err) => {
+        dispatch(sendMessage({ severity: 'error', message: err }))
+      })
+  }
+  const handleQuestionSubmit = () => {
     //TODO 可能需要提取成一個function
     //TODO Choice 也需要通知
+    setIsQuestionSubmit(true)
     if (select.value == null) {
       const { id, ...addData } = question
       fetch('/api/question', {
@@ -82,6 +111,7 @@ const EditInfo = (props: {
         .then((response) => response.json())
         .then((data: Info) => {
           setVideo((prev) => ({ ...prev, question: [data, ...prev.question] }))
+          setIsQuestionSubmit(false)
           setSelect({ value: 0, initQuestion: data })
           dispatch(sendMessage({ severity: 'success', message: '新增成功' }))
         })
@@ -109,6 +139,7 @@ const EditInfo = (props: {
             prev.question[select.value] = data
             return { ...prev }
           })
+          setIsQuestionSubmit(false)
           dispatch(sendMessage({ severity: 'success', message: '更新成功' }))
         })
         .catch((err) => {
@@ -127,6 +158,7 @@ const EditInfo = (props: {
           onChange={handleTitleChange}
         />
         <TextField
+          multiline
           sx={{ m: 1 }}
           variant="standard"
           label="內容"
@@ -141,13 +173,29 @@ const EditInfo = (props: {
           onChange={handleUrlChange}
         />
         <img src={question.url} />
-        <Button
-          sx={{ m: '16px auto 0 auto', width: '7rem', height: '3rem' }}
-          variant="outlined"
-          onClick={handleInfoSubmit}
-        >
-          {select.value != null ? '更新' : '新增'}
-        </Button>
+
+        <Box m={'16px auto 0 auto'}>
+          <ButtonGroup>
+            {select.value != null ? (
+              <LoadingButton
+                loading={isQuestionDelete}
+                sx={{ width: '7rem', height: '3rem' }}
+                variant="outlined"
+                onClick={handleQuestionDelete}
+              >
+                {'刪除'}
+              </LoadingButton>
+            ) : null}
+            <LoadingButton
+              loading={isQuestionSubmit}
+              sx={{ width: '7rem', height: '3rem' }}
+              variant="outlined"
+              onClick={handleQuestionSubmit}
+            >
+              {select.value != null ? '更新' : '新增'}
+            </LoadingButton>
+          </ButtonGroup>
+        </Box>
       </Box>
     </>
   )
