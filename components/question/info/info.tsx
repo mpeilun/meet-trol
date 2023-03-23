@@ -12,7 +12,7 @@ import { Info as InfoData } from '@prisma/client'
 // 還需引入 description 圖片 src 變數
 const Info = (props: { handleQuestionClose: () => void; data: InfoData }) => {
   const data = props.data
-  const isNoImage = data.url != null
+  const isNoImage = data.url == ""
   return (
     <>
       <Box minHeight={50} display="flex" alignItems="center">
@@ -28,7 +28,7 @@ const Info = (props: { handleQuestionClose: () => void; data: InfoData }) => {
         {data.content && <Typography>{data.content ?? ''}</Typography>}
         {/* 顯示圖片 */}
         <Box sx={{ width: '600px', mt: 1 }}>
-          {isNoImage && (
+          {!isNoImage && (
             <Box
               component="img"
               src={props.data.url} // 變數替換 是否有圖片有則是網址
