@@ -26,8 +26,10 @@ import { Course } from '@prisma/client'
 import { sendMessage } from '../../../store/notification'
 import { useAppDispatch } from '../../../hooks/redux'
 import { LoadingButton } from '@mui/lab'
+import { useSession } from 'next-auth/react'
 
 function CoursesManagePage() {
+  const { data: session } = useSession()
   const [jointCourseLoading, setJointCourseLoading] = React.useState(false)
   const [courseData, setCourseData] = React.useState<Course[]>([])
   const [courseID, setCourseId] = React.useState('')
@@ -43,6 +45,14 @@ function CoursesManagePage() {
     fetchData()
   }, [])
 
+  if (!session)
+    return (
+      <Box>
+        <Typography variant="h2" sx={{ mt: '20%' }} fontWeight="bold">
+          請先登入
+        </Typography>
+      </Box>
+    )
   return (
     <Paper
       key={'paper'}

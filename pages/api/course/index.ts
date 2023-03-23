@@ -30,13 +30,38 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   //判斷是否登入
   if (session) {
-    if (req.method === 'GET' && owner) {
+    if (req.method === 'GET' && courseId) {
+      const course = await prisma.course.findUnique({
+        where: {
+          id: courseId,
+        },
+        include: {
+          chapters: {
+            include: {
+              videos: true,
+            },
+          },
+        },
+      })
+      if (course.ownerId.includes(session.user.id)) {
+        return res.status(200).json(course)
+      } else {
+        return res.status(403).json({ message: 'Forbidden' })
+      }
+    } else if (req.method === 'GET' && owner) {
       const session = await getServerSession(req, res, authOptions)
 
       const courses = await prisma.course.findMany({
         where: {
           ownerId: {
             has: session.user.id,
+          },
+        },
+        include: {
+          chapters: {
+            include: {
+              videos: true,
+            },
           },
         },
       })
@@ -57,7 +82,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
       return res.status(200).json(courses)
     } else if (req.method === 'POST') {
-      const data: CourseCreateType = req.body
+      const data: CourseCreateType = JSON.parse(req.body)
       const create = await prisma.course.create({
         data: {
           title: data.title,
@@ -90,7 +115,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           .status(404)
           .json({ message: 'No Found, need parameter courseId: [objectId]' })
       }
-      const data: Course = req.body
+      const data: Course = JSON.parse(req.body)
       const check = await prisma.course.findUnique({
         where: {
           id: courseId,
@@ -107,6 +132,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           data: {
             title: data.title,
             description: data.description,
+            start: data.start,
+            end: data.end,
           },
         })
 

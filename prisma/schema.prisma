@@ -79,6 +79,8 @@ model Course {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
   title       String    @unique
   description String?
+  start       DateTime?
+  end         DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   chapters    Chapter[]

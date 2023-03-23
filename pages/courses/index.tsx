@@ -103,17 +103,6 @@ function AllCoursesPage() {
           >
             加入課程
           </LoadingButton>
-          <Link href="/manage/courses">
-            <Button
-              startIcon={<AddCircleOutlineIcon />}
-              variant="contained"
-              href="/manage/courses"
-              LinkComponent={Link}
-              sx={{ ml: '1rem', height: '95%', fontSize: '20' }}
-            >
-              新增課程
-            </Button>
-          </Link>
         </Grid>
         <Grid md={12} xs={12}>
           <Typography
