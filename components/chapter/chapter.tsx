@@ -64,15 +64,25 @@ export default function CustomizedAccordions(props: {
   lastView: LastViewData[]
 }) {
   const data = props.chapterData
-  const lastView = props.lastView
+  let lastView = props.lastView
   // 獲得最後觀看的影片
+  const now: Date = new Date()
+
+  if (lastView.length == 0) {
+    lastView.push({
+      videoId: data[0].videos[0].id,
+      videoTime: 0,
+      viewTime: now,
+    })
+  }
 
   const lastViewVideo = lastView.reduce((earliest, current) => {
     const earliestTime = new Date(earliest.viewTime)
     const currentTime = new Date(current.viewTime)
+    console.log(earliest)
     return earliestTime > currentTime ? earliest : current
   }, lastView[0])
-
+  
   const dispatch = useAppDispatch()
   const initialSelectVideo = React.useCallback((): boolean[][] => {
     let chapterList = []

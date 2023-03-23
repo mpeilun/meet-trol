@@ -46,5 +46,5 @@ export interface DragData extends Drag {
 export interface LastViewData {
   videoId: string
   videoTime: number
-  viewTime: string
+  viewTime: Date
 }
