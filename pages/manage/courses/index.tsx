@@ -5,8 +5,11 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { Button, Box, Card, TextField, Typography } from '@mui/material'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { useSession } from 'next-auth/react'
 
 export default function Home() {
+  const { data: session } = useSession()
+
   const [startDate, setStartDate] = useState<Dayjs | null>(dayjs())
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs())
   const [name, setName] = useState('')
@@ -21,6 +24,15 @@ export default function Home() {
 
   const newStart = () => setStartDate(newStart)
   const newEnd = () => setEndDate(newEnd)
+
+  if (!session)
+    return (
+      <Box>
+        <Typography variant="h2" sx={{ mt: '20%' }} fontWeight="bold">
+          請先登入
+        </Typography>
+      </Box>
+    )
 
   return (
     <Card

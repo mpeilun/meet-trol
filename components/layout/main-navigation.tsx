@@ -45,8 +45,8 @@ function MainNavigation() {
 
   const pages = [
     { displayName: '我的課程', path: '/courses' },
-    { displayName: '課程管理', path: '/courses' },
-    { displayName: '關於我們', path: '/courses/search' },
+    { displayName: '課程管理', path: '/courses/manage' },
+    { displayName: '關於我們', path: '/#about' },
     // { displayName: 'course title', path: 'course/courseid' },
   ]
   const settings = [
