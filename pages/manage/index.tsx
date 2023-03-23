@@ -96,22 +96,51 @@ export default function CreateCoursePage() {
     const updatedChapter = [...chapter]
     updatedChapter[targetChapterIndex] = {
       ...updatedChapter[targetChapterIndex],
-      videoData: updatedChapter[targetChapterIndex].videoData.filter(
-        (videoData) => videoData !== videoDataToDelete
-      ),
-    }
-    // 更新状态
-    setChapter(updatedChapter)
+      videoData: updatedChapter[targetChapterIndex].videoData.filter((videoData) => videoData !== videoDataToDelete)
+    };
+    setChapter(updatedChapter);
   }
+
+  const [openEdit, setOpenEdit] = useState(false); //修改Dialog的狀態
+  const handleClickOpen = () => setOpenEdit(true);
+  const handleClickClose = () => setOpenEdit(false);
+  const [editTitle, setEditTitle] = useState(""); //修改後title狀態
+  const handleTitleChange = (e) => {
+    // 讀取texfield
+      setEditTitle(e.target.value);
+    }
+  const [editURL, setEditURL] = useState("");//修改後url狀態
+  const handleURLChange = (e) => {
+    // 讀取texfield
+      setEditURL(e.target.value);
+    }
+  const handleEditVideo = (videoToEdit,newTitle,newURL) =>  {
+    // 修改影片
+    handleClickOpen();
+    const updatedChapter = chapter.map(ch => {
+      return {
+        ...ch,
+        videoData: ch.videoData.map(video => {
+          if (video.title === videoToEdit.title) {
+            return {
+              ...video,
+              title: newTitle ,
+              url: newURL
+              }
+           } else {
+            return video;
+           }
+         })
+      }
+    });
+    setChapter(updatedChapter);
+  }  
+
   const handleDialogAndVideo = (chapterId: string, newVideo: VideoData) => {
     //按下新增按鈕後，關掉Dialog，增加影片
-    handleCloseVideoDialog()
-    handleAddVideo(chapterId, newVideo)
-  }
-  // const handleInsert = () =>{
-
-  //   setVideo(prevState=>[...chapter.slice(0,index),video,...chapter.slice(index)])
-  // }
+    handleCloseVideoDialog();
+    handleAddVideo(chapterId, newVideo);
+  };
 
   const handleSelect = (event: SelectChangeEvent) => {
     //讀取位置
@@ -195,6 +224,33 @@ export default function CreateCoursePage() {
             >
               新增影片
             </Button>
+
+            <Dialog open={openEdit} onClose={handleClickClose}>
+              <DialogTitle bgcolor={"#D4C5C7"} fontWeight="bold">
+                修改影片
+              </DialogTitle>
+
+              <TextField
+                required
+                id="outlined-required"
+                sx={{ mx: 5, my: 3, width: 300 }}
+                autoFocus
+                label="名稱"
+                fullWidth
+                variant="standard"
+                onChange={handleTitleChange}
+              ></TextField>
+              <TextField label="影片連結" onChange={handleURLChange} sx={{ mb: 3, mx: 2 }} ></TextField>
+
+              <Button
+                // onClick={}
+                variant="contained"
+                sx={{ mx: 5, mb: 2 }}
+              >
+                修改影片
+              </Button>
+            </Dialog>
+            
             <Dialog open={openChapterDialog} onClose={handleCloseChapterDialog}>
               <DialogTitle bgcolor={'#D4C5C7'} fontWeight="bold">
                 新增章節
