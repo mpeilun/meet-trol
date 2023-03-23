@@ -7,9 +7,11 @@ import Drag from '../question/drag/drag'
 import { ChoiceData, RankData, FillData, DragData } from '../../types/chapter'
 import { Info as InfoData } from '@prisma/client'
 
-const QuestionType = (props: {
+const   QuestionType = (props: {
   setClose: () => void
   data: InfoData | ChoiceData | RankData | FillData | DragData
+  isLog?: boolean
+  
 }) => {
   // console.log(props.questionType)
   switch (props.data.questionType) {
@@ -28,6 +30,7 @@ const QuestionType = (props: {
         <Choice
           handleQuestionClose={props.setClose}
           data={props.data as ChoiceData}
+          isLog={props.isLog ?? false}
         ></Choice>
       )
 
@@ -37,6 +40,8 @@ const QuestionType = (props: {
         <FillIn
           handleQuestionClose={props.setClose}
           data={props.data as FillData}
+          isLog={props.isLog ?? false}
+
         ></FillIn>
       )
 
@@ -46,6 +51,8 @@ const QuestionType = (props: {
         <RankQuestion
           handleQuestionClose={props.setClose}
           data={props.data as RankData}
+          isLog={props.isLog ?? false}
+
         ></RankQuestion>
       )
 
@@ -55,6 +62,8 @@ const QuestionType = (props: {
         <Drag
           handleQuestionClose={props.setClose}
           data={props.data as DragData}
+          isLog={props.isLog ?? false}
+
         ></Drag>
       )
 

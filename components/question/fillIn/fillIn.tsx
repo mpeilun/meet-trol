@@ -16,24 +16,30 @@ import DragDrop from './dragDrop'
 import { FillData } from '../../../types/chapter'
 
 // 需引入變數 questions & answers
-const FillIn = (props: { handleQuestionClose: () => void; data: FillData }) => {
+const FillIn = (props: {
+  handleQuestionClose: () => void
+  data: FillData
+  isLog: boolean
+}) => {
   const data = props.data
 
   return (
     <Box>
       <Box minHeight={50} display="flex" alignItems="center">
         <Typography variant="h5" sx={{ width: '100%' }}>
-          {data.title??'填充題'}
+          {data.title ?? '填充題'}
         </Typography>
         <IconButton onClick={() => props.handleQuestionClose()}>
           <CloseIcon />
         </IconButton>
       </Box>
       <Divider />
-      {data.question && (<Typography variant="body2" sx={{ pt: 1.5 }}>
-        {data.question ?? ''}
-      </Typography>)}
-      <DragDrop data={data}></DragDrop>
+      {data.question && (
+        <Typography variant="body2" sx={{ pt: 1.5 }}>
+          {data.question ?? ''}
+        </Typography>
+      )}
+      <DragDrop data={data} isLog={props.isLog}></DragDrop>
     </Box>
     //   </Card>
     // </Box>

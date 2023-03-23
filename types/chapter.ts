@@ -19,7 +19,7 @@ export interface ChapterListData {
 }
 
 export interface VideoData extends Video {
-  question: (Info | ChoiceData | RankData | FillData | DragData)[]
+  questions: (Info | ChoiceData | RankData | FillData | DragData)[]
 }
 
 export interface InteractionData {

@@ -127,7 +127,7 @@ export default function CourseTabs(props: {
         {videoData &&
           (videoData.material ? (
             <div>
-              <Button
+              {/* <Button
                 sx={{ height: '40px', width: 'auto' }}
                 onClick={() => {
                   window.open(videoData.material ?? '')
@@ -150,8 +150,14 @@ export default function CourseTabs(props: {
                 style={{ display: 'none' }}
               >
                 下載
-              </a>
-              <PDF path={videoData.material ?? ''}></PDF>
+              </a> */}
+              <div style={{ height: '600px' }}>
+                <iframe
+                  style={{ width: '100%', height: '100%' }}
+                  src={videoData.material ?? ''}
+                ></iframe>
+              </div>
+              {/* <PDF path={videoData.material ?? ''}></PDF> */}
             </div>
           ) : (
             <h3>沒有教材</h3>
@@ -163,7 +169,7 @@ export default function CourseTabs(props: {
       </TabPanel>
 
       <TabPanel value={value} index={3}>
-        <ReplyLog></ReplyLog>
+        {videoData && (<ReplyLog questions={videoData.questions}></ReplyLog>)}
       </TabPanel>
 
       {/* 已知BUG 左側和下方tab的目錄不會同步 */}

@@ -16,6 +16,7 @@ const PopupModal = (props: {
   setClose: () => void
   open: boolean
   data: Info | ChoiceData | RankData | FillData | DragData
+  
 }) => {
   const questionRef = useRef<HTMLDivElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)

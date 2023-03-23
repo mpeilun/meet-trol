@@ -26,7 +26,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       const { info, choice, rank, fill, drag, ...result } = data
       res.status(200).json({
         ...result,
-        question: [...info, ...choice, ...rank, ...fill, ...drag],
+        questions: [...info, ...choice, ...rank, ...fill, ...drag],
       })
     } else {
       res.status(400).json({ message: 'Error' })

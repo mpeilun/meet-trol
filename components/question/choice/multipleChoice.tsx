@@ -23,8 +23,13 @@ interface alert {
   severity: AlertColor
 }
 
-export default function MultipleChoice(props: { data: ChoiceData }) {
+export default function MultipleChoice(props: {
+  data: ChoiceData
+  isLog: boolean
+  
+}) {
   const data = props.data
+
   const [checked, setChecked] = React.useState<boolean[]>(
     new Array(data.options.length).fill(false)
   )
@@ -155,25 +160,27 @@ export default function MultipleChoice(props: { data: ChoiceData }) {
             </Button>
           )}
           <Box></Box>
-          <Button
-            disableElevation
-            type="submit"
-            variant="contained"
-            disabled={isReply}
-            startIcon={<CheckCircleOutlineIcon />}
-            sx={{
-              bgcolor: '#82CD00',
-              '&:hover': {
-                backgroundColor: '#54B435',
-                color: 'white',
-              },
-              width: 125,
-              fontWeight: 'bold',
-              borderRadius: 16,
-            }}
-          >
-            送出
-          </Button>
+          {!props.isLog && (
+            <Button
+              disableElevation
+              type="submit"
+              variant="contained"
+              disabled={isReply}
+              startIcon={<CheckCircleOutlineIcon />}
+              sx={{
+                bgcolor: '#82CD00',
+                '&:hover': {
+                  backgroundColor: '#54B435',
+                  color: 'white',
+                },
+                width: 125,
+                fontWeight: 'bold',
+                borderRadius: 16,
+              }}
+            >
+              送出
+            </Button>
+          )}
         </Box>
       </FormControl>
     </form>

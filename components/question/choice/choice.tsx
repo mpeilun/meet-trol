@@ -6,6 +6,8 @@ import MultipleChoice from './multipleChoice'
 export default function Choice(props: {
   handleQuestionClose: () => void
   data: ChoiceData
+  isLog: boolean
+  
 }) {
   const data = props.data
   const count = data.options.reduce((acc, curr) => {
@@ -21,7 +23,7 @@ export default function Choice(props: {
     <Box>
       <Box minHeight={50} display="flex" alignItems="center">
         <Typography variant="h5" sx={{ width: '100%' }}>
-          {data.title??'選擇題'}
+          {data.title ?? '選擇題'}
         </Typography>
         <IconButton onClick={() => props.handleQuestionClose()}>
           <CloseIcon />
@@ -31,11 +33,11 @@ export default function Choice(props: {
 
       {isSingleChoice ? (
         <Box sx={{ minWidth: 400 }}>
-          <SingleChoice data={data} />
+          <SingleChoice data={data} isLog={props.isLog} />
         </Box>
       ) : (
         <Box sx={{ minWidth: 400 }}>
-          <MultipleChoice data={data}></MultipleChoice>{' '}
+          <MultipleChoice data={data} isLog={props.isLog}></MultipleChoice>{' '}
         </Box>
       )}
     </Box>

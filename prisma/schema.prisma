@@ -91,7 +91,7 @@ model Chapter {
   id       String  @id @default(auto()) @map("_id") @db.ObjectId
   title    String
   videos   Video[]
-  course   Course  @relation(fields: [courseId], references: [id])
+  course   Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId String  @db.ObjectId
 }
 
@@ -106,7 +106,7 @@ model Video {
   rank        Rank[]
   fill        Fill[]
   drag        Drag[]
-  chapter     Chapter  @relation(fields: [chapterId], references: [id])
+  chapter     Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   chapterId   String   @db.ObjectId
 }
 
@@ -118,7 +118,7 @@ model Info {
   url          String?
   start        Float
   end          Float
-  video        Video   @relation(fields: [videoId], references: [id])
+  video        Video   @relation(fields: [videoId], references: [id], onDelete: Cascade)
   videoId      String  @db.ObjectId
 }
 
@@ -138,7 +138,7 @@ model Choice {
   feedback     ChoiceFeedback[] // 第一層List放回答次數，第二層放答案index index有兩個以上則為複選
   start        Float
   end          Float
-  video        Video            @relation(fields: [videoId], references: [id])
+  video        Video            @relation(fields: [videoId], references: [id], onDelete: Cascade)
   videoId      String           @db.ObjectId
 }
 
@@ -161,7 +161,7 @@ model Rank {
   feedback     RankFeedback[] // 第一層List放回答次數，第二層放答案順序
   start        Float
   end          Float
-  video        Video          @relation(fields: [videoId], references: [id])
+  video        Video          @relation(fields: [videoId], references: [id], onDelete: Cascade)
   videoId      String         @db.ObjectId
 }
 
@@ -184,7 +184,7 @@ model Fill {
   feedback     FillFeedback[]
   start        Float
   end          Float
-  video        Video          @relation(fields: [videoId], references: [id])
+  video        Video          @relation(fields: [videoId], references: [id], onDelete: Cascade)
   videoId      String         @db.ObjectId
 }
 
@@ -216,7 +216,7 @@ model Drag {
   feedback     DragFeedback[]
   start        Float
   end          Float
-  video        Video          @relation(fields: [videoId], references: [id])
+  video        Video          @relation(fields: [videoId], references: [id], onDelete: Cascade)
   videoId      String         @db.ObjectId
 }
 
