@@ -7,13 +7,14 @@ import { CourseCreateType } from '../../../types/course'
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await getServerSession(req, res, authOptions)
-  const { courseId, myCourse } = req.query as {
+  const { courseId, myCourse, owner } = req.query as {
     courseId?: string
     myCourse?: boolean
+    owner?: boolean
   }
 
   //公開課程列表
-  if (req.method == 'GET' && !myCourse) {
+  if (req.method == 'GET' && !myCourse && !owner) {
     const courses = await prisma.course.findMany({
       select: {
         id: true,
@@ -29,7 +30,20 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   //判斷是否登入
   if (session) {
-    //GET 取得已加入課程列表
+    if (req.method === 'GET' && owner) {
+      const session = await getServerSession(req, res, authOptions)
+
+      const courses = await prisma.course.findMany({
+        where: {
+          ownerId: {
+            has: session.user.id,
+          },
+        },
+      })
+
+      return res.status(200).json(courses)
+    }
+
     if (req.method === 'GET') {
       const session = await getServerSession(req, res, authOptions)
 

@@ -12,6 +12,8 @@ import {
   MenuItem,
   TextField,
   Paper,
+  Card,
+  CardActions,
 } from '@mui/material'
 
 import Grid from '@mui/material/Unstable_Grid2' // Grid version 2
@@ -21,18 +23,18 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import Link from 'next/link'
 import * as React from 'react'
 import { Course } from '@prisma/client'
-import { sendMessage } from '../../store/notification'
-import { useAppDispatch } from '../../hooks/redux'
+import { sendMessage } from '../../../store/notification'
+import { useAppDispatch } from '../../../hooks/redux'
 import { LoadingButton } from '@mui/lab'
 
-function AllCoursesPage() {
+function CoursesManagePage() {
   const [jointCourseLoading, setJointCourseLoading] = React.useState(false)
   const [courseData, setCourseData] = React.useState<Course[]>([])
   const [courseID, setCourseId] = React.useState('')
   const dispatch = useAppDispatch()
 
   const fetchData = React.useCallback(async () => {
-    const response = await fetch(`/api/course?myCourse=true`)
+    const response = await fetch(`/api/course?owner=true`)
     const data: Course[] = await response.json()
     setCourseData(data)
   }, [])
@@ -59,7 +61,7 @@ function AllCoursesPage() {
         justifyContent="space-between"
         spacing={2}
       >
-        <Grid
+        {/* <Grid
           md={12}
           xs={12}
           display="flex"
@@ -103,18 +105,7 @@ function AllCoursesPage() {
           >
             加入課程
           </LoadingButton>
-          <Link href="/manage/courses">
-            <Button
-              startIcon={<AddCircleOutlineIcon />}
-              variant="contained"
-              href="/manage/courses"
-              LinkComponent={Link}
-              sx={{ ml: '1rem', height: '95%', fontSize: '20' }}
-            >
-              新增課程
-            </Button>
-          </Link>
-        </Grid>
+        </Grid> */}
         <Grid md={12} xs={12}>
           <Typography
             display={'flex'}
@@ -122,7 +113,7 @@ function AllCoursesPage() {
             fontWeight="bold"
             justifyContent={'center'}
           >
-            我的課程
+            您所管理的課程
           </Typography>
           <Box display="flex" flex={'center'} flexDirection="column" m={2}>
             <Grid
@@ -131,6 +122,33 @@ function AllCoursesPage() {
               mt={2}
               justifyContent={{ md: 'center', xs: 'center' }}
             >
+              <Grid md={4}>
+                <Link href="/manage/courses">
+                  <Card component={'a'}>
+                    <Box
+                      width={'150px'}
+                      height={'150px'}
+                      bgcolor={'secondary.main'}
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Typography
+                        variant="h5"
+                        textAlign={'center'}
+                        color={'white'}
+                        //TODO need overwrite underline none
+                        sx={{ textDecorationLine: 'none !important' }}
+                      >
+                        新增課程
+                      </Typography>
+                    </Box>
+                  </Card>
+                </Link>
+              </Grid>
               {courseData.map(({ id, title, description }, index) => {
                 return (
                   <Grid md={4} key={`courseItem-${index}`}>
@@ -173,4 +191,4 @@ function AllCoursesPage() {
   )
 }
 
-export default AllCoursesPage
+export default CoursesManagePage
