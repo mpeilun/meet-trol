@@ -19,6 +19,8 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { useState } from 'react'
 import courseData from '../../store/course-data'
 import { Delete } from '@mui/icons-material'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 interface ChapterData {
   title: string
@@ -30,7 +32,7 @@ interface VideoData {
   url: string
 }
 
-export default function Teacherpage() {
+export default function CreateCoursePage() {
   const [chapterSelector, setChapterSeletor] = useState('')
   const [chapter, setChapter] = useState<ChapterData[]>([]) //全部章節
   const [chapterDialogText, setChapterDialogText] = useState('') //Dialog輸入文字狀態(title)
@@ -151,17 +153,19 @@ export default function Teacherpage() {
               ))}
           </Box> */}
 
-          {chapter.map((chapteritem, index) => (
-            <Box key={`chapteritem-${index}`}>
+          {chapter.map((chapterItem, index) => (
+            <Box key={`chapterItem-${index}`}>
               <Typography sx={{ fontSize: 25, mt: 3 }} fontWeight="bold">
-                {chapteritem.title}
+                {chapterItem.title}
               </Typography>
               <Divider />
-              {chapteritem.videoData.map((videoItem, index) => (
-                <Box display={'flex'} flexDirection={'row'}>
-                  <Typography key={`videoItem-${index}`} fontSize={20}>
-                    {videoItem.title}
-                  </Typography>
+              {chapterItem.videoData.map((videoItem, index) => (
+                <Box
+                  key={`videoItem-${index}`}
+                  display={'flex'}
+                  flexDirection={'row'}
+                >
+                  <Typography fontSize={20}>{videoItem.title}</Typography>
                   <IconButton
                     color="primary"
                     onClick={() => handleDeleteVideoData(videoItem)}

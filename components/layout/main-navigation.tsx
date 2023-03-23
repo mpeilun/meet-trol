@@ -69,27 +69,28 @@ function MainNavigation() {
     <AppBar component="nav" position="sticky">
       <Container maxWidth="md">
         <Toolbar disableGutters>
-          {/* 手機尺寸 */}
           <RemoveRedEyeIcon
             sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}
           />
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.0.6rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            Meet-Trol
-          </Typography>
+          <Link href={'/'} passHref legacyBehavior>
+            <Typography
+              variant="h6"
+              noWrap
+              component="a"
+              //TODO
+              sx={{
+                mr: 2,
+                display: { xs: 'none', md: 'flex' },
+                fontFamily: 'monospace',
+                fontWeight: 700,
+                letterSpacing: '.0.6rem',
+                color: 'inherit',
+                textDecoration: 'none',
+              }}
+            >
+              Meet-Trol
+            </Typography>
+          </Link>
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -120,43 +121,47 @@ function MainNavigation() {
               }}
             >
               {pages.map((page, index) => {
-                const isCourseTitle = index == pages.length - 1
                 return (
-                  <MenuItem
-                    href={page.path}
+                  <Link
                     key={page.displayName}
-                    onClick={handleCloseNavMenu}
-                    LinkComponent={Link}
-                    sx={{ color: 'black' }}
+                    href={page.path}
+                    passHref
+                    legacyBehavior
                   >
-                    {page.displayName}
-                  </MenuItem>
+                    <MenuItem
+                      onClick={handleCloseNavMenu}
+                      component="a"
+                      sx={{ my: 2, display: 'block' }}
+                    >
+                      {page.displayName}
+                    </MenuItem>
+                  </Link>
                 )
               })}
             </Menu>
           </Box>
-          {/* 電腦尺寸 */}
           <RemoveRedEyeIcon
             sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }}
           />
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href=""
-            sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            Meet-Trol
-          </Typography>
+          <Link href={'/'} passHref legacyBehavior>
+            <Typography
+              variant="h5"
+              noWrap
+              component="a"
+              sx={{
+                mr: 2,
+                display: { xs: 'flex', md: 'none' },
+                flexGrow: 1,
+                fontFamily: 'monospace',
+                fontWeight: 700,
+                letterSpacing: '.3rem',
+                color: 'inherit',
+                textDecoration: 'none',
+              }}
+            >
+              Meet-Trol
+            </Typography>
+          </Link>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => {
               return (
