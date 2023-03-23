@@ -15,10 +15,9 @@ import {
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import DeleteIcon from '@mui/icons-material/Delete';
 import { useState } from "react";
 import courseData from "../../store/course-data";
-import { Delete } from "@mui/icons-material";
+import { Delete,Edit } from "@mui/icons-material";
 
 interface ChapterData {
   title: string;
@@ -76,6 +75,7 @@ export default function Teacherpage() {
   };
 
   const handleAddVideo = (chapterId: string, newVideo: VideoData) => {
+    // 增加影片
     const targetIndex = chapter.findIndex((item) => item.title === chapterId);
     if (targetIndex === -1) return;
 
@@ -84,7 +84,9 @@ export default function Teacherpage() {
       return prev;
     });
   };
-  function handleDeleteVideoData(videoDataToDelete: VideoData) {
+
+  const handleDeleteVideoData = (videoDataToDelete: VideoData) => {
+    //刪除影片
     const targetChapterIndex = chapter.findIndex((chapter) => chapter.videoData.includes(videoDataToDelete));
     if (targetChapterIndex === -1) {
       return;
@@ -94,18 +96,49 @@ export default function Teacherpage() {
       ...updatedChapter[targetChapterIndex],
       videoData: updatedChapter[targetChapterIndex].videoData.filter((videoData) => videoData !== videoDataToDelete)
     };
-    // 更新状态
     setChapter(updatedChapter);
   }
+
+  const [openEdit, setOpenEdit] = useState(false); //修改Dialog的狀態
+  const handleClickOpen = () => setOpenEdit(true);
+  const handleClickClose = () => setOpenEdit(false);
+  const [editTitle, setEditTitle] = useState(""); //修改後title狀態
+  const handleTitleChange = (e) => {
+    // 讀取texfield
+      setEditTitle(e.target.value);
+    }
+  const [editURL, setEditURL] = useState("");//修改後url狀態
+  const handleURLChange = (e) => {
+    // 讀取texfield
+      setEditURL(e.target.value);
+    }
+  const handleEditVideo = (videoToEdit,newTitle,newURL) =>  {
+    // 修改影片
+    handleClickOpen();
+    const updatedChapter = chapter.map(ch => {
+      return {
+        ...ch,
+        videoData: ch.videoData.map(video => {
+          if (video.title === videoToEdit.title) {
+            return {
+              ...video,
+              title: newTitle ,
+              url: newURL
+              }
+           } else {
+            return video;
+           }
+         })
+      }
+    });
+    setChapter(updatedChapter);
+  }  
+
   const handleDialogAndVideo = (chapterId: string, newVideo: VideoData) => {
     //按下新增按鈕後，關掉Dialog，增加影片
     handleCloseVideoDialog();
     handleAddVideo(chapterId, newVideo);
   };
-  // const handleInsert = () =>{
-
-  //   setVideo(prevState=>[...chapter.slice(0,index),video,...chapter.slice(index)])
-  // }
 
   const handleSelect = (event: SelectChangeEvent) => {
     //讀取位置
@@ -158,7 +191,8 @@ export default function Teacherpage() {
                 <Typography key={`videoItem-${index}`} fontSize={20}>
                   {videoItem.title}
                 </Typography>
-                <IconButton color="primary" onClick={() =>handleDeleteVideoData(videoItem)}><Delete/></IconButton>
+                <IconButton  color="primary" onClick={() =>handleDeleteVideoData(videoItem)}><Delete/></IconButton>
+                <IconButton  color="primary" onClick={() =>handleEditVideo(index,editTitle,editURL)}><Edit/></IconButton>
                 </Box>
               ))}
             </Box>
@@ -182,6 +216,33 @@ export default function Teacherpage() {
             >
               新增影片
             </Button>
+
+            <Dialog open={openEdit} onClose={handleClickClose}>
+              <DialogTitle bgcolor={"#D4C5C7"} fontWeight="bold">
+                修改影片
+              </DialogTitle>
+
+              <TextField
+                required
+                id="outlined-required"
+                sx={{ mx: 5, my: 3, width: 300 }}
+                autoFocus
+                label="名稱"
+                fullWidth
+                variant="standard"
+                onChange={handleTitleChange}
+              ></TextField>
+              <TextField label="影片連結" onChange={handleURLChange} sx={{ mb: 3, mx: 2 }} ></TextField>
+
+              <Button
+                // onClick={}
+                variant="contained"
+                sx={{ mx: 5, mb: 2 }}
+              >
+                修改影片
+              </Button>
+            </Dialog>
+            
             <Dialog open={openChapterDialog} onClose={handleCloseChapterDialog}>
               <DialogTitle bgcolor={"#D4C5C7"} fontWeight="bold">
                 新增章節
