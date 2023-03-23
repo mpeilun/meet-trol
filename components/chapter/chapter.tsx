@@ -62,27 +62,45 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 export default function CustomizedAccordions(props: {
   chapterData: ChapterListData[]
   lastView: LastViewData[]
+  pid: string
 }) {
   const data = props.chapterData
   let lastView = props.lastView
   // 獲得最後觀看的影片
   const now: Date = new Date()
 
+  const [videosId, setVideosId] = React.useState<string>('')
+  const postLastView = async (videoId: string) => {
+    console.log(videoId)
+    await fetch(`/api/record/${props.pid}/${videoId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        videoTime: videoTime,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.log(error))
+  }
   if (lastView.length == 0) {
-    lastView.push({
+    const view = {
       videoId: data[0].videos[0].id,
       videoTime: 0,
       viewTime: now,
-    })
+    }
+    lastView.push(view)
+    postLastView(data[0].videos[0].id)
   }
 
   const lastViewVideo = lastView.reduce((earliest, current) => {
     const earliestTime = new Date(earliest.viewTime)
     const currentTime = new Date(current.viewTime)
-    console.log(earliest)
     return earliestTime > currentTime ? earliest : current
   }, lastView[0])
-  
+
   const dispatch = useAppDispatch()
   const initialSelectVideo = React.useCallback((): boolean[][] => {
     let chapterList = []
@@ -129,7 +147,16 @@ export default function CustomizedAccordions(props: {
       setIsExpanded(expanded)
     }
 
+  const getLastView = async (videoId: string) => {
+    await fetch(`/api/record/${props.pid}/${videoId}`)
+      .then((response) => response.json())
+      .then((data) => dispatch(setVideoTime(data.videoTime)))
+      .catch((error) => console.log(error))
+  }
+  const videoTime = useAppSelector((state) => state.course.playedSecond)
+
   React.useEffect(() => {
+    setVideosId(lastViewVideo.videoId)
     dispatch(setVideoId(lastViewVideo.videoId))
     dispatch(setVideoTime(lastViewVideo.videoTime))
   }, [])
@@ -182,6 +209,9 @@ export default function CustomizedAccordions(props: {
                       >
                         <CardActionArea
                           onClick={() => {
+                            postLastView(videosId)
+                            getLastView(id)
+                            setVideosId(id)
                             let selected = [...selectedVideo]
                             selected.map((ele) => {
                               ele.fill(false)

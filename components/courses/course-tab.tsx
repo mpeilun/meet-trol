@@ -50,6 +50,7 @@ function a11yProps(index: number) {
 export default function CourseTabs(props: {
   chapterData: ChapterListData[]
   lastView: LastViewData[]
+  pid: string
 }) {
   const [value, setValue] = React.useState(0)
   const [windowWidth, setWindowWidth] = React.useState(1000)
@@ -169,7 +170,7 @@ export default function CourseTabs(props: {
       </TabPanel>
 
       <TabPanel value={value} index={3}>
-        {videoData && (<ReplyLog questions={videoData.questions}></ReplyLog>)}
+        {videoData && <ReplyLog questions={videoData.questions}></ReplyLog>}
       </TabPanel>
 
       {/* 已知BUG 左側和下方tab的目錄不會同步 */}
@@ -178,6 +179,7 @@ export default function CourseTabs(props: {
         <CustomizedAccordions
           chapterData={props.chapterData}
           lastView={props.lastView}
+          pid={props.pid}
         ></CustomizedAccordions>
       </TabPanel>
     </Box>

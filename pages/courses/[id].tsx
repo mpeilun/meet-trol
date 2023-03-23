@@ -21,7 +21,7 @@ const CourseTab = dynamic(() => import('../../components/courses/course-tab'))
 function CourseInnerPage(props: {
   chapter: ChapterListData[]
   error: boolean
-  record: { lastView: LastViewData[] }[]
+  record: { lastView: LastViewData[] }
 }) {
   const router = useRouter()
   const pid = router.query.id as string
@@ -32,8 +32,7 @@ function CourseInnerPage(props: {
     chapter == undefined ||
     chapter.length < 1 ||
     props.error == true ||
-    props.record == undefined ||
-    props.record.length < 1
+    props.record == undefined
   ) {
     return (
       <>
@@ -44,7 +43,7 @@ function CourseInnerPage(props: {
       </>
     )
   } else {
-    const lastView: LastViewData[] = props.record[0].lastView
+    const lastView: LastViewData[] = props.record.lastView
 
     return (
       <Box
@@ -70,6 +69,7 @@ function CourseInnerPage(props: {
             <CustomizedAccordions
               chapterData={chapter}
               lastView={lastView}
+              pid={pid}
             ></CustomizedAccordions>
             <Divider />
           </Card>
@@ -81,7 +81,11 @@ function CourseInnerPage(props: {
           sx={{ overflowX: 'hidden' }}
         >
           <CoursePlayer courseId={pid}></CoursePlayer>
-          <CourseTab chapterData={chapter} lastView={lastView}></CourseTab>
+          <CourseTab
+            chapterData={chapter}
+            pid={pid}
+            lastView={lastView}
+          ></CourseTab>
         </Box>
       </Box>
     )
@@ -116,7 +120,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     )
     if (chapterResponse.status === 200 && lastViewResponse.status === 200) {
       const chapter: Array<ChapterListData> = await chapterResponse.json()
-      const record: Array<LastViewData> = await lastViewResponse.json()
+      const record: LastViewData = await lastViewResponse.json()
 
       return { props: { chapter, error: false, record } }
     } else {
