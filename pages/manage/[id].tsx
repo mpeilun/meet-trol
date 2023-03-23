@@ -44,7 +44,7 @@
 //   React.useEffect(() => {
 //     const fetchData = async () => {
 //       const res = await fetch(`/api/course?courseId=${courseId}`)
-//       const data: CourseWithDetail[] = await res.json()
+//       const data: CourseWithDetail = await res.json()
 //       setCourse(data)
 //     }
 //     fetchData()
@@ -66,16 +66,10 @@
 //     setVideoURL(event.target.value)
 //   }
 
-//   const handleAddChapter = (newChapter: ChapterWithDetail) => {
-//     //增加章節名稱
-//     setCourse((prevState) => )
-//     console.log('chapter', chapter)
-//   }
-
-//   const handleDialogAndChapter = () => {
+//   const handleDialogAndChapter = (newChapter: string) => {
 //     //按下新增按鈕後，關掉Dialog，增加章節
 //     handleCloseChapterDialog()
-//     handleAddChapter({ title: chapterDialogText, videoData: [] })
+//     setCourse((prevState) => {return {...prevState, chapters: [...prevState.chapters, {title: newChapter, videoData: []}]}})
 //   }
 
 //   const handleChangeVideo = (event) => {
