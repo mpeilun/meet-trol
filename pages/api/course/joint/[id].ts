@@ -10,33 +10,53 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     //判斷是否登入
     if (session) {
       const query = req.query as { id: string }
-      const check = await prisma.course.findUnique({
-        where: {
-          id: query.id,
-        },
-        select: {
-          membersId: true,
-        },
-      })
-
-      if (check.membersId.includes(session.user.id)) {
-        res.status(409).json({ message: '已經在課程成員中!' })
-      } else {
-        const update = await prisma.course.update({
+      try {
+        const check = await prisma.course.findUnique({
           where: {
             id: query.id,
           },
-          data: {
-            membersId: {
-              push: session.user.id,
-            },
+          select: {
+            membersId: true,
           },
         })
 
-        //TODO 預先加入 ViewRecord
-        res.status(201).json({
-          ...update,
-          message: 'Success',
+        if (check?.membersId.includes(session.user.id)) {
+          res.status(409).json({ message: '已經在課程成員中!' })
+        } else {
+          const update = await prisma.course.update({
+            where: {
+              id: query.id,
+            },
+            data: {
+              membersId: {
+                push: session.user.id,
+              },
+            },
+          })
+
+          //TODO 預先加入 ViewRecord
+
+          await prisma.user.update({
+            where: {
+              id: session.user.id,
+            },
+            data: {
+              records: {
+                create: {
+                  courseId: query.id,
+                },
+              },
+            },
+          })
+
+          res.status(201).json({
+            ...update,
+            message: 'Success',
+          })
+        }
+      } catch (err) {
+        res.status(404).json({
+          message: err,
         })
       }
     } else {

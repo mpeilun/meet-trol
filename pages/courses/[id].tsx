@@ -81,10 +81,7 @@ function CourseInnerPage(props: {
           sx={{ overflowX: 'hidden' }}
         >
           <CoursePlayer courseId={pid}></CoursePlayer>
-          <CourseTab
-            chapterData={chapter}
-            lastView={lastView}
-          ></CourseTab>
+          <CourseTab chapterData={chapter} lastView={lastView}></CourseTab>
         </Box>
       </Box>
     )

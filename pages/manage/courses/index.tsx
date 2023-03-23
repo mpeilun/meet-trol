@@ -4,7 +4,6 @@ import dayjs, { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Button, Box, Card,TextField,Typography } from "@mui/material";
-import { borderRadius } from "@mui/system";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 export default function Home() {
@@ -20,7 +19,9 @@ export default function Home() {
     setInfo(event.target.value);
   }
 
-
+  const newStart = () => setStartDate(newStart)
+  const newEnd = () => setEndDate(newEnd)
+  
   return (
     <Card  style={{ backgroundColor: "#F9F5E3"}} sx={{ mt: "1%",mr:"10%",ml:"10%"}}>
       <Box display="flex" flexDirection="row" sx={{ml:"12%"}} width="100%" height="100%">
@@ -65,7 +66,7 @@ export default function Home() {
                 label="結束日期"
                 value={endDate}
                 onChange={(newEnd) => setEndDate(newEnd)}
-                sx={{backgroundColor:"#F4F2F3"}}
+                sx={{mr:2,backgroundColor:"#F4F2F3"}}
               />
 
             </LocalizationProvider>
