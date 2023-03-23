@@ -24,10 +24,15 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import Link from 'next/link'
 import * as React from 'react'
 import { Course } from '@prisma/client'
+import { sendMessage } from '../../store/notification'
+import { useAppDispatch } from '../../hooks/redux'
+import { LoadingButton } from '@mui/lab'
 
 function AllCoursesPage() {
+  const [jointCourseLoading, setJointCourseLoading] = React.useState(false)
   const [courseData, setCourseData] = React.useState<Course[]>([])
   const [courseID, setCourseId] = React.useState('')
+  const dispatch = useAppDispatch()
 
   const fetchData = React.useCallback(async () => {
     const response = await fetch(`/api/course?myCourse=true`)
@@ -71,21 +76,42 @@ function AllCoursesPage() {
             sx={{ width: '50%', minWidth: '100px', bgcolor: '#FFF' }}
             onChange={(e) => setCourseId(e.target.value)}
           ></TextField>
-          {/*TODO 考慮使用ICON Button */}
-          <Button
+          <LoadingButton
+            startIcon={<ArrowForwardIcon />}
+            loading={jointCourseLoading}
             variant="contained"
             sx={{ ml: '1rem', height: '95%' }}
             onClick={async () => {
-              await fetch(`/api/course/joint/${courseID}`)
-              await fetchData()
+              setJointCourseLoading(true)
+              const result = await fetch(`/api/course/joint/${courseID}`)
+              if (result.status === 201) {
+                dispatch(
+                  sendMessage({ severity: 'success', message: '成功加入課程' })
+                )
+                await fetchData()
+              } else if (result.status === 409) {
+                dispatch(
+                  sendMessage({
+                    severity: 'warning',
+                    message: (await result.json()).message,
+                  })
+                )
+              } else {
+                dispatch(
+                  sendMessage({ severity: 'error', message: '課程不存在' })
+                )
+              }
+              setJointCourseLoading(false)
             }}
           >
-            <ArrowForwardIcon />
-          </Button>
+            加入課程
+          </LoadingButton>
           <Link href="/manage/courses">
             <Button
               startIcon={<AddCircleOutlineIcon />}
               variant="contained"
+              href="/manage/courses"
+              LinkComponent={Link}
               sx={{ ml: '1rem', height: '95%', fontSize: '20' }}
             >
               新增課程

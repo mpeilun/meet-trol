@@ -10,7 +10,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select'
 const ReplyLog = (props: {
   questions: (Info | ChoiceData | RankData | FillData | DragData)[]
 }) => {
-  const [currentData, setCurrentData] = useState<number>(1)
+  const [currentData, setCurrentData] = useState<number>(0)
 
   const [age, setAge] = useState<string>('')
 
@@ -29,24 +29,30 @@ const ReplyLog = (props: {
               unmountOnExit
             >
               <Box>
-                {/* <FormControl
+                <FormControl
                   key={`${index}DropDownMenu`}
-                  sx={{minWidth: 120 }}
+                  sx={{ minWidth: 120 }}
                   size="small"
                 >
-                  <InputLabel id="demo-select-small">Age</InputLabel>
+                  <InputLabel id="demo-select-small">Answer</InputLabel>
                   <Select
                     labelId="demo-select-small"
                     id="demo-select-small"
                     value={age}
-                    label="Age"
+                    label="Reply"
                     onChange={handleChange}
                   >
-                    {question.feedback.map((feedback, index) =>{
+                    {/* {question.feedback.map((feedback, index) =>{
                         <MenuItem value={10}>Ten</MenuItem>
-                    })}
+                    })} */}
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={10}>回答一</MenuItem>
+                    <MenuItem value={20}>回答二</MenuItem>
+                    <MenuItem value={30}>回答三</MenuItem>
                   </Select>
-                </FormControl> */}
+                </FormControl>
                 <QuestionType
                   key={`${index} question`}
                   setClose={() => {}}
