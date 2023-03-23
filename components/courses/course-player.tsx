@@ -132,9 +132,7 @@ function CoursePlayer(props: { courseId: string }) {
   }
 
 
-  const setSecond = React.useCallback((seconds?: number) => {
-    setPlayedSeconds(seconds!)
-  },[])
+
 
   //Slider
   const [playedSeconds, setPlayedSeconds] = React.useState(0)
@@ -154,6 +152,7 @@ function CoursePlayer(props: { courseId: string }) {
   let onPlayerReady = (player: ReactPlayerType) => {
     if (playerRef) {
       playerRef.current = player
+      setPlayedSeconds(videoTime)
       setLoading(false)
       // var availableQualityLevels=player.getInternalPlayer().getAvailableQualityLevels()
       // console.log(availableQualityLevels)

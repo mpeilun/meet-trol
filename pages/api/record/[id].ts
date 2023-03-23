@@ -27,7 +27,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           },
         },
       })
-      res.status(200).json(data)
+      res.status(200).json(data[0])
     } else {
       res.status(403).json({ message: 'forbidden' })
     }
