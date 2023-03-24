@@ -25,7 +25,26 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         ownerId: true,
       },
     })
-    return res.status(200).json(courses)
+    const coursesWithOwnerData = await Promise.all(
+      courses.map(async (course) => {
+        const owners = await prisma.user.findMany({
+          where: {
+            id: {
+              in: course.ownerId,
+            },
+          },
+        })
+
+        const courseWithOwnerData = {
+          ...course,
+          owners: owners,
+        }
+
+        return courseWithOwnerData
+      })
+    )
+
+    return res.status(200).json(coursesWithOwnerData)
   }
 
   //判斷是否登入
@@ -43,8 +62,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           },
         },
       })
+
+      const owners = await prisma.user.findMany({
+        where: {
+          id: {
+            in: course.ownerId,
+          },
+        },
+      })
+
       if (course.ownerId.includes(session.user.id)) {
-        return res.status(200).json(course)
+        return res.status(200).json({ ...course, owners: owners })
       } else {
         return res.status(403).json({ message: 'Forbidden' })
       }
@@ -66,7 +94,26 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         },
       })
 
-      return res.status(200).json(courses)
+      const coursesWithOwnerData = await Promise.all(
+        courses.map(async (course) => {
+          const owners = await prisma.user.findMany({
+            where: {
+              id: {
+                in: course.ownerId,
+              },
+            },
+          })
+
+          const courseWithOwnerData = {
+            ...course,
+            owners: owners,
+          }
+
+          return courseWithOwnerData
+        })
+      )
+
+      return res.status(200).json(coursesWithOwnerData)
     }
 
     if (req.method === 'GET') {
