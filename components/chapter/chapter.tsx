@@ -85,6 +85,7 @@ export default function CustomizedAccordions(props: {
       // .then((data) => console.log(data))
       .catch((error) => console.log(error))
   }
+
   if (lastView.length == 0) {
     const view = {
       videoId: data[0].videos[0].id,
@@ -92,8 +93,13 @@ export default function CustomizedAccordions(props: {
       viewTime: now,
     }
     lastView.push(view)
-    postLastView(data[0].videos[0].id)
   }
+
+  React.useEffect(() => {
+    if (lastView.length == 0) {
+      postLastView(data[0].videos[0].id)
+    }
+  }, [])
 
   const lastViewVideo = lastView.reduce((earliest, current) => {
     const earliestTime = new Date(earliest.viewTime)

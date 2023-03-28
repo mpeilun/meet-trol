@@ -59,7 +59,7 @@ model Record {
 
 model LastView {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  videoId   String   @db.ObjectId
+  videoId   String   @unique @db.ObjectId
   videoTime Float
   viewTime  DateTime @default(now())
   record    Record   @relation(fields: [recordId], references: [id])

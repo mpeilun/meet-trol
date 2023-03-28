@@ -12,6 +12,7 @@ import {
   SliderProps,
   Grid,
   CircularProgress,
+  Typography,
 } from '@mui/material'
 import {
   PlayArrow,
@@ -23,7 +24,7 @@ import {
   VolumeOff,
   VolumeDown,
   VolumeUp,
-  Camera,
+  AddComment,
 } from '@mui/icons-material'
 
 import PopupModal from '../popup/popupModel'
@@ -36,6 +37,7 @@ import {
 } from 'react-full-screen'
 import { OnProgressProps } from 'react-player/base'
 import { VideoData } from '../../types/chapter'
+import CreateDiscussion from '../discussion/createDiscussion'
 
 const ReactPlayerDynamic = dynamic(() => import('react-player/lazy'), {
   loading: () => (
@@ -75,6 +77,7 @@ function CoursePlayer(props: { courseId: string }) {
   const [volume, setVolume] = React.useState(1) //音量
   const handleFullScreen = useFullScreenHandle() //全螢幕控制器
   const [playbackRate, setPlaybackRate] = React.useState(1.0) //播放速度
+  const [displayCreateDiscussion, setDisplayCreateDiscussion] = React.useState(false) //是否顯示新增討論區
 
   const [hasWindow, setHasWindow] = React.useState(false)
   React.useEffect(() => {
@@ -104,7 +107,7 @@ function CoursePlayer(props: { courseId: string }) {
     if (isValidObjectId) {
       fetchData()
     }
-   
+
   }, [videoId])
 
 
@@ -206,6 +209,7 @@ function CoursePlayer(props: { courseId: string }) {
               handleFullScreen={handleFullScreen}
               playbackRate={playbackRate}
               setPlaybackRate={setPlaybackRate}
+              setDisplayCreateDiscussion={setDisplayCreateDiscussion}
             />
           )}
 
@@ -256,33 +260,48 @@ function CoursePlayer(props: { courseId: string }) {
               <CircularProgress />
             </Box>
           )}
-          <ReactPlayerDynamic
-            url={videoData == undefined ? '' : videoData.url}
-            playing={playing}
-            onPlay={play}
-            onPause={pause}
-            onProgress={handlePlayerStatus}
-            onReady={onPlayerReady}
-            volume={volume}
-            width={'100%'}
-            height={handleFullScreen.active ? '100%' : height}
-            progressInterval={200}
-            playbackRate={playbackRate}
-            config={{
-              youtube: {
-                playerVars: {
-                  start: videoTime,
-                  // 此參數指定從影片開始播放時起算的秒數，表示播放器應停止播放影片的時間。參數值為正整數。
-                  // 請注意，時間是從影片開頭算起，而非從 start 播放器參數的值或 startSeconds 參數 (用於在 YouTube Player API 函式中載入或排入影片)。
-                  controls: 0, // 0, 播放器控制項不會顯示播放器的控制項。
-                  modestbranding: 0,
-                  // 此參數可用來避免未顯示 YouTube 標誌的 YouTube 播放器。將參數值設為 1
-                  // 可避免在控制列中顯示 YouTube 標誌。請注意，當使用者的滑鼠遊標懸停在播放器上時，暫停顯示的右上角仍會顯示小型的 YouTube 文字標籤。
-                  rel: 0, // 0, 相關影片則會從播放過的影片來自同一個頻道。
+          
+          <div className="course-player">
+            <Box position='absolute' width={'100%'}
+              onClick={()=>setPlaying(!playing)}
+              height={handleFullScreen.active ? '100%' : 600}/>
+            <ReactPlayerDynamic
+              url={videoData == undefined ? '' : videoData.url}
+              playing={playing}
+              onPlay={play}
+              onPause={pause}
+              onProgress={handlePlayerStatus}
+              onReady={onPlayerReady}
+              volume={volume}
+              width={'100%'}
+              height={handleFullScreen.active ? '100%' : 600}
+              progressInterval={200}
+              playbackRate={playbackRate}
+              config={{
+                youtube: {
+                  playerVars: {
+                    start: videoTime,
+                    // 此參數指定從影片開始播放時起算的秒數，表示播放器應停止播放影片的時間。參數值為正整數。
+                    // 請注意，時間是從影片開頭算起，而非從 start 播放器參數的值或 startSeconds 參數 (用於在 YouTube Player API 函式中載入或排入影片)。
+                    controls: 0, // 0, 播放器控制項不會顯示播放器的控制項。
+                    modestbranding: 0,
+                    // 此參數可用來避免未顯示 YouTube 標誌的 YouTube 播放器。將參數值設為 1
+                    // 可避免在控制列中顯示 YouTube 標誌。請注意，當使用者的滑鼠遊標懸停在播放器上時，暫停顯示的右上角仍會顯示小型的 YouTube 文字標籤。
+                    rel: 0, // 0, 相關影片則會從播放過的影片來自同一個頻道。
+                  },
                 },
-              },
-            }}
-          />
+              }}
+            />
+          </div>
+          {playerRef?.current && (<CreateDiscussion 
+          duration={playerRef.current.getDuration()}
+          displayCreateDiscussion={displayCreateDiscussion}
+          setDisplayCreateDiscussion={setDisplayCreateDiscussion}
+          timing={playedSeconds}
+          courseId={courseId}
+          chapterId={videoData.chapterId}
+          />)}
+
         </Box>
       )}
     </FullScreen>
@@ -306,6 +325,7 @@ interface PlayerBarProps {
   handleFullScreen: FullScreenHandle
   playbackRate: number
   setPlaybackRate: (value: number) => void
+  setDisplayCreateDiscussion: (value: boolean) => void
 }
 const PlayerBar = (props: PlayerBarProps) => {
   interface Mark {
@@ -330,6 +350,7 @@ const PlayerBar = (props: PlayerBarProps) => {
     setVolume,
     playbackRate,
     setPlaybackRate,
+    setDisplayCreateDiscussion
   } = props
   const handleVolumeButtonClick = () => {
     if (volume == 0) {
@@ -347,19 +368,13 @@ const PlayerBar = (props: PlayerBarProps) => {
       return <VolumeUp sx={{ fontSize: 30 }} />
     }
   }
-  const handleScreenshotButtonClick = () => {
-    setMarks([...marks, { value: playedSeconds }])
-    console.log(marks)
+  const handleDiscussionButtonClick = () => {
+    // setMarks([...marks, { value: playedSeconds }])
+    // console.log(marks)
     // generateImage()
+    pause()
+    setDisplayCreateDiscussion(true)
   }
-  // const generateImage = async() => {
-  //   const player = playerRef.current.getInternalPlayer();
-  //   const currentTime = player.getCurrentTime();
-  //   const videoId = player.getVideoData().video_id;
-  //   setThumbnailUrl(`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg?time=${currentTime}`)
-  //   document.createElement('img').src = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg?time=${currentTime}`
-  //   open(thumbnailUrl)
-  // }
 
   return (
     <Box
@@ -425,6 +440,12 @@ const PlayerBar = (props: PlayerBarProps) => {
                 max={1}
                 step={0.05}
               />
+              <Box display='flex' alignItems='center' height={50} ml={4} className='player-bar-playedsecond'>
+                {/* format playedSeconds to mm:ss like 10:11, and under 10 sec auto fill 0 like 10:01*/}
+                {Math.floor(playedSeconds / 60)}:{Math.floor(playedSeconds % 60) < 10 ? '0' + Math.floor(playedSeconds % 60) : Math.floor(playedSeconds % 60)}/
+                {playerRef.current ? `${Math.floor(playerRef.current.getDuration() / 60)}:${Math.floor(playerRef.current.getDuration() % 60) < 10 ? '0' + Math.floor(playerRef.current.getDuration() % 60) : Math.floor(playerRef.current.getDuration() % 60)}` : '0:00'}
+                {/* {playerRef.current ? playerRef.current.getDuration() : 0} */}
+              </Box>
             </div>
 
             {/* <Box width={'100%'} height={'100%'} display="flex">
@@ -433,9 +454,9 @@ const PlayerBar = (props: PlayerBarProps) => {
             <div>
               <ButtonBase
                 sx={{ ...buttonSize }}
-                onClick={handleScreenshotButtonClick}
+                onClick={handleDiscussionButtonClick}
               >
-                <Camera />
+                <AddComment />
               </ButtonBase>
               <ButtonBase
                 sx={{ ...buttonSize }}

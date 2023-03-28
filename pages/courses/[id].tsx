@@ -31,6 +31,7 @@ function CourseInnerPage(props: {
   
 
   const [chapter, setChapter] = React.useState<ChapterListData[]>(data)
+
   if (
     chapter == undefined ||
     chapter.length < 1 ||
@@ -110,7 +111,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // Retrieve the value of a cookie
   if (session) {
     const chapterResponse = await fetch(
-      `http://localhost:3000/api/chapter/${courseId}`
+      `http://localhost:3000/api/chapter?courseId=${courseId}`,
+      {
+        method: 'GET',
+        headers: {
+          Cookie: context.req.headers.cookie,
+        },
+      }
     )
     const lastViewResponse = await fetch(
       `http://localhost:3000/api/record/${courseId}`,
@@ -121,6 +128,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         },
       }
     )
+    console.log('chapterResponse', chapterResponse)
+
     if (chapterResponse.status === 200 && lastViewResponse.status === 200) {
       const chapter: Array<ChapterListData> = await chapterResponse.json()
       const record: LastViewData = await lastViewResponse.json()      
