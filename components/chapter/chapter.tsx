@@ -68,10 +68,10 @@ export default function CustomizedAccordions(props: {
   let lastView = props.lastView
   // 獲得最後觀看的影片
   const now: Date = new Date()
+  const videoTime = useAppSelector((state) => state.course.playedSecond)
 
   const [videosId, setVideosId] = React.useState<string>('')
   const postLastView = async (videoId: string) => {
-    console.log(videoId)
     await fetch(`/api/record/${props.pid}/${videoId}`, {
       method: 'POST',
       headers: {
@@ -85,6 +85,7 @@ export default function CustomizedAccordions(props: {
       .then((data) => console.log(data))
       .catch((error) => console.log(error))
   }
+
   if (lastView.length == 0) {
     const view = {
       videoId: data[0].videos[0].id,
@@ -92,8 +93,13 @@ export default function CustomizedAccordions(props: {
       viewTime: now,
     }
     lastView.push(view)
-    postLastView(data[0].videos[0].id)
   }
+
+  React.useEffect(() => {
+    if (lastView.length == 0) {
+      postLastView(data[0].videos[0].id)
+    }
+  }, [])
 
   const lastViewVideo = lastView.reduce((earliest, current) => {
     const earliestTime = new Date(earliest.viewTime)
@@ -153,7 +159,6 @@ export default function CustomizedAccordions(props: {
       .then((data) => dispatch(setVideoTime(data.videoTime)))
       .catch((error) => console.log(error))
   }
-  const videoTime = useAppSelector((state) => state.course.playedSecond)
 
   React.useEffect(() => {
     setVideosId(lastViewVideo.videoId)

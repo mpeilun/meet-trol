@@ -173,7 +173,7 @@ function CoursesManagePage() {
                       flexDirection={'column'}
                       justifyContent={'center'}
                     >
-                      <Link href={`/courses/${id}`} passHref legacyBehavior>
+                      <Link href={`/manage/${id}`} passHref legacyBehavior>
                         <Typography
                           component="a"
                           bgcolor={grey[400]}
