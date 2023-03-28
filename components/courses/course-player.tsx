@@ -77,7 +77,8 @@ function CoursePlayer(props: { courseId: string }) {
   const [volume, setVolume] = React.useState(1) //音量
   const handleFullScreen = useFullScreenHandle() //全螢幕控制器
   const [playbackRate, setPlaybackRate] = React.useState(1.0) //播放速度
-  const [displayCreateDiscussion, setDisplayCreateDiscussion] = React.useState(false) //是否顯示新增討論區
+  const [displayCreateDiscussion, setDisplayCreateDiscussion] =
+    React.useState(false) //是否顯示新增討論區
 
   const [hasWindow, setHasWindow] = React.useState(false)
   React.useEffect(() => {
@@ -107,11 +108,7 @@ function CoursePlayer(props: { courseId: string }) {
     if (isValidObjectId) {
       fetchData()
     }
-
   }, [videoId])
-
-
-
 
   let handlePlayerStatus = (props: OnProgressProps) => {
     setPlayedSeconds(props.playedSeconds)
@@ -133,9 +130,6 @@ function CoursePlayer(props: { courseId: string }) {
     // console.log(playerRef.current.props.height)
     // console.log(playerRef.current.props.width)
   }
-
-
-
 
   //Slider
   const [playedSeconds, setPlayedSeconds] = React.useState(0)
@@ -162,20 +156,20 @@ function CoursePlayer(props: { courseId: string }) {
     }
   }
 
-  const [height, setHeight] = React.useState(600);
+  const [height, setHeight] = React.useState(600)
 
   React.useEffect(() => {
     function updateHeight() {
-      const height = window.innerHeight / 1.35;
-      setHeight(height);
+      const height = window.innerHeight / 1.35
+      setHeight(height)
     }
 
-    updateHeight();
-    window.addEventListener('resize', updateHeight);
+    updateHeight()
+    window.addEventListener('resize', updateHeight)
     return () => {
-      window.removeEventListener('resize', updateHeight);
-    };
-  }, []);
+      window.removeEventListener('resize', updateHeight)
+    }
+  }, [])
 
   return (
     <FullScreen handle={handleFullScreen}>
@@ -260,11 +254,14 @@ function CoursePlayer(props: { courseId: string }) {
               <CircularProgress />
             </Box>
           )}
-          
+
           <div className="course-player">
-            <Box position='absolute' width={'100%'}
-              onClick={()=>setPlaying(!playing)}
-              height={handleFullScreen.active ? '100%' : 600}/>
+            <Box
+              position="absolute"
+              width={'100%'}
+              onClick={() => setPlaying(!playing)}
+              height={handleFullScreen.active ? '100%' : height}
+            />
             <ReactPlayerDynamic
               url={videoData == undefined ? '' : videoData.url}
               playing={playing}
@@ -274,7 +271,7 @@ function CoursePlayer(props: { courseId: string }) {
               onReady={onPlayerReady}
               volume={volume}
               width={'100%'}
-              height={handleFullScreen.active ? '100%' : 600}
+              height={handleFullScreen.active ? '100%' : height}
               progressInterval={200}
               playbackRate={playbackRate}
               config={{
@@ -293,15 +290,16 @@ function CoursePlayer(props: { courseId: string }) {
               }}
             />
           </div>
-          {playerRef?.current && (<CreateDiscussion 
-          duration={playerRef.current.getDuration()}
-          displayCreateDiscussion={displayCreateDiscussion}
-          setDisplayCreateDiscussion={setDisplayCreateDiscussion}
-          timing={playedSeconds}
-          courseId={courseId}
-          chapterId={videoData.chapterId}
-          />)}
-
+          {playerRef?.current && (
+            <CreateDiscussion
+              duration={playerRef.current.getDuration()}
+              displayCreateDiscussion={displayCreateDiscussion}
+              setDisplayCreateDiscussion={setDisplayCreateDiscussion}
+              timing={playedSeconds}
+              courseId={courseId}
+              chapterId={videoData.chapterId}
+            />
+          )}
         </Box>
       )}
     </FullScreen>
@@ -350,7 +348,7 @@ const PlayerBar = (props: PlayerBarProps) => {
     setVolume,
     playbackRate,
     setPlaybackRate,
-    setDisplayCreateDiscussion
+    setDisplayCreateDiscussion,
   } = props
   const handleVolumeButtonClick = () => {
     if (volume == 0) {
@@ -440,10 +438,26 @@ const PlayerBar = (props: PlayerBarProps) => {
                 max={1}
                 step={0.05}
               />
-              <Box display='flex' alignItems='center' height={50} ml={4} className='player-bar-playedsecond'>
+              <Box
+                display="flex"
+                alignItems="center"
+                height={50}
+                ml={4}
+                className="player-bar-playedsecond"
+              >
                 {/* format playedSeconds to mm:ss like 10:11, and under 10 sec auto fill 0 like 10:01*/}
-                {Math.floor(playedSeconds / 60)}:{Math.floor(playedSeconds % 60) < 10 ? '0' + Math.floor(playedSeconds % 60) : Math.floor(playedSeconds % 60)}/
-                {playerRef.current ? `${Math.floor(playerRef.current.getDuration() / 60)}:${Math.floor(playerRef.current.getDuration() % 60) < 10 ? '0' + Math.floor(playerRef.current.getDuration() % 60) : Math.floor(playerRef.current.getDuration() % 60)}` : '0:00'}
+                {Math.floor(playedSeconds / 60)}:
+                {Math.floor(playedSeconds % 60) < 10
+                  ? '0' + Math.floor(playedSeconds % 60)
+                  : Math.floor(playedSeconds % 60)}
+                /
+                {playerRef.current
+                  ? `${Math.floor(playerRef.current.getDuration() / 60)}:${
+                      Math.floor(playerRef.current.getDuration() % 60) < 10
+                        ? '0' + Math.floor(playerRef.current.getDuration() % 60)
+                        : Math.floor(playerRef.current.getDuration() % 60)
+                    }`
+                  : '0:00'}
                 {/* {playerRef.current ? playerRef.current.getDuration() : 0} */}
               </Box>
             </div>
