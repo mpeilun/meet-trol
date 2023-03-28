@@ -24,7 +24,7 @@ import {
   VolumeOff,
   VolumeDown,
   VolumeUp,
-  Camera,
+  AddComment,
 } from '@mui/icons-material'
 
 import PopupModal from '../popup/popupModel'
@@ -427,7 +427,7 @@ const PlayerBar = (props: PlayerBarProps) => {
                 sx={{ ...buttonSize }}
                 onClick={handleScreenshotButtonClick}
               >
-                <Camera />
+                <AddComment />
               </ButtonBase>
               <ButtonBase
                 sx={{ ...buttonSize }}
