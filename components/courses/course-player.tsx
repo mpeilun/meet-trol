@@ -159,6 +159,21 @@ function CoursePlayer(props: { courseId: string }) {
     }
   }
 
+  const [height, setHeight] = React.useState(600);
+
+  React.useEffect(() => {
+    function updateHeight() {
+      const height = window.innerHeight / 1.35;
+      setHeight(height);
+    }
+
+    updateHeight();
+    window.addEventListener('resize', updateHeight);
+    return () => {
+      window.removeEventListener('resize', updateHeight);
+    };
+  }, []);
+
   return (
     <FullScreen handle={handleFullScreen}>
       {hasWindow && (
@@ -250,7 +265,7 @@ function CoursePlayer(props: { courseId: string }) {
             onReady={onPlayerReady}
             volume={volume}
             width={'100%'}
-            height={handleFullScreen.active ? '100%' : 600}
+            height={handleFullScreen.active ? '100%' : height}
             progressInterval={200}
             playbackRate={playbackRate}
             config={{

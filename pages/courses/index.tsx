@@ -15,21 +15,22 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import Link from 'next/link'
 import * as React from 'react'
-import { Course } from '@prisma/client'
 import { sendMessage } from '../../store/notification'
 import { useAppDispatch } from '../../hooks/redux'
 import { LoadingButton } from '@mui/lab'
 import CourseCard from '../../components/courses/course-card'
+import { CourseWithOwner } from '../../types/course'
 
 function AllCoursesPage() {
   const [jointCourseLoading, setJointCourseLoading] = React.useState(false)
-  const [courseData, setCourseData] = React.useState<Course[]>([])
+  const [courseData, setCourseData] = React.useState<CourseWithOwner[]>([])
   const [courseID, setCourseId] = React.useState('')
   const dispatch = useAppDispatch()
 
   const fetchData = React.useCallback(async () => {
     const response = await fetch(`/api/course?myCourse=true`)
-    const data: Course[] = await response.json()
+    const data: CourseWithOwner[] = await response.json()
+    console.log(data)
     setCourseData(data)
   }, [])
 
@@ -42,7 +43,7 @@ function AllCoursesPage() {
       key={'paper'}
       sx={{
         width: { md: '80%', xs: ' 100%' },
-        height: '100%',
+        // height: '100%',
         maxWidth: 'xl',
         m: { md: '1rem auto', xs: '0' },
         p: '2rem',
@@ -129,7 +130,7 @@ function AllCoursesPage() {
                 </Typography>
               ) : (
                 courseData.map(
-                  ({ id, title, description, start, end, ownerId }, index) => {
+                  ({ id, title, description, start, end, owners }, index) => {
                     return (
                       <Grid
                         xs={12}
@@ -151,7 +152,7 @@ function AllCoursesPage() {
                             description={description}
                             start={start}
                             end={end}
-                            ownerId={ownerId}
+                            owner={owners}
                           />
                         }
                         {/* <Box

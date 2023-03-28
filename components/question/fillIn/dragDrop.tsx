@@ -27,7 +27,11 @@ interface alert {
   severity: AlertColor
 }
 
-const DragDrop = (props: { data: FillData; isLog: boolean }) => {
+const DragDrop = (props: {
+  data: FillData
+  isLog: boolean
+  feedbackIndex: number
+}) => {
   const data = props.data
   const question = data.question
   const regex = /(?<=\().+?(?=\))/g // 正則表達式 匹配所有括號內的文字

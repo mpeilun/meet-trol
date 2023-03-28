@@ -20,6 +20,7 @@ const FillIn = (props: {
   handleQuestionClose: () => void
   data: FillData
   isLog: boolean
+  feedbackIndex: number
 }) => {
   const data = props.data
 
@@ -39,7 +40,11 @@ const FillIn = (props: {
           {data.question ?? ''}
         </Typography>
       )}
-      <DragDrop data={data} isLog={props.isLog}></DragDrop>
+      <DragDrop
+        data={data}
+        isLog={props.isLog}
+        feedbackIndex={props.feedbackIndex}
+      ></DragDrop>
     </Box>
     //   </Card>
     // </Box>

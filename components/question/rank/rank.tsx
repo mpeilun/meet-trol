@@ -37,8 +37,11 @@ export default function RankQuestion(props: {
   handleQuestionClose: () => void
   data: RankData
   isLog: boolean
+  feedbackIndex: number
 }) {
   const data = props.data
+  const isLog = props.isLog
+  const feedbackIndex = props.feedbackIndex
 
   const shuffle = (array: string[]): string[] => {
     let arr = array.slice()
@@ -49,8 +52,13 @@ export default function RankQuestion(props: {
     return arr
   }
 
-  const newArray = shuffle(data.options)
-  const [items, setItems] = useState<string[]>(newArray)
+  const [items, setItems] = useState<string[]>(
+    isLog && data.feedback[0] != null
+      ? data.feedback[feedbackIndex].answers
+      : isLog
+      ? data.options
+      : shuffle(data.options)
+  )
   const [isReply, setIsReply] = React.useState(false)
   const [isAnsError, setIsAnsError] = useState<alert>({
     isShow: false,
@@ -153,7 +161,7 @@ export default function RankQuestion(props: {
                       key={`${index}${title}`}
                       draggableId={`${index}${title}`}
                       index={index}
-                      isDragDisabled={isReply}
+                      isDragDisabled={isLog ? true : isReply}
                     >
                       {(provided, snapshot) => (
                         <ListItem
@@ -161,7 +169,9 @@ export default function RankQuestion(props: {
                             transition: '.3s ease background-color',
                             bgcolor: snapshot.isDragging ? '#000' : '#fff',
                             position: 'relative',
-                            border: isReply
+                            border: isLog
+                              ? '1.5px solid grey'
+                              : isReply
                               ? '1.5px solid grey'
                               : '1.5px solid #212121',
                             mb: 1,
@@ -180,7 +190,9 @@ export default function RankQuestion(props: {
                               sx={{
                                 p: 0.75,
                                 mr: 1,
-                                color: isReply
+                                color: isLog
+                                  ? 'grey'
+                                  : isReply
                                   ? 'grey'
                                   : snapshot.isDragging
                                   ? '#fff'
@@ -191,7 +203,9 @@ export default function RankQuestion(props: {
                               component="span"
                               width="100%"
                               sx={{
-                                color: isReply
+                                color: isLog
+                                  ? 'grey'
+                                  : isReply
                                   ? 'grey'
                                   : snapshot.isDragging
                                   ? '#fff'
@@ -208,7 +222,9 @@ export default function RankQuestion(props: {
                               left="6px"
                               fontSize=".7rem"
                               sx={{
-                                color: isReply
+                                color: isLog
+                                  ? 'grey'
+                                  : isReply
                                   ? 'grey'
                                   : snapshot.isDragging
                                   ? '#fff'

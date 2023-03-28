@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
@@ -26,13 +26,24 @@ interface alert {
 export default function MultipleChoice(props: {
   data: ChoiceData
   isLog: boolean
-  
+  feedbackIndex: number
 }) {
   const data = props.data
+  const isLog = props.isLog
+  const feedbackIndex = props.feedbackIndex
+  const defaultAnswer = useCallback((): boolean[] => {
+    if (props.isLog && data.feedback[0] != null) {
+      
+      let arr = Array(data.options.length).fill(false)
+      data.feedback[feedbackIndex].answers.map((answerIndex) => {
+        arr[answerIndex] = true
+      })
+      return arr
+    } else return new Array(data.options.length).fill(false)
+  }, [])
+  
+  const [checked, setChecked] = React.useState<boolean[]>(defaultAnswer)
 
-  const [checked, setChecked] = React.useState<boolean[]>(
-    new Array(data.options.length).fill(false)
-  )
   const [isReply, setIsReply] = React.useState(false)
 
   const [isAnsError, setIsAnsError] = React.useState<alert>({
@@ -105,6 +116,7 @@ export default function MultipleChoice(props: {
     })
   }
 
+  // debugger
   return (
     <form onSubmit={handleSubmit}>
       <FormControl sx={{ pt: 1, width: '100%' }} variant="standard">
@@ -114,7 +126,7 @@ export default function MultipleChoice(props: {
           {data.options.map((option, index) => {
             return (
               <FormControlLabel
-                disabled={isReply}
+                disabled={isLog ? isLog : isReply}
                 key={`${index}- ${option.option} option`}
                 value={index}
                 control={
