@@ -127,7 +127,26 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         },
       })
 
-      return res.status(200).json(courses)
+      const coursesWithOwnerData = await Promise.all(
+        courses.map(async (course) => {
+          const owners = await prisma.user.findMany({
+            where: {
+              id: {
+                in: course.ownerId,
+              },
+            },
+          })
+
+          const courseWithOwnerData = {
+            ...course,
+            owners: owners,
+          }
+
+          return courseWithOwnerData
+        })
+      )
+
+      return res.status(200).json(coursesWithOwnerData)
     } else if (req.method === 'POST') {
       const data: CourseCreateType = JSON.parse(req.body)
       const create = await prisma.course.create({

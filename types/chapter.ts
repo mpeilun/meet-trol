@@ -48,3 +48,5 @@ export interface LastViewData {
   videoTime: number
   viewTime: Date
 }
+
+export interface ChapterCreateType extends Omit<Chapter, 'id' | 'courseId'> {}
