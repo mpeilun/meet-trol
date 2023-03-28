@@ -87,6 +87,16 @@ export default function CourseTabs(props: {
     setValue(newValue)
   }
   const material = ''
+
+
+  const extractGoogleDriveId = (url:string) =>{
+    // 定義正則表達式，以匹配 Google Drive 共用網址中的 ID
+    var regex = /\/(?:d|file\/d)\/([a-zA-Z0-9_-]{25,})/;
+    // 使用正則表達式提取 ID
+    var match = url.match(regex);
+    // 如果找到匹配的 ID，則返回它，否則返回 null
+    return match ? match[1] : 'null';
+  }
   return (
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -155,7 +165,7 @@ export default function CourseTabs(props: {
               <div style={{ height: '600px' }}>
                 <iframe
                   style={{ width: '100%', height: '100%' }}
-                  src={videoData.material ?? ''}
+                  src={`https://drive.google.com/file/d/${extractGoogleDriveId(videoData.material ?? '')}/preview`}
                 ></iframe>
               </div>
               {/* <PDF path={videoData.material ?? ''}></PDF> */}

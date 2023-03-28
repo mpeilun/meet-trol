@@ -1,15 +1,10 @@
 import {
-  AppBar,
   Box,
-  Toolbar,
-  IconButton,
+  CardActionArea,
   Typography,
-  Menu,
-  Container,
-  Avatar,
-  Button,
-  Tooltip,
-  MenuItem,
+  Card,
+  CardMedia,
+  CardContent,
   TextField,
   Paper,
 } from '@mui/material'
@@ -24,6 +19,7 @@ import { Course } from '@prisma/client'
 import { sendMessage } from '../../store/notification'
 import { useAppDispatch } from '../../hooks/redux'
 import { LoadingButton } from '@mui/lab'
+import CourseCard from '../../components/courses/course-card'
 
 function AllCoursesPage() {
   const [jointCourseLoading, setJointCourseLoading] = React.useState(false)
@@ -113,47 +109,78 @@ function AllCoursesPage() {
           >
             我的課程
           </Typography>
-          <Box display="flex" flex={'center'} flexDirection="column" m={2}>
+          <Box
+            sx={{ border: 2 }}
+            display="flex"
+            flex={'center'}
+            flexDirection="column"
+            m={2}
+          >
             <Grid
               container
-              spacing={2}
-              mt={2}
+              spacing={3}
+              maxWidth="lg"
+              m={1}
               justifyContent={{ md: 'center', xs: 'center' }}
             >
-              {courseData.map(({ id, title, description }, index) => {
-                return (
-                  <Grid md={4} key={`courseItem-${index}`}>
-                    {/* <img
-                      style={{ margin: 'auto' }}
-                      src="https://i.imgur.com/uCSOvTI.png"
-                      width={180}
-                      height={180}
-                    ></img> */}
-                    <Box
-                      display={'flex'}
-                      flexDirection={'column'}
-                      justifyContent={'center'}
-                    >
-                      <Link href={`/courses/${id}`} passHref legacyBehavior>
-                        <Typography
-                          component="a"
-                          bgcolor={grey[400]}
-                          textAlign={'center'}
-                          sx={{
-                            color: 'inherit',
-                            // textDecoration: 'none'
-                          }}
-                        >
-                          {title}
+              {courseData.length == 0 ? (
+                <Typography variant="h3" sx={{ color: 'grey' }}>
+                  目前尚未加入任何課程
+                </Typography>
+              ) : (
+                courseData.map(
+                  ({ id, title, description, start, end, ownerId }, index) => {
+                    return (
+                      <Grid
+                        xs={12}
+                        sm={6}
+                        md={4}
+                        lg={3}
+                        key={`courseItem-${index}`}
+                      >
+                        {/* <img
+                        style={{ margin: 'auto' }}
+                        src="https://i.imgur.com/uCSOvTI.png"
+                        width={180}
+                        height={180}
+                      ></img> */}
+                        {
+                          <CourseCard
+                            id={id}
+                            title={title}
+                            description={description}
+                            start={start}
+                            end={end}
+                            ownerId={ownerId}
+                          />
+                        }
+                        {/* <Box
+                        display={'flex'}
+                        flexDirection={'column'}
+                        justifyContent={'center'}
+                      >
+                        <Link href={`/courses/${id}`} passHref legacyBehavior>
+                          <Typography
+                            component="a"
+                            bgcolor={grey[400]}
+                            textAlign={'center'}
+                            sx={{
+                              color: 'inherit',
+                              // textDecoration: 'none'
+                            }}
+                          >
+                            {title}
+                          </Typography>
+                        </Link>
+                        <Typography textAlign={'center'} sx={{ color: grey }}>
+                          {description}
                         </Typography>
-                      </Link>
-                      <Typography textAlign={'center'} sx={{ color: grey }}>
-                        {description}
-                      </Typography>
-                    </Box>
-                  </Grid>
+                      </Box> */}
+                      </Grid>
+                    )
+                  }
                 )
-              })}
+              )}
             </Grid>
           </Box>
         </Grid>
