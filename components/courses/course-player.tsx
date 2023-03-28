@@ -12,6 +12,7 @@ import {
   SliderProps,
   Grid,
   CircularProgress,
+  Typography,
 } from '@mui/material'
 import {
   PlayArrow,
@@ -410,6 +411,12 @@ const PlayerBar = (props: PlayerBarProps) => {
                 max={1}
                 step={0.05}
               />
+              <Box display='flex' alignItems='center' height={50} ml={4} className='player-bar-playedsecond'>
+                {/* format playedSeconds to mm:ss like 10:11, and under 10 sec auto fill 0 like 10:01*/}
+                {Math.floor(playedSeconds / 60)}:{Math.floor(playedSeconds % 60) < 10 ? '0' + Math.floor(playedSeconds % 60) : Math.floor(playedSeconds % 60)}/
+                {playerRef.current ?`${Math.floor(playerRef.current.getDuration() / 60)}:${Math.floor(playerRef.current.getDuration() % 60) < 10 ? '0' + Math.floor(playerRef.current.getDuration() % 60) : Math.floor(playerRef.current.getDuration() % 60)}`:'0:00'}
+                {/* {playerRef.current ? playerRef.current.getDuration() : 0} */}
+              </Box>
             </div>
 
             {/* <Box width={'100%'} height={'100%'} display="flex">
