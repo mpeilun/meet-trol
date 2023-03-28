@@ -93,6 +93,8 @@ const CreateDiscussion = (props: CreateDiscussionProps) => {
             {duration}
             {'/'}
             {minutes * 60 + seconds}
+            {'/'}
+            {chapterId}
             <FormControl fullWidth sx={{ mt: 2 }}>
                 <TextField
                     id="title"

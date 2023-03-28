@@ -13,6 +13,7 @@ import ReplyLog from '../replyLog'
 import CustomizedAccordions from '../chapter/chapter'
 import { ChapterListData, LastViewData, VideoData } from '../../types/chapter'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
+import DiscussionTab from '../discussion/discussion-tab'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -114,6 +115,7 @@ export default function CourseTabs(props: {
             {...a11yProps(4)}
             sx={{ display: { md: 'none' } }}
           />
+          <Tab label="討論區" {...a11yProps(5)} />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
@@ -191,6 +193,9 @@ export default function CourseTabs(props: {
           lastView={props.lastView}
           pid={props.pid}
         ></CustomizedAccordions>
+      </TabPanel>
+      <TabPanel value={value} index={5}>
+        <DiscussionTab/>
       </TabPanel>
     </Box>
   )
