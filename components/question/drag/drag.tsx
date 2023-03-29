@@ -26,6 +26,7 @@ const Drag = (props: {
   handleQuestionClose: () => void
   isLog: boolean
   data: DragData
+  feedbackIndex: number
 }) => {
   const boxRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLDivElement>(null)
@@ -266,27 +267,29 @@ const Drag = (props: {
               </Button>
             )}
             <Box></Box>
-            {!props.isLog && (<Button
-              disableElevation
-              type="submit"
-              variant="contained"
-              disabled={isReply}
-              startIcon={<CheckCircleOutlineIcon />}
-              sx={{
-                mt: 1.5,
-                bgcolor: '#82CD00',
-                '&:hover': {
-                  backgroundColor: '#54B435',
-                  color: 'white',
-                },
-                width: 125,
-                fontWeight: 'bold',
-                borderRadius: 16,
-              }}
-              onClick={checkAns}
-            >
-              送出
-            </Button>)}
+            {!props.isLog && (
+              <Button
+                disableElevation
+                type="submit"
+                variant="contained"
+                disabled={isReply}
+                startIcon={<CheckCircleOutlineIcon />}
+                sx={{
+                  mt: 1.5,
+                  bgcolor: '#82CD00',
+                  '&:hover': {
+                    backgroundColor: '#54B435',
+                    color: 'white',
+                  },
+                  width: 125,
+                  fontWeight: 'bold',
+                  borderRadius: 16,
+                }}
+                onClick={checkAns}
+              >
+                送出
+              </Button>
+            )}
           </Box>
         </Box>
       </Box>

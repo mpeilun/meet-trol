@@ -82,7 +82,7 @@ export default function CustomizedAccordions(props: {
       }),
     })
       .then((response) => response.json())
-      .then((data) => console.log(data))
+      // .then((data) => console.log(data))
       .catch((error) => console.log(error))
   }
 
@@ -156,7 +156,9 @@ export default function CustomizedAccordions(props: {
   const getLastView = async (videoId: string) => {
     await fetch(`/api/record/${props.pid}/${videoId}`)
       .then((response) => response.json())
-      .then((data) => dispatch(setVideoTime(data.videoTime)))
+      .then((data) => {
+        dispatch(setVideoTime(data.videoTime))
+      })
       .catch((error) => console.log(error))
   }
 

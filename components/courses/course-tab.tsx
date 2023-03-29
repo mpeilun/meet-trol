@@ -89,6 +89,7 @@ export default function CourseTabs(props: {
   const material = ''
 
 
+
   const extractGoogleDriveId = (url:string) =>{
     // 定義正則表達式，以匹配 Google Drive 共用網址中的 ID
     var regex = /\/(?:d|file\/d)\/([a-zA-Z0-9_-]{25,})/;

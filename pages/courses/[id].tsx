@@ -10,6 +10,7 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../api/auth/[...nextauth]'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
+import { Co2Sharp } from '@mui/icons-material'
 
 const CoursePlayer = dynamic(
   () => import('../../components/courses/course-player')
@@ -26,6 +27,9 @@ function CourseInnerPage(props: {
   const router = useRouter()
   const pid = router.query.id as string
   const data = props.chapter
+  const record = props.record
+  
+
   const [chapter, setChapter] = React.useState<ChapterListData[]>(data)
 
   if (
@@ -128,8 +132,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     if (chapterResponse.status === 200 && lastViewResponse.status === 200) {
       const chapter: Array<ChapterListData> = await chapterResponse.json()
-      const record: LastViewData = await lastViewResponse.json()
-
+      const record: LastViewData = await lastViewResponse.json()      
       return { props: { chapter, error: false, record } }
     } else {
       return {
