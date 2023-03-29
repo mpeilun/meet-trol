@@ -32,25 +32,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         },
       })
       if (check.ownerId.includes(session.user.id)) {
-        const create = await prisma.course.update({
-          where: {
-            id: courseId,
-          },
+        const create = await prisma.video.create({
           data: {
-            chapters: {
-              update: {
-                where: {
-                  id: chapterId,
-                },
-                data: {
-                  videos: {
-                    create: {
-                      ...data,
-                    },
-                  },
-                },
-              },
-            },
+            ...data,
+            chapterId: chapterId,
           },
         })
 
@@ -65,7 +50,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             'No Found, need parameter ?courseId=[objectId]?videoId=[objectId]',
         })
       }
-      const data: Chapter = JSON.parse(req.body)
+      const data: Chapter = req.body
       const check = await prisma.course.findUnique({
         where: {
           id: courseId,
@@ -96,7 +81,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             'No Found, need parameter ?chapterId=[objectId]?videoId=[objectId]',
         })
       }
-      const data: Course = req.body
+
       const check = await prisma.course.findUnique({
         where: {
           id: courseId,

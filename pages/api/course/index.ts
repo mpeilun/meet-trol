@@ -151,7 +151,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       const data: CourseCreateType = req.body
       const create = await prisma.course.create({
         data: {
-          ...data,
+          title: data.title,
+          description: data.description,
+          start: data.start,
+          end: data.end,
           ownerId: [session.user.id],
           chapters: {
             create: [
