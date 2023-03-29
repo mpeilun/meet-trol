@@ -14,7 +14,9 @@ const CourseCard = (props: {
   start: Date
   end: Date
   owner: User[]
+  isManage: boolean
 }) => {
+  
   return (
     <CardActionArea
       sx={{
@@ -25,7 +27,7 @@ const CourseCard = (props: {
         },
       }}
       component="a"
-      href={`/courses/${props.id}`}
+      href={props.isManage ? `/manage/${props.id}` : `/courses/${props.id}`}
     >
       <Card sx={{ position: 'relative', borderRadius: '16px' }}>
         <CardMedia
@@ -42,9 +44,9 @@ const CourseCard = (props: {
             {props.description}
           </Typography>
           <Typography variant="body2">{`open: ${props.start} - ${props.end}`}</Typography>
-          <Typography variant="body2">{`Teacher: ${props.owner?.map((name) => {
-            name
-          })}`}</Typography>
+          <Typography variant="body2">{`Teacher: ${props.owner?.map(
+            (owner) => owner.name
+          )}`}</Typography>
         </CardContent>
       </Card>
     </CardActionArea>

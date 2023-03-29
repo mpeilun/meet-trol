@@ -131,6 +131,7 @@ function AllCoursesPage() {
               ) : (
                 courseData.map(
                   ({ id, title, description, start, end, owners }, index) => {
+                    
                     return (
                       <Grid
                         xs={12}
@@ -139,12 +140,6 @@ function AllCoursesPage() {
                         lg={3}
                         key={`courseItem-${index}`}
                       >
-                        {/* <img
-                        style={{ margin: 'auto' }}
-                        src="https://i.imgur.com/uCSOvTI.png"
-                        width={180}
-                        height={180}
-                      ></img> */}
                         {
                           <CourseCard
                             id={id}
@@ -153,30 +148,10 @@ function AllCoursesPage() {
                             start={start}
                             end={end}
                             owner={owners}
+                            isManage={false}
                           />
                         }
-                        {/* <Box
-                        display={'flex'}
-                        flexDirection={'column'}
-                        justifyContent={'center'}
-                      >
-                        <Link href={`/courses/${id}`} passHref legacyBehavior>
-                          <Typography
-                            component="a"
-                            bgcolor={grey[400]}
-                            textAlign={'center'}
-                            sx={{
-                              color: 'inherit',
-                              // textDecoration: 'none'
-                            }}
-                          >
-                            {title}
-                          </Typography>
-                        </Link>
-                        <Typography textAlign={'center'} sx={{ color: grey }}>
-                          {description}
-                        </Typography>
-                      </Box> */}
+                        
                       </Grid>
                     )
                   }

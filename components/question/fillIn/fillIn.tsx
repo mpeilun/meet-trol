@@ -35,11 +35,6 @@ const FillIn = (props: {
         </IconButton>
       </Box>
       <Divider />
-      {data.question && (
-        <Typography variant="body2" sx={{ pt: 1.5 }}>
-          {data.question ?? ''}
-        </Typography>
-      )}
       <DragDrop
         data={data}
         isLog={props.isLog}
