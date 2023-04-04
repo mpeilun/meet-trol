@@ -7,7 +7,7 @@ export default function Choice(props: {
   handleQuestionClose: () => void
   data: ChoiceData
   isLog: boolean
-  
+  feedbackIndex: number
 }) {
   const data = props.data
   const count = data.options.reduce((acc, curr) => {
@@ -33,11 +33,19 @@ export default function Choice(props: {
 
       {isSingleChoice ? (
         <Box sx={{ minWidth: 400 }}>
-          <SingleChoice data={data} isLog={props.isLog} />
+          <SingleChoice
+            data={data}
+            isLog={props.isLog}
+            feedbackIndex={props.feedbackIndex}
+          />
         </Box>
       ) : (
         <Box sx={{ minWidth: 400 }}>
-          <MultipleChoice data={data} isLog={props.isLog}></MultipleChoice>{' '}
+          <MultipleChoice
+            data={data}
+            isLog={props.isLog}
+            feedbackIndex={props.feedbackIndex}
+          ></MultipleChoice>{' '}
         </Box>
       )}
     </Box>

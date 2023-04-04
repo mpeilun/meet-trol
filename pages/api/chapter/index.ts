@@ -3,25 +3,58 @@ import prisma from '../../../prisma/prisma'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../auth/[...nextauth]'
 import { Course, Chapter } from '@prisma/client'
-import { VideoCreateType } from '../../../types/video'
+import { ChapterCreateType } from '../../../types/chapter'
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await getServerSession(req, res, authOptions)
-  const { courseId, chapterId, videoId } = req.query as {
+  const { courseId, chapterId } = req.query as {
     courseId: string
-    chapterId: string
-    videoId?: string
+    chapterId?: string
   }
 
   //判斷是否登入
   if (session) {
-    if (req.method === 'POST') {
+    if (req.method === 'GET') {
       if (!courseId) {
         return res
           .status(404)
           .json({ message: 'No Found, need parameter ?courseId=[objectId]' })
       }
-      const data: VideoCreateType = req.body
+
+      const check = await prisma.course.findUnique({
+        where: {
+          id: courseId,
+        },
+        select: {
+          membersId: true,
+        },
+      })
+      if (check.membersId.includes(session.user.id)) {
+        const data = await prisma.chapter.findMany({
+          where: {
+            courseId: courseId,
+          },
+          select: {
+            title: true,
+            videos: {
+              select: {
+                id: true,
+                title: true,
+              },
+            },
+          },
+        })
+        return res.status(200).json(data)
+      } else {
+        return res.status(403).json({ message: 'Forbidden' })
+      }
+    } else if (req.method === 'POST') {
+      if (!courseId) {
+        return res
+          .status(404)
+          .json({ message: 'No Found, need parameter ?courseId=[objectId]' })
+      }
+      const data: ChapterCreateType = req.body
 
       const check = await prisma.course.findUnique({
         where: {
@@ -32,10 +65,23 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         },
       })
       if (check.ownerId.includes(session.user.id)) {
-        const create = await prisma.video.create({
+        // const create = await prisma.course.update({
+        //   where: {
+        //     id: courseId,
+        //   },
+        //   data: {
+        //     chapters: {
+        //       create: {
+        //         ...data,
+        //       },
+        //     },
+        //   },
+        // })
+
+        const create = await prisma.chapter.create({
           data: {
             ...data,
-            chapterId: chapterId,
+            courseId: courseId,
           },
         })
 
@@ -44,10 +90,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(403).json({ message: 'Forbidden' })
       }
     } else if (req.method === 'PUT') {
-      if (!courseId || !videoId) {
+      if (!courseId || !chapterId) {
         return res.status(404).json({
           message:
-            'No Found, need parameter ?courseId=[objectId]?videoId=[objectId]',
+            'No Found, need parameter ?courseId=[objectId]?chapterId=[chapterId]',
         })
       }
       const data: Chapter = req.body
@@ -60,9 +106,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         },
       })
       if (check.ownerId.includes(session.user.id)) {
-        const update = await prisma.video.update({
+        const update = await prisma.chapter.update({
           where: {
-            id: videoId,
+            id: chapterId,
           },
           data: {
             ...data,
@@ -74,14 +120,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(403).json({ message: 'Forbidden' })
       }
     } else if (req.method === 'DELETE') {
-      console.log(chapterId, videoId)
-      if (!chapterId || !videoId) {
+      if (!courseId || !chapterId) {
         return res.status(404).json({
           message:
-            'No Found, need parameter ?chapterId=[objectId]?videoId=[objectId]',
+            'No Found, need parameter ?courseId=[objectId]?chapterId=[chapterId]',
         })
       }
-
       const check = await prisma.course.findUnique({
         where: {
           id: courseId,
@@ -91,9 +135,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         },
       })
       if (check.ownerId.includes(session.user.id)) {
-        const update = await prisma.video.delete({
+        const update = await prisma.chapter.delete({
           where: {
-            id: videoId,
+            id: chapterId,
           },
         })
 

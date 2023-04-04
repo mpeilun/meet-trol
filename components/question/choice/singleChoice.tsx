@@ -18,9 +18,14 @@ interface alert {
 export default function SingleChoice(props: {
   data: ChoiceData
   isLog: boolean
+  feedbackIndex: number
 }) {
   const data = props.data
-  const [value, setValue] = React.useState('')
+  const isLog = props.isLog
+  const feedbackIndex = props.feedbackIndex
+  const [value, setValue] = React.useState(
+    `${isLog && data.feedback[0] != null ? data.feedback[feedbackIndex].answers[0] : ''}`
+  )
   const [isReply, setIsReply] = React.useState(false)
 
   const [isAnsError, setIsAnsError] = React.useState<alert>({
@@ -33,7 +38,6 @@ export default function SingleChoice(props: {
     event.preventDefault()
     const correctIndex = data.options.findIndex((data) => data.isAnswer == true)
     let yourAns: number[] = []
-  
 
     if (value === '') {
       setIsAnsError({
@@ -81,7 +85,7 @@ export default function SingleChoice(props: {
 
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue((event.target as HTMLInputElement).value)
-    console.log((event.target as HTMLInputElement).value)
+    // console.log((event.target as HTMLInputElement).value)
     setIsAnsError({
       isShow: false,
       text: '',
@@ -102,10 +106,10 @@ export default function SingleChoice(props: {
           {data.options.map((option, index) => {
             return (
               <FormControlLabel
-                disabled={isReply}
+                disabled={isLog ? isLog : isReply}
                 key={`${index}- ${option.option} option`}
                 value={index}
-                control={<Radio  />}
+                control={<Radio />}
                 label={option.option}
               ></FormControlLabel>
             )

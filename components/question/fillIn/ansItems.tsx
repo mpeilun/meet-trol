@@ -18,7 +18,7 @@ function AnsItem(props: {
       setAnswer(item.ans)
       let newAnswer: string[] = props.myAnswer
       newAnswer[props.index] = item.ans
-      console.log(newAnswer)
+      // console.log(newAnswer)
       props.setMyAnswer(newAnswer)
     },
     collect: (monitor) => ({

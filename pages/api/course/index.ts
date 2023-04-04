@@ -14,7 +14,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   //公開課程列表
-  if (req.method == 'GET' && !myCourse && !owner) {
+  if (req.method == 'GET' && !myCourse && !owner && !courseId) {
     const courses = await prisma.course.findMany({
       select: {
         id: true,
@@ -127,13 +127,34 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         },
       })
 
-      return res.status(200).json(courses)
+      const coursesWithOwnerData = await Promise.all(
+        courses.map(async (course) => {
+          const owners = await prisma.user.findMany({
+            where: {
+              id: {
+                in: course.ownerId,
+              },
+            },
+          })
+
+          const courseWithOwnerData = {
+            ...course,
+            owners: owners,
+          }
+
+          return courseWithOwnerData
+        })
+      )
+
+      return res.status(200).json(coursesWithOwnerData)
     } else if (req.method === 'POST') {
-      const data: CourseCreateType = JSON.parse(req.body)
+      const data: CourseCreateType = req.body
       const create = await prisma.course.create({
         data: {
           title: data.title,
           description: data.description,
+          start: data.start,
+          end: data.end,
           ownerId: [session.user.id],
           chapters: {
             create: [
@@ -162,7 +183,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           .status(404)
           .json({ message: 'No Found, need parameter courseId: [objectId]' })
       }
-      const data: Course = JSON.parse(req.body)
+      const data: Course = req.body
       const check = await prisma.course.findUnique({
         where: {
           id: courseId,
@@ -210,7 +231,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           },
         })
 
-        return res.status(204).json(update)
+        return res.status(200).json(update)
       } else {
         return res.status(403).json({ message: 'Forbidden' })
       }

@@ -1,0 +1,82 @@
+.CardExitRight {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.CardExitActiveRight {
+    opacity: 0;
+    height: 0%;
+    transform: translateX(100%);
+    transition: transform 0.3s, opacity 0.3s, height 0.3s;
+}
+
+.CardEnterActiveRight {
+    width: 0;
+    height: 0;
+    opacity: 0;
+    transform: translateX(-100%);
+}
+
+.CardEnterDoneRight {
+    width: 100%;
+    opacity: 1;
+    transform: translateX(0);
+    transition: transform 0.3s, opacity 0.3s, height 0.3s;
+}
+
+.CardExitLeft {
+    opacity: 1;
+    height: 100%;
+    transform: translateX(0);
+}
+
+.CardExitActiveLeft {
+    opacity: 0;
+    height: 0;
+    transform: translateX(-100%);
+    transition: transform 0.3s, opacity 0.3s, height 0.3s;
+}
+
+.CardEnterActiveLeft {
+    width: 0;
+    height: 0;
+    opacity: 0;
+    transform: translateX(100%);
+}
+
+.CardEnterDoneLeft {
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+    transform: translateX(0);
+    transition: transform 0.3s, opacity 0.3s, height 0.3s;
+}
+
+
+.FeedbackExit {
+    opacity: 1;
+    height: 100%;
+
+}
+
+.FeedbackExitActive {
+    opacity: 0;
+    height: 0;
+    transform: scale(0.9);
+    transition: opacity 300ms, transform 300ms, height 0.3s;
+}
+
+.FeedbackEnterActive {
+    width: 0;
+    height: 0;
+    opacity: 0;
+    transform: scale(0.9);
+}
+
+.FeedbackEnterDone {
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 300ms, transform 300ms, height 0.3s;
+}
