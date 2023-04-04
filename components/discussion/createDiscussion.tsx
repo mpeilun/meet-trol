@@ -1,6 +1,7 @@
 import { Close } from '@mui/icons-material';
 import { Box, Button, Card, Divider, Typography, FormControl, TextField, FormHelperText } from '@mui/material';
 import * as React from 'react'
+import UploadImage from '../../photo/uploadImage';
 
 interface CreateDiscussionProps {
     timing: number,
@@ -135,6 +136,7 @@ const CreateDiscussion = (props: CreateDiscussionProps) => {
                     helperText={contentError && '請輸入 1 到 100 字元'}
                     sx={{ mt: 2 }}
                 />
+                <UploadImage />
                 <Button variant="contained" onClick={handleSubmit} sx={{ mt: 2 }}>
                     送出
                 </Button>
