@@ -515,7 +515,10 @@ export default function CreateCoursePage() {
         <Box sx={{ display: 'flex', flexDirection: 'row' }}>
           <Button
             fullWidth
-            onClick={() => setOpenChapterDialog(true)}
+            onClick={() => {
+              setChapterTitle('新的章節')
+              handleChapterDialogOpen()
+            }}
             variant="contained"
             size="medium"
             startIcon={<AddCircleOutlineIcon />}
@@ -525,7 +528,10 @@ export default function CreateCoursePage() {
 
           <Button
             fullWidth
-            onClick={() => setOpenVideoDialog(true)}
+            onClick={() => {
+              setVideoTitle('新的影片')
+              handleVideoDialogOpen()
+            }}
             variant="contained"
             size="medium"
             sx={{ ml: 2 }}
