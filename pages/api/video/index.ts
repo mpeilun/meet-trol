@@ -50,7 +50,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             'No Found, need parameter ?courseId=[objectId]?videoId=[objectId]',
         })
       }
-      const data: Chapter = req.body
+      const data: VideoCreateType = req.body
       const check = await prisma.course.findUnique({
         where: {
           id: courseId,

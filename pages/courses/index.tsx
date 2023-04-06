@@ -20,6 +20,7 @@ import { useAppDispatch } from '../../hooks/redux'
 import { LoadingButton } from '@mui/lab'
 import CourseCard from '../../components/courses/course-card'
 import { CourseWithOwner } from '../../types/course'
+import BodyLayout from '../../components/layout/common-body'
 
 function AllCoursesPage() {
   const [jointCourseLoading, setJointCourseLoading] = React.useState(false)
@@ -39,17 +40,7 @@ function AllCoursesPage() {
   }, [])
 
   return (
-    <Paper
-      key={'paper'}
-      sx={{
-        width: { md: '80%', xs: ' 100%' },
-        // height: '100%',
-        maxWidth: 'xl',
-        m: { md: '1rem auto', xs: '0' },
-        p: '2rem',
-        backgroundColor: '#F9F5E3',
-      }}
-    >
+    <BodyLayout>
       <Grid
         container
         flexDirection="row-reverse"
@@ -66,7 +57,7 @@ function AllCoursesPage() {
         >
           <TextField
             value={courseID}
-            placeholder="加入課程  請輸入課程ID"
+            placeholder="請輸入課程ID"
             sx={{ width: '50%', minWidth: '100px', bgcolor: '#FFF' }}
             onChange={(e) => setCourseId(e.target.value)}
           ></TextField>
@@ -110,13 +101,7 @@ function AllCoursesPage() {
           >
             我的課程
           </Typography>
-          <Box
-            sx={{ border: 2 }}
-            display="flex"
-            flex={'center'}
-            flexDirection="column"
-            m={2}
-          >
+          <Box display="flex" flex={'center'} flexDirection="column" m={2}>
             <Grid
               container
               spacing={3}
@@ -131,7 +116,6 @@ function AllCoursesPage() {
               ) : (
                 courseData.map(
                   ({ id, title, description, start, end, owners }, index) => {
-                    
                     return (
                       <Grid
                         xs={12}
@@ -151,7 +135,6 @@ function AllCoursesPage() {
                             isManage={false}
                           />
                         }
-                        
                       </Grid>
                     )
                   }
@@ -161,7 +144,7 @@ function AllCoursesPage() {
           </Box>
         </Grid>
       </Grid>
-    </Paper>
+    </BodyLayout>
   )
 }
 

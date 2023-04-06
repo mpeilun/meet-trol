@@ -7,9 +7,10 @@ import { Button, Box, Card, TextField, Typography, Paper } from '@mui/material'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { useSession } from 'next-auth/react'
 import { useDispatch } from 'react-redux'
-import { sendMessage } from '../../../store/notification'
+import { sendMessage } from '../../../../store/notification'
 import { LoadingButton } from '@mui/lab'
 import { useRouter } from 'next/router'
+import BodyLayout from '../../../../components/layout/common-body'
 
 export default function Home() {
   const { data: session } = useSession()
@@ -85,29 +86,11 @@ export default function Home() {
     )
 
   return (
-    <Paper
-      key={'paper'}
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        width: { md: '80%', xs: ' 100%' },
-        height: '100%',
-        maxWidth: 'xl',
-        m: { md: '1rem auto', xs: '0' },
-        p: '2rem',
-        backgroundColor: '#F9F5E3',
-      }}
-    >
+    <BodyLayout>
       <Typography variant="h4" sx={{ alignSelf: 'center' }} fontWeight="bold">
         新增課程
       </Typography>
-      {/* <Box display="flex" flexDirection="row" sx={{ ml: '12%' }}>
-        <Typography variant="h4" sx={{ mt: '20%' }} fontWeight="bold">
-          新增課程
-        </Typography> */}
-      {/* <img src="https://i.imgur.com/6QxVhMt.png" width={500} height="auto" /> */}
-      {/* </Box> */}
-      <Box justifyContent="start" flexDirection="column" sx={{ ml: '25%' }}>
+      <Box justifyContent="start" flexDirection="column">
         <Box flexDirection="column">
           <h2>課程名稱</h2>
           <TextField
@@ -124,6 +107,7 @@ export default function Home() {
         <Box flexDirection="column">
           <h2>簡介</h2>
           <TextField
+            required
             id="filled-basic"
             label="說明"
             multiline
@@ -158,7 +142,6 @@ export default function Home() {
             variant="contained"
             size="medium"
             onClick={() => {
-              console.log('log')
               handelSubmit()
             }}
           >
@@ -169,6 +152,6 @@ export default function Home() {
           </Typography>
         </Box>
       </Box>
-    </Paper>
+    </BodyLayout>
   )
 }

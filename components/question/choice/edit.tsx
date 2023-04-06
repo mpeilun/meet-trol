@@ -14,7 +14,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { LoadingButton } from '@mui/lab'
 import { Choice } from '@prisma/client'
 import { Video } from '../../../types/video-edit'
-import { SelectType } from '../../../pages/courses/edit/[id]'
+import { SelectType } from '../../../pages/courses/edit/question/[id]'
 import { sendMessage } from '../../../store/notification'
 import { useAppDispatch } from '../../../hooks/redux'
 

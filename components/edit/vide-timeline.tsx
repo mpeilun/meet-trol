@@ -9,7 +9,7 @@ import {
   alpha,
 } from '@mui/material'
 import { Dispatch, ReactNode, SetStateAction, useEffect } from 'react'
-import { SelectType } from '../../pages/courses/edit/[id]'
+import { SelectType } from '../../pages/courses/edit/question/[id]'
 import { allQuestion, Video } from '../../types/video-edit'
 import { formatSeconds, questionStyle } from '../../util/common'
 

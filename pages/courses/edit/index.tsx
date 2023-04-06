@@ -14,6 +14,7 @@ import {
   Paper,
   Card,
   CardActions,
+  Fab,
 } from '@mui/material'
 import CourseCard from '../../../components/courses/course-card'
 
@@ -29,6 +30,8 @@ import { useAppDispatch } from '../../../hooks/redux'
 import { LoadingButton } from '@mui/lab'
 import { useSession } from 'next-auth/react'
 import { CourseWithOwner } from '../../../types/course'
+import BodyLayout from '../../../components/layout/common-body'
+import AddIcon from '@mui/icons-material/Add'
 
 function CoursesManagePage() {
   const { data: session } = useSession()
@@ -56,67 +59,16 @@ function CoursesManagePage() {
       </Box>
     )
   return (
-    <Paper
-      key={'paper'}
-      sx={{
-        width: { md: '80%', xs: ' 100%' },
-        height: '100%',
-        maxWidth: 'xl',
-        m: { md: '1rem auto', xs: '0' },
-        p: '2rem',
-        backgroundColor: '#F9F5E3',
-      }}
-    >
-      <Grid
-        container
-        flexDirection="row"
-        justifyContent="space-between"
-        spacing={2}
-        xs={12}
-        sm={12}
-        md={12}
-        lg={12}
+    <BodyLayout>
+      <Typography
+        display={'flex'}
+        variant="h4"
+        fontWeight="bold"
+        justifyContent={'center'}
+        alignItems={'center'}
       >
-        <Grid xs={12} sm={8} md={8} lg={8}>
-          <Typography
-            display={'flex'}
-            variant="h4"
-            fontWeight="bold"
-            justifyContent={'center'}
-            alignItems={'center'}
-          >
-            您所管理的課程
-          </Typography>
-        </Grid>
-        <Grid xs={12} sm={4} md={4} lg={4}>
-          <Link href="/manage/courses">
-            <Card component={'a'}>
-              <Box
-                width={'150px'}
-                height={'80px'}
-                bgcolor={'secondary.main'}
-                sx={{
-                  borderRadius: '16px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <Typography
-                  variant="h5"
-                  textAlign={'center'}
-                  color={'white'}
-                  //TODO need overwrite underline none
-                  sx={{ textDecorationLine: 'none !important' }}
-                >
-                  新增課程
-                </Typography>
-              </Box>
-            </Card>
-          </Link>
-        </Grid>
-      </Grid>
+        您所管理的課程
+      </Typography>
       <Box display="flex" flex={'center'} flexDirection="column" m={2}>
         <Grid
           container
@@ -157,7 +109,15 @@ function CoursesManagePage() {
           )}
         </Grid>
       </Box>
-    </Paper>
+      <Link
+        href="/courses/edit/course"
+        style={{ display: 'flex', justifyContent: 'end' }}
+      >
+        <Fab component={'a'} color="primary" sx={{ boxShadow: '2' }}>
+          <AddIcon />
+        </Fab>
+      </Link>
+    </BodyLayout>
   )
 }
 
