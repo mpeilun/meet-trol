@@ -54,7 +54,11 @@ function VideoRangeSlider(props: VideoRangeSliderProps) {
 
   const [inputUrl, setInputUrl] = useState('')
   const [currentSeconds, setCurrentSeconds] = useState(0)
-  const [selectRange, setSelectRange] = useState([start ?? 0, end ?? 30])
+  const [selectRange, setSelectRange] = useState([start, end])
+
+  useEffect(() => {
+    setSelectRange([start, end])
+  }, [start, end])
 
   useEffect(() => {
     setInputUrl(url)
@@ -67,7 +71,7 @@ function VideoRangeSlider(props: VideoRangeSliderProps) {
     })
   }, [playerProgress.playedSeconds])
 
-  const minDistance = 30
+  const minDistance = 5
 
   const handleChange = (event, newValue, activeThumb) => {
     if (!Array.isArray(newValue)) {
@@ -122,7 +126,7 @@ function VideoRangeSlider(props: VideoRangeSliderProps) {
             bottom: '8px',
             margin: '0 0 0 0',
             padding: '0 0 0 0',
-            height: '8px',
+            height: '10px',
             boxShadow: 'none !important',
             '& .MuiSlider-thumb': {
               width: '8px',
@@ -210,6 +214,7 @@ function VideoRangeSlider(props: VideoRangeSliderProps) {
           />
           {/*網址輸入框*/}
           <TextField
+            disabled
             label="Youtube Link"
             value={inputUrl}
             onChange={(event) => {
@@ -217,7 +222,7 @@ function VideoRangeSlider(props: VideoRangeSliderProps) {
               onUrlChange(event.target.value)
             }}
             sx={{
-              width: '32%',
+              width: '40%',
               maxWidth: '248px',
               marginLeft: '16px',
               '.MuiInputBase-input': {

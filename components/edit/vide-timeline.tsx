@@ -12,6 +12,7 @@ import { Dispatch, ReactNode, SetStateAction, useEffect } from 'react'
 import { SelectType } from '../../pages/courses/edit/question/[id]'
 import { allQuestion, Video } from '../../types/video-edit'
 import { formatSeconds, questionStyle } from '../../util/common'
+import { PriceChange } from '@mui/icons-material'
 
 function VideoTimeLine(props: {
   video: Video
@@ -19,8 +20,10 @@ function VideoTimeLine(props: {
   duration: number
   select: SelectType
   setSelect: Dispatch<SetStateAction<SelectType>>
+  setSelectRange: Dispatch<SetStateAction<[number, number]>>
 }) {
-  const { video, allQuestion, duration, select, setSelect } = props
+  const { video, allQuestion, duration, select, setSelect, setSelectRange } =
+    props
 
   useEffect(() => {
     console.log('new value', allQuestion)
@@ -64,6 +67,8 @@ function VideoTimeLine(props: {
               }}
               onClick={() => {
                 setSelect({ value: index, initQuestion: question })
+                setSelectRange([question.start, question.end])
+                console.log(question.start, question.end)
                 window.scrollTo({ top: 64, behavior: 'smooth' })
               }}
             >

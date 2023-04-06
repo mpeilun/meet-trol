@@ -82,7 +82,7 @@ function EditQuestionPage() {
     value: null,
     initQuestion: null,
   })
-  const [selectRange, setSelectRange] = useState([0, 30])
+  const [selectRange, setSelectRange] = useState([0, 5])
 
   const [tabValue, setTabValue] = useState(0)
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -190,13 +190,13 @@ function EditQuestionPage() {
                 reactPlayer={reactPlayer}
                 playerProgress={playerProgress}
                 url={video.url}
+                start={selectRange[0]}
+                end={selectRange[1]}
                 onUrlChange={(url) => {
                   setVideo((prev) => {
                     return { ...prev, url: url }
                   })
                 }}
-                // start={500}
-                // end={600}
                 onSelectRangeChange={(startTime, endTime) => {
                   setSelectRange([startTime, endTime])
                 }}
@@ -238,6 +238,7 @@ function EditQuestionPage() {
                       },
                     }}
                     onClick={() => {
+                      setSelectRange([0, 10])
                       setSelect({
                         value: null,
                         initQuestion: null,
@@ -311,6 +312,7 @@ function EditQuestionPage() {
           duration={playerProgress.duration}
           select={select}
           setSelect={setSelect}
+          setSelectRange={setSelectRange}
         />
         {/*測試區塊*/}
         {/* <Box
