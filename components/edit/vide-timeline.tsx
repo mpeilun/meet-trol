@@ -12,6 +12,7 @@ import { Dispatch, ReactNode, SetStateAction, useEffect } from 'react'
 import { SelectType } from '../../pages/courses/edit/question/[id]'
 import { allQuestion, Video } from '../../types/video-edit'
 import { formatSeconds, questionStyle } from '../../util/common'
+import { PriceChange } from '@mui/icons-material'
 
 function VideoTimeLine(props: {
   video: Video
@@ -19,8 +20,18 @@ function VideoTimeLine(props: {
   duration: number
   select: SelectType
   setSelect: Dispatch<SetStateAction<SelectType>>
+  selectRange: number[]
+  setSelectRange: Dispatch<SetStateAction<[number, number]>>
 }) {
-  const { video, allQuestion, duration, select, setSelect } = props
+  const {
+    video,
+    allQuestion,
+    duration,
+    select,
+    setSelect,
+    selectRange,
+    setSelectRange,
+  } = props
 
   useEffect(() => {
     console.log('new value', allQuestion)
@@ -37,6 +48,9 @@ function VideoTimeLine(props: {
           duration
         ).toFixed(0)
         const left = ((question.start * 100) / duration).toFixed(0)
+        const selectStartLeft = ((selectRange[0] * 100) / duration).toFixed(0)
+        const selectEndLeft = ((selectRange[1] * 100) / duration).toFixed(0)
+        //TODO 修好紅線跟蹤時間
         return (
           <Box
             key={question.id}
@@ -55,6 +69,22 @@ function VideoTimeLine(props: {
               {icon}
               <Typography>{displayName.substring(0, 2)}</Typography>
             </Box>
+            <div
+              style={{
+                position: 'relative',
+                left: `${selectStartLeft}%`,
+                borderLeft: '2px solid red',
+                height: '100px',
+              }}
+            />
+            <div
+              style={{
+                position: 'relative',
+                left: `${selectEndLeft}%`,
+                borderLeft: '2px solid red',
+                height: '100px',
+              }}
+            />
             <Card
               sx={{
                 cursor: 'pointer',
@@ -64,6 +94,8 @@ function VideoTimeLine(props: {
               }}
               onClick={() => {
                 setSelect({ value: index, initQuestion: question })
+                setSelectRange([question.start, question.end])
+                console.log(question.start, question.end)
                 window.scrollTo({ top: 64, behavior: 'smooth' })
               }}
             >

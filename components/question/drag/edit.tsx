@@ -12,26 +12,30 @@ import {
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { LoadingButton } from '@mui/lab'
-import { Choice } from '@prisma/client'
+import { Drag } from '@prisma/client'
 import { Video } from '../../../types/video-edit'
 import { SelectType } from '../../../pages/courses/edit/question/[id]'
 import { sendMessage } from '../../../store/notification'
 import { useAppDispatch } from '../../../hooks/redux'
+import Rector from './rector'
+import { green } from '@mui/material/colors'
 
-const defaultQuestion: Choice = {
+const defaultQuestion: Drag = {
   id: null,
-  questionType: 'choice',
-  title: '選擇題',
+  questionType: 'drag',
+  title: '圖選題',
   question: '',
+  url: '',
   note: '',
   isShowAnswer: false,
-  options: [{ option: '', isAnswer: false }],
+  answerCount: 1,
+  options: [],
   start: 0,
   end: 0,
   videoId: null,
 }
 
-const EditChoice = (props: {
+const EditDrag = (props: {
   video: Video
   setVideo: Dispatch<SetStateAction<Video>>
   select: SelectType
@@ -41,15 +45,15 @@ const EditChoice = (props: {
   const dispatch = useAppDispatch()
 
   const { video, setVideo, select, setSelect, selectRange } = props
-  const [question, setQuestion] = useState<Choice>(
-    (select.initQuestion as Choice) ?? { ...defaultQuestion, videoId: video.id }
+  const [question, setQuestion] = useState<Drag>(
+    (select.initQuestion as Drag) ?? { ...defaultQuestion, videoId: video.id }
   )
   const [isQuestionSubmit, setIsQuestionSubmit] = useState(false)
   const [isQuestionDelete, setIsQuestionDelete] = useState(false)
 
   useEffect(() => {
     if (select.value) {
-      setQuestion(select.initQuestion as Choice)
+      setQuestion(select.initQuestion as Drag)
     }
   }, [select])
 
@@ -59,6 +63,10 @@ const EditChoice = (props: {
 
   const handleQuestionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuestion((prev) => ({ ...prev, question: event.target.value }))
+  }
+
+  const handleImgUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setQuestion((prev) => ({ ...prev, url: event.target.value }))
   }
 
   const handleNoteChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,7 +118,7 @@ const EditChoice = (props: {
         }),
       })
         .then((response) => response.json())
-        .then((data: Choice) => {
+        .then((data: Drag) => {
           console.log(data)
           setVideo((prev) => ({ ...prev, question: [data, ...prev.question] }))
           setIsQuestionSubmit(false)
@@ -136,7 +144,7 @@ const EditChoice = (props: {
         }),
       })
         .then((response) => response.json())
-        .then((data: Choice) => {
+        .then((data: Drag) => {
           console.log(data)
           setVideo((prev) => {
             prev.question[select.value] = data
@@ -154,8 +162,10 @@ const EditChoice = (props: {
   const addOption = () => {
     setQuestion((prev) => {
       const prevOptions = prev.options
-      prevOptions.push({ option: '', isAnswer: false })
-      return { ...prev, options: prevOptions }
+      return {
+        ...prev,
+        options: [...prevOptions, { width: 50, height: 50, x: 50, y: 50 }],
+      }
     })
   }
 
@@ -176,56 +186,39 @@ const EditChoice = (props: {
     })
   }
 
-  //選項 Component
-  const Options = question.options.map((item, index) => {
-    const handleOptionChange =
-      (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-        setQuestion((prev) => {
-          const prevOptions = prev.options
-          prevOptions[index].option = event.target.value
-          return { ...prev, options: prevOptions }
-        })
-      }
+  // const Options = question.options.map((item, index) => {
+  //   const handleOptionChange =
+  //     (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+  //       setQuestion((prev) => {
+  //         const prevOptions = prev.options
+  //         prevOptions[index] = event.target.value
+  //         return { ...prev, options: prevOptions }
+  //       })
+  //     }
 
-    const handleIsAnswerChange =
-      (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-        setQuestion((prev) => {
-          const prevOptions = prev.options
-          prevOptions[index].isAnswer = event.target.checked
-          return { ...prev, options: prevOptions }
-        })
-      }
+  //   return (
+  //     <Box sx={{ flexDirection: 'row' }} key={`option-${index}`}>
+  //       <TextField
+  //         sx={{ m: 1, width: '60%' }}
+  //         variant="standard"
+  //         label={`選項 ${index + 1}`}
+  //         value={item}
+  //         onChange={handleOptionChange(index)}
+  //       />
+  //       <Button
+  //         sx={{ width: '5%', mt: 2, ml: 0.5 }}
+  //         key={index}
+  //         variant="outlined"
+  //         onClick={() => {
+  //           removeOption(index)
+  //         }}
+  //       >
+  //         <DeleteIcon />
+  //       </Button>
+  //     </Box>
+  //   )
+  // })
 
-    return (
-      <Box sx={{ flexDirection: 'row' }} key={`option-${index}`}>
-        <TextField
-          sx={{ m: 1, width: '60%' }}
-          variant="standard"
-          label={`選項 ${index + 1}`}
-          value={item.option}
-          onChange={handleOptionChange(index)}
-        />
-        <Tooltip title="設為答案">
-          <Checkbox
-            sx={{ mt: 2 }}
-            checked={item.isAnswer}
-            onChange={handleIsAnswerChange(index)}
-          />
-        </Tooltip>
-        <Button
-          sx={{ width: '5%', mt: 2, ml: 0.5 }}
-          key={index}
-          variant="outlined"
-          onClick={() => {
-            removeOption(index)
-          }}
-        >
-          <DeleteIcon />
-        </Button>
-      </Box>
-    )
-  })
-  //
   return (
     <>
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -250,6 +243,13 @@ const EditChoice = (props: {
           value={question.note}
           onChange={handleNoteChange}
         />
+        <TextField
+          sx={{ m: 1 }}
+          variant="standard"
+          label="圖片"
+          value={question.url}
+          onChange={handleImgUrlChange}
+        />
         <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
           <Typography sx={{ mt: 2 }}>顯示答案</Typography>
           <Checkbox
@@ -258,15 +258,26 @@ const EditChoice = (props: {
             onChange={handleIsShowAnswerChange}
           />
         </Box>
-        <Typography sx={{ mt: 2 }}>選項</Typography>
-        {Options}
-        <Button
+        <Typography sx={{ mt: 2 }}>正確區域</Typography>
+        <Rector
+          imgUrl={question.url}
+          lineWidth={2}
+          strokeStyle={green[500]}
+          onSelected={(position) => {
+            console.log(position)
+            setQuestion((prev) => {
+              return { ...prev, options: [position] }
+            })
+          }}
+        ></Rector>
+        {/* {Options} */}
+        {/* <Button
           sx={{ m: 1, width: '7rem', height: '3rem' }}
           variant="outlined"
           onClick={addOption}
         >
           新增選項
-        </Button>
+        </Button> */}
         <Box ml={'auto'}>
           <ButtonGroup>
             {select.value != null ? (
@@ -293,4 +304,4 @@ const EditChoice = (props: {
     </>
   )
 }
-export default EditChoice
+export default EditDrag

@@ -12,26 +12,26 @@ import {
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { LoadingButton } from '@mui/lab'
-import { Choice } from '@prisma/client'
+import { Fill } from '@prisma/client'
 import { Video } from '../../../types/video-edit'
 import { SelectType } from '../../../pages/courses/edit/question/[id]'
 import { sendMessage } from '../../../store/notification'
 import { useAppDispatch } from '../../../hooks/redux'
 
-const defaultQuestion: Choice = {
+const defaultQuestion: Fill = {
   id: null,
-  questionType: 'choice',
-  title: '選擇題',
+  questionType: 'fill',
+  title: '填充題',
   question: '',
   note: '',
   isShowAnswer: false,
-  options: [{ option: '', isAnswer: false }],
+  options: [],
   start: 0,
   end: 0,
   videoId: null,
 }
 
-const EditChoice = (props: {
+const EditFill = (props: {
   video: Video
   setVideo: Dispatch<SetStateAction<Video>>
   select: SelectType
@@ -41,15 +41,15 @@ const EditChoice = (props: {
   const dispatch = useAppDispatch()
 
   const { video, setVideo, select, setSelect, selectRange } = props
-  const [question, setQuestion] = useState<Choice>(
-    (select.initQuestion as Choice) ?? { ...defaultQuestion, videoId: video.id }
+  const [question, setQuestion] = useState<Fill>(
+    (select.initQuestion as Fill) ?? { ...defaultQuestion, videoId: video.id }
   )
   const [isQuestionSubmit, setIsQuestionSubmit] = useState(false)
   const [isQuestionDelete, setIsQuestionDelete] = useState(false)
 
   useEffect(() => {
     if (select.value) {
-      setQuestion(select.initQuestion as Choice)
+      setQuestion(select.initQuestion as Fill)
     }
   }, [select])
 
@@ -110,7 +110,7 @@ const EditChoice = (props: {
         }),
       })
         .then((response) => response.json())
-        .then((data: Choice) => {
+        .then((data: Fill) => {
           console.log(data)
           setVideo((prev) => ({ ...prev, question: [data, ...prev.question] }))
           setIsQuestionSubmit(false)
@@ -136,7 +136,7 @@ const EditChoice = (props: {
         }),
       })
         .then((response) => response.json())
-        .then((data: Choice) => {
+        .then((data: Fill) => {
           console.log(data)
           setVideo((prev) => {
             prev.question[select.value] = data
@@ -146,7 +146,7 @@ const EditChoice = (props: {
           dispatch(sendMessage({ severity: 'success', message: '更新成功' }))
         })
         .catch((err) => {
-          dispatch(sendMessage({ severity: 'success', message: err }))
+          dispatch(sendMessage({ severity: 'success', message: '更新失敗' }))
         })
     }
   }
@@ -154,8 +154,7 @@ const EditChoice = (props: {
   const addOption = () => {
     setQuestion((prev) => {
       const prevOptions = prev.options
-      prevOptions.push({ option: '', isAnswer: false })
-      return { ...prev, options: prevOptions }
+      return { ...prev, options: [...prevOptions, '新的選項'] }
     })
   }
 
@@ -171,8 +170,7 @@ const EditChoice = (props: {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setQuestion((prev) => {
-      prev.isShowAnswer = event.target.checked
-      return { ...prev }
+      return { ...prev, isShowAnswer: event.target.checked }
     })
   }
 
@@ -182,16 +180,7 @@ const EditChoice = (props: {
       (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
         setQuestion((prev) => {
           const prevOptions = prev.options
-          prevOptions[index].option = event.target.value
-          return { ...prev, options: prevOptions }
-        })
-      }
-
-    const handleIsAnswerChange =
-      (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-        setQuestion((prev) => {
-          const prevOptions = prev.options
-          prevOptions[index].isAnswer = event.target.checked
+          prevOptions[index] = event.target.value
           return { ...prev, options: prevOptions }
         })
       }
@@ -202,16 +191,9 @@ const EditChoice = (props: {
           sx={{ m: 1, width: '60%' }}
           variant="standard"
           label={`選項 ${index + 1}`}
-          value={item.option}
+          value={item}
           onChange={handleOptionChange(index)}
         />
-        <Tooltip title="設為答案">
-          <Checkbox
-            sx={{ mt: 2 }}
-            checked={item.isAnswer}
-            onChange={handleIsAnswerChange(index)}
-          />
-        </Tooltip>
         <Button
           sx={{ width: '5%', mt: 2, ml: 0.5 }}
           key={index}
@@ -237,10 +219,13 @@ const EditChoice = (props: {
           onChange={handleTitleChange}
         />
         <TextField
+          maxRows={5}
+          multiline
           sx={{ m: 1 }}
           variant="standard"
           label="問題"
           value={question.question}
+          helperText="請以符號 () 來包裹住需要挖空的內容"
           onChange={handleQuestionChange}
         />
         <TextField
@@ -293,4 +278,4 @@ const EditChoice = (props: {
     </>
   )
 }
-export default EditChoice
+export default EditFill

@@ -25,6 +25,9 @@ import { Choice, Drag, Fill, Info, Rank } from '@prisma/client'
 import VideoTimeLine from '../../../../components/edit/vide-timeline'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { questionStyle } from '../../../../util/common'
+import EditFill from '../../../../components/question/fillIn/edit'
+import EditRank from '../../../../components/question/rank/edit'
+import EditDrag from '../../../../components/question/drag/edit'
 
 export interface SelectType {
   value: number
@@ -82,7 +85,7 @@ function EditQuestionPage() {
     value: null,
     initQuestion: null,
   })
-  const [selectRange, setSelectRange] = useState([0, 30])
+  const [selectRange, setSelectRange] = useState([0, 5])
 
   const [tabValue, setTabValue] = useState(0)
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -190,13 +193,13 @@ function EditQuestionPage() {
                 reactPlayer={reactPlayer}
                 playerProgress={playerProgress}
                 url={video.url}
+                start={selectRange[0]}
+                end={selectRange[1]}
                 onUrlChange={(url) => {
                   setVideo((prev) => {
                     return { ...prev, url: url }
                   })
                 }}
-                // start={500}
-                // end={600}
                 onSelectRangeChange={(startTime, endTime) => {
                   setSelectRange([startTime, endTime])
                 }}
@@ -238,6 +241,7 @@ function EditQuestionPage() {
                       },
                     }}
                     onClick={() => {
+                      setSelectRange([0, 10])
                       setSelect({
                         value: null,
                         initQuestion: null,
@@ -246,7 +250,10 @@ function EditQuestionPage() {
                   >
                     <ArrowBackIcon />
                   </IconButton>
-                  <Typography variant="h6" sx={{ position: 'absolute' }}>
+                  <Typography
+                    variant="h6"
+                    sx={{ position: 'relative', right: '45%' }}
+                  >
                     {
                       questionStyle(select.initQuestion.questionType)
                         .displayName
@@ -292,13 +299,31 @@ function EditQuestionPage() {
                   />
                 </TabPanel>
                 <TabPanel value={tabValue} index={2}>
-                  #填空題
+                  <EditFill
+                    video={video}
+                    setVideo={setVideo}
+                    select={select}
+                    setSelect={setSelect}
+                    selectRange={selectRange}
+                  />
                 </TabPanel>
                 <TabPanel value={tabValue} index={3}>
-                  #排序題
+                  <EditRank
+                    video={video}
+                    setVideo={setVideo}
+                    select={select}
+                    setSelect={setSelect}
+                    selectRange={selectRange}
+                  />
                 </TabPanel>
                 <TabPanel value={tabValue} index={4}>
-                  #圖片選答
+                  <EditDrag
+                    video={video}
+                    setVideo={setVideo}
+                    select={select}
+                    setSelect={setSelect}
+                    selectRange={selectRange}
+                  />
                 </TabPanel>
               </Box>
             )}
@@ -311,6 +336,8 @@ function EditQuestionPage() {
           duration={playerProgress.duration}
           select={select}
           setSelect={setSelect}
+          selectRange={selectRange}
+          setSelectRange={setSelectRange}
         />
         {/*測試區塊*/}
         {/* <Box
@@ -381,13 +408,37 @@ function editQuestion(
       )
     }
     case 'fill': {
-      return <></>
+      return (
+        <EditFill
+          video={video}
+          setVideo={setVideo}
+          select={select}
+          setSelect={setSelect}
+          selectRange={selectRange}
+        />
+      )
     }
     case 'rank': {
-      return <></>
+      return (
+        <EditRank
+          video={video}
+          setVideo={setVideo}
+          select={select}
+          setSelect={setSelect}
+          selectRange={selectRange}
+        />
+      )
     }
     case 'drag': {
-      return <></>
+      return (
+        <EditDrag
+          video={video}
+          setVideo={setVideo}
+          select={select}
+          setSelect={setSelect}
+          selectRange={selectRange}
+        />
+      )
     }
     default: {
       return <></>
