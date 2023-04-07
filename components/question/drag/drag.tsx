@@ -83,6 +83,9 @@ const Drag = (props: {
         const nextX = e.clientX - coords.current.startX + coords.current.lastX
         const nextY = e.clientY - coords.current.startY + coords.current.lastY
 
+        //TODO DEBUG
+        console.log('nextX Y', nextX, nextY)
+
         button.style.top = `${nextY}px`
         button.style.left = `${nextX}px`
       }

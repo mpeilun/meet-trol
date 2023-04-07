@@ -220,8 +220,21 @@ export default function CreateCoursePage() {
           ],
         }
       })
+      dispatch(
+        sendMessage({
+          severity: 'success',
+          message: '新增成功',
+          duration: 'short',
+        })
+      )
     } else {
-      console.log('error')
+      dispatch(
+        sendMessage({
+          severity: 'error',
+          message: '新增失敗',
+          duration: 'short',
+        })
+      )
     }
     WebGLActiveInfo
     setOpenVideoDialog(false)
