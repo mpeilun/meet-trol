@@ -1,149 +1,122 @@
-import { Box, Card, Divider, Icon, Typography } from '@mui/material'
-import { GetServerSideProps } from 'next'
-import CustomizedAccordions from '../../components/chapter/chapter'
+import {
+  Box,
+  Card,
+  CircularProgress,
+  Divider,
+  Icon,
+  Typography,
+} from '@mui/material'
 import dynamic from 'next/dynamic'
 import * as React from 'react'
-import { parse } from 'cookie'
-
-import { ChapterListData, LastViewData } from '../../types/chapter'
-import { getServerSession } from 'next-auth/next'
-import { authOptions } from '../api/auth/[...nextauth]'
-import { useSession } from 'next-auth/react'
+import { ChapterListData, PastViewData } from '../../types/chapter'
 import { useRouter } from 'next/router'
-import { Co2Sharp } from '@mui/icons-material'
+import useSWR from 'swr'
+import { Shimmer } from 'react-shimmer'
+import InfoCard from '../../components/infoCard'
 
 const CoursePlayer = dynamic(
-  () => import('../../components/courses/course-player')
+  () => import('../../components/courses/course-player'),
+  {
+    loading: () => <Shimmer width={2000} height={1000} />,
+    ssr: false,
+  }
 )
-const CourseTab = dynamic(() => import('../../components/courses/course-tab'))
+const CourseTab = dynamic(() => import('../../components/courses/course-tab'), {
+  loading: () => <Shimmer width={2000} height={1000} />,
+  ssr: false,
+})
+const CustomizedAccordions = dynamic(
+  () => import('../../components/chapter/chapter'),
+  {
+    loading: () => <Shimmer width={2000} height={1000} />,
+    ssr: false,
+  }
+)
 // import CoursePlayer from '../../components/courses/course-player'
 // import CourseTab from '../../components/courses/course-tab'
 
-function CourseInnerPage(props: {
-  chapter: ChapterListData[]
-  error: boolean
-  record: { lastView: LastViewData[] }
-}) {
-  const router = useRouter()
-  const pid = router.query.id as string
-  const data = props.chapter
-  const record = props.record
-  
-
-  const [chapter, setChapter] = React.useState<ChapterListData[]>(data)
-
-  if (
-    chapter == undefined ||
-    chapter.length < 1 ||
-    props.error == true ||
-    props.record == undefined
-  ) {
-    return (
-      <>
-        <p>
-          Page not found. Please Checking the course ID or confirming you are
-          logged.
-        </p>
-      </>
-    )
-  } else {
-    const lastView: LastViewData[] = props.record.lastView
-
-    return (
-      <Box
-        className="course-main-div"
-        display="flex"
-        width="100%"
-        height={'100%'}
-        maxHeight={'calc(100vh - 68.5px)'}
-      >
-        <Box
-          className="course-nav-div"
-          display={{ width: '20vw', xs: 'none', md: 'flex' }}
-        >
-          <Card
-            elevation={0}
-            sx={{
-              height: '100%',
-              width: '100%',
-              borderRadius: 0,
-              overflowY: 'auto',
-            }}
-          >
-            <CustomizedAccordions
-              chapterData={chapter}
-              lastView={lastView}
-              pid={pid}
-            ></CustomizedAccordions>
-            <Divider />
-          </Card>
-        </Box>
-        <Box
-          className="course-material-div"
-          width="100%"
-          overflow="scroll"
-          sx={{ overflowX: 'hidden' }}
-        >
-          <CoursePlayer courseId={pid}></CoursePlayer>
-          <CourseTab
-            chapterData={chapter}
-            pid={pid}
-            lastView={lastView}
-          ></CourseTab>
-        </Box>
-      </Box>
-    )
-  }
+const fetcher = async (url: string) => {
+  return await fetch(url).then((res) => {
+    if (!res.ok) {
+      return 'error'
+    }
+    return res.json()
+  })
 }
 
-// export const getStaticProps = async (context: GetStaticPropsContext) => {
-//   const lastViewResponse = await fetch(
-//     `http://localhost:3000/api/record/${courseId}`
-//   )
-//   const record = await lastViewResponse.json()
-//   const lastView: LastViewData[] = record[0].lastView
-// }
+function CourseInnerPage(props: {}) {
+  const router = useRouter()
+  const courseId = router.query.id as string
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getServerSession(context.req, context.res, authOptions)
-  const courseId = context.params?.id as string
+  const { data: chapterData, error: chapterError } = useSWR(
+    courseId && ['http://localhost:3000/api/chapter?courseId=' + courseId],
+    fetcher
+  )
+  const { data: pastViewData, error: recordError } = useSWR(
+    courseId && ['http://localhost:3000/api/record?courseId=' + courseId],
+    fetcher
+  )
+  const isLoading =
+    !chapterData && !chapterError && !pastViewData && !recordError
 
-  // Retrieve the value of a cookie
-  if (session) {
-    const chapterResponse = await fetch(
-      `http://localhost:3000/api/chapter?courseId=${courseId}`,
-      {
-        method: 'GET',
-        headers: {
-          Cookie: context.req.headers.cookie,
-        },
-      }
-    )
-    const lastViewResponse = await fetch(
-      `http://localhost:3000/api/record/${courseId}`,
-      {
-        method: 'GET',
-        headers: {
-          Cookie: context.req.headers.cookie,
-        },
-      }
-    )
-    console.log('chapterResponse', chapterResponse)
-
-    if (chapterResponse.status === 200 && lastViewResponse.status === 200) {
-      const chapter: Array<ChapterListData> = await chapterResponse.json()
-      const record: LastViewData = await lastViewResponse.json()      
-      return { props: { chapter, error: false, record } }
-    } else {
-      return {
-        props: { chapter: null, error: true, record: null },
-      }
-    }
-  } else {
-    return {
-      props: { chapter: null, error: true, record: null },
-    }
+  if (isLoading || !courseId) {
+    return <Shimmer width={2000} height={2000} />
   }
+
+  if (chapterData === 'error' || pastViewData === 'error') {
+    return (
+      <InfoCard
+        title="Error"
+        message="Read failed. Please confirm the course code or whether you have enrolled
+      in this course, or if you have already logged in."
+      ></InfoCard>
+    )
+  }
+
+  return (
+    <Box
+      className="course-main-div"
+      display="flex"
+      width="100%"
+      height={'100%'}
+      maxHeight={'calc(100vh - 68.5px)'}
+    >
+      <Box
+        className="course-nav-div"
+        display={{ width: '20vw', xs: 'none', md: 'flex' }}
+      >
+        <Card
+          elevation={0}
+          sx={{
+            height: '100%',
+            width: '100%',
+            borderRadius: 0,
+            overflowY: 'auto',
+          }}
+        >
+          <CustomizedAccordions
+            chapterData={chapterData as ChapterListData[]}
+            pastViewData={pastViewData as PastViewData[]}
+            courseId={courseId}
+          ></CustomizedAccordions>
+          <Divider />
+        </Card>
+      </Box>
+      <Box
+        className="course-material-div"
+        width="100%"
+        overflow="scroll"
+        sx={{ overflowX: 'hidden' }}
+      >
+        <CoursePlayer courseId={courseId}></CoursePlayer>
+        {/* <CourseTab
+          chapterData={chapter}
+          pid={pid}
+          lastView={lastView}
+        ></CourseTab> */}
+      </Box>
+    </Box>
+  )
 }
 
 export default CourseInnerPage

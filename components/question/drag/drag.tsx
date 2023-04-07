@@ -22,17 +22,20 @@ interface alert {
   severity: AlertColor
 }
 
-const Drag = (props: {
+interface props {
   handleQuestionClose: () => void
   isLog: boolean
   data: DragData
   feedbackIndex: number
-}) => {
+}
+
+const Drag = ({ handleQuestionClose, isLog, data, feedbackIndex }: props) => {
   const boxRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLDivElement>(null)
   const isClicked = useRef<boolean>(false)
 
   const emptyRef = useRef()
+  
   const coords = useRef<{
     startX: number
     startY: number
@@ -45,7 +48,6 @@ const Drag = (props: {
     lastY: 0,
   })
 
-  const data = props.data
   const [correctColor, setCorrectColor] = useState('#EA7540')
   const [isReply, setIsReply] = React.useState(false)
   const [isAnsError, setIsAnsError] = useState<alert>({
@@ -55,7 +57,7 @@ const Drag = (props: {
   })
 
   useEffect(() => {
-    if (!isReply) {
+    if (!isReply && !isLog) {
       if (!boxRef.current || !buttonRef.current) return
       if (isReply) return
       const box = boxRef.current
@@ -166,7 +168,7 @@ const Drag = (props: {
         <Typography variant="h5" sx={{ width: '100%' }}>
           {data.title ?? '圖選題'}
         </Typography>
-        <IconButton onClick={() => props.handleQuestionClose()}>
+        <IconButton onClick={() => handleQuestionClose()}>
           <CloseIcon />
         </IconButton>
       </Box>
@@ -267,7 +269,7 @@ const Drag = (props: {
               </Button>
             )}
             <Box></Box>
-            {!props.isLog && (
+            {!isLog && (
               <Button
                 disableElevation
                 type="submit"

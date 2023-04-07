@@ -15,10 +15,11 @@ import {
   CardContent,
   Card,
 } from '@mui/material'
-import { Chapter, Video, LastView } from '@prisma/client'
+import { Chapter, Video, PastView } from '@prisma/client'
 import { useAppSelector, useAppDispatch } from '../../hooks/redux'
 import { setVideoId, setVideoTime } from '../../store/course-data'
-import { ChapterListData, LastViewData } from '../../types/chapter'
+import { ChapterListData, PastViewData } from '../../types/chapter'
+import { isNullOrUndefined } from 'util'
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -59,62 +60,65 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   borderTop: '1px solid rgba(0, 0, 0, .125)',
 }))
 
-export default function CustomizedAccordions(props: {
+interface props {
   chapterData: ChapterListData[]
-  lastView: LastViewData[]
-  pid: string
-}) {
-  const data = props.chapterData
-  let lastView = props.lastView
-  // 獲得最後觀看的影片
-  const now: Date = new Date()
-  const videoTime = useAppSelector((state) => state.course.playedSecond)
+  pastViewData: PastViewData[]
+  courseId: string
+}
 
-  const [videosId, setVideosId] = React.useState<string>('')
-  const postLastView = async (videoId: string) => {
-    await fetch(`/api/record/${props.pid}/${videoId}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        videoTime: videoTime,
-      }),
-    })
-      .then((response) => response.json())
-      // .then((data) => console.log(data))
-      .catch((error) => console.log(error))
-  }
+export default function CustomizedAccordions({
+  chapterData,
+  pastViewData,
+  courseId,
+}: props) {
+  // const postPastView = React.useCallback(async (videoId: string) => {
+  //   await fetch(`/api/record?courseId=${courseId}&videoId=${videoId}`, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({
+  //       videoTime: videoTime,
+  //     }),
+  //   })
+  //     .then((response) => response.json())
+  //     // .then((data) => console.log(data))
+  //     .catch((error) => console.log(error))
+  // }, [])
+  // React.useEffect(() => {
+  //   if (!pastViewData.length) {
+  //     postPastView(chapterData[0].videos[0].id)
+  //   }
+  // }, [])
 
-  if (lastView.length == 0) {
-    const view = {
-      videoId: data[0].videos[0].id,
-      videoTime: 0,
-      viewTime: now,
-    }
-    lastView.push(view)
-  }
-
-  React.useEffect(() => {
-    if (lastView.length == 0) {
-      postLastView(data[0].videos[0].id)
-    }
-  }, [])
-
-  const lastViewVideo = lastView.reduce((earliest, current) => {
-    const earliestTime = new Date(earliest.viewTime)
-    const currentTime = new Date(current.viewTime)
-    return earliestTime > currentTime ? earliest : current
-  }, lastView[0])
+  const setLastViewVideo = React.useCallback(
+    (array: PastViewData[]): PastViewData => {
+      if (!array.length)
+        return {
+          videoId: chapterData[0].videos[0].id,
+          lastViewTime: new Date(),
+          lastVideoTime: 0,
+        }
+      const lastViewVideo = array.reduce((earliest, current) => {
+        const earliestTime = new Date(earliest.lastViewTime)
+        const currentTime = new Date(current.lastViewTime)
+        return earliestTime > currentTime ? earliest : current
+      }, pastViewData[0])
+      return lastViewVideo
+    },
+    []
+  )
+  const lastView = setLastViewVideo(pastViewData)
 
   const dispatch = useAppDispatch()
+
   const initialSelectVideo = React.useCallback((): boolean[][] => {
     let chapterList = []
     const initialSelected = () => {
-      data.map((chapter, index) => {
+      chapterData.map((chapter, index) => {
         let videoList = []
         chapter.videos.map((video, index) => {
-          if (video.id == lastViewVideo.videoId) {
+          if (video.id == lastView.videoId) {
             videoList.push(true)
           } else {
             videoList.push(false)
@@ -126,6 +130,7 @@ export default function CustomizedAccordions(props: {
     initialSelected()
     return chapterList
   }, [])
+
   const [selectedVideo, setSelectedVideo] = React.useState<boolean[][]>(
     initialSelectVideo()
   )
@@ -146,6 +151,12 @@ export default function CustomizedAccordions(props: {
   const [isExpanded, setIsExpanded] = React.useState<boolean[]>(
     initialExpanded()
   )
+
+  React.useEffect(() => {
+    dispatch(setVideoId(lastView.videoId))
+    dispatch(setVideoTime(lastView.lastVideoTime))
+  }, [])
+
   const handleChange =
     (index: number) => (event: React.SyntheticEvent, newExpanded: boolean) => {
       let expanded = [...isExpanded]
@@ -154,128 +165,102 @@ export default function CustomizedAccordions(props: {
     }
 
   const getLastView = async (videoId: string) => {
-    await fetch(`/api/record/${props.pid}/${videoId}`)
+    await fetch(`/api/record?courseId=${courseId}&videoId=${videoId}`)
       .then((response) => response.json())
       .then((data) => {
-        dispatch(setVideoTime(data.videoTime))
+        if (data) {
+          dispatch(setVideoTime(data.videoTime))
+        }
       })
-      .catch((error) => console.log(error))
+      .catch((error) => {
+        dispatch(setVideoTime(0))
+      })
   }
 
-  React.useEffect(() => {
-    setVideosId(lastViewVideo.videoId)
-    dispatch(setVideoId(lastViewVideo.videoId))
-    dispatch(setVideoTime(lastViewVideo.videoTime))
-  }, [])
-
-  if (data == undefined) {
-    return <></>
-  } else if (data.length == 0) {
-    return (
-      <>
-        <Typography align="center" sx={{ py: 2, fontWeight: 'bold' }}>
-          課程尚未新增影片和章節
-        </Typography>
-      </>
-    )
-  } else {
-    return (
-      <div>
-        {data.map(({ title, videos }, indexOne) => {
-          return (
-            <Accordion
-              key={indexOne}
-              expanded={isExpanded[indexOne]}
-              onChange={handleChange(indexOne)}
+  return (
+    <div>
+      {chapterData.map(({ title, videos }, indexOne) => {
+        return (
+          <Accordion
+            key={indexOne}
+            expanded={isExpanded[indexOne]}
+            onChange={handleChange(indexOne)}
+          >
+            <AccordionSummary
+              aria-controls={`panel${indexOne + 1}d-content`}
+              id={`panel${indexOne + 1}d-header`}
             >
-              <AccordionSummary
-                aria-controls={`panel${indexOne + 1}d-content`}
-                id={`panel${indexOne + 1}d-header`}
-              >
-                <Box sx={{ pl: 1 }}>
-                  <Typography sx={{ fontSize: '0.95rem', fontWeight: 'bold' }}>
-                    {title}
-                  </Typography>
-                </Box>
-              </AccordionSummary>
-              <AccordionDetails>
-                {videos.map(({ title, id }, indexTwo) => {
-                  let isLast = true
-                  if (videos.length == indexTwo + 1) {
-                    isLast = false
-                  }
-                  return (
-                    <Box key={indexTwo}>
-                      <Card
-                        elevation={0}
-                        sx={{
-                          borderRadius: 0,
-                          borderColor: 'transparent',
-                          display: 'flex',
+              <Box sx={{ pl: 1 }}>
+                <Typography sx={{ fontSize: '0.95rem', fontWeight: 'bold' }}>
+                  {title}
+                </Typography>
+              </Box>
+            </AccordionSummary>
+            <AccordionDetails>
+              {videos.map(({ title, id }, indexTwo) => {
+                let isLast = true
+                if (videos.length == indexTwo + 1) {
+                  isLast = false
+                }
+                return (
+                  <Box key={indexTwo}>
+                    <Card
+                      elevation={0}
+                      sx={{
+                        borderRadius: 0,
+                        borderColor: 'transparent',
+                        display: 'flex',
+                      }}
+                    >
+                      <CardActionArea
+                        onClick={() => {
+                          getLastView(id)
+                          let selected = [...selectedVideo]
+                          selected.map((ele) => {
+                            ele.fill(false)
+                          })
+                          selected[indexOne][indexTwo] = true
+                          setSelectedVideo(selected)
+                          dispatch(setVideoId(id))
                         }}
                       >
-                        <CardActionArea
-                          onClick={() => {
-                            postLastView(videosId)
-                            getLastView(id)
-                            setVideosId(id)
-                            let selected = [...selectedVideo]
-                            selected.map((ele) => {
-                              ele.fill(false)
-                            })
-                            selected[indexOne][indexTwo] = true
-                            setSelectedVideo(selected)
-                            const video = lastView.find(
-                              (lastView) => lastView.videoId == id
-                            )
-                            if (video) {
-                              dispatch(setVideoTime(video.videoTime))
-                            } else {
-                              dispatch(setVideoTime(0))
-                            }
-                            dispatch(setVideoId(id))
+                        <CardContent
+                          sx={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
                           }}
                         >
-                          <CardContent
+                          <Box
                             sx={{
-                              display: 'flex',
-                              flexDirection: 'row',
-                              alignItems: 'center',
+                              backgroundColor: selectedVideo[indexOne][indexTwo]
+                                ? '#67a1f3'
+                                : 'white',
+                              color: selectedVideo[indexOne][indexTwo]
+                                ? '#67a1f3'
+                                : 'white',
                             }}
                           >
-                            <Box
-                              sx={{
-                                backgroundColor: selectedVideo[indexOne][
-                                  indexTwo
-                                ]
-                                  ? '#67a1f3'
-                                  : 'white',
-                                color: selectedVideo[indexOne][indexTwo]
-                                  ? '#67a1f3'
-                                  : 'white',
-                              }}
-                            >
-                              {`.`}
-                            </Box>
-                            <Typography
-                              sx={{ ml: 1 }}
-                              variant="body2"
-                              component="div"
-                            >
-                              {title}
-                            </Typography>
-                          </CardContent>
-                        </CardActionArea>
-                      </Card>
-                      {isLast && <Divider variant="middle" />}
-                    </Box>
-                  )
-                })}
-              </AccordionDetails>
-            </Accordion>
-          )
-        })}
-      </div>
-    )
-  }
+                            {`.`}
+                          </Box>
+                          <Typography
+                            sx={{ ml: 1 }}
+                            variant="body2"
+                            component="div"
+                          >
+                            {title}
+                          </Typography>
+                        </CardContent>
+                      </CardActionArea>
+                    </Card>
+                    {isLast && <Divider variant="middle" />}
+                  </Box>
+                )
+              })}
+            </AccordionDetails>
+          </Accordion>
+        )
+      })}
+    </div>
+  )
 }

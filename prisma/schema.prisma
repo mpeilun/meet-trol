@@ -51,19 +51,40 @@ model User {
 
 model Record {
   id       String     @id @default(auto()) @map("_id") @db.ObjectId
-  courseId String     @db.ObjectId
-  lastView LastView[]
+  courseId String     @unique @db.ObjectId
+  pastView PastView[]
   user     User       @relation(fields: [userId], references: [id])
-  userId   String     @db.ObjectId
+  userId   String     @unique @db.ObjectId
 }
 
-model LastView {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  videoId   String   @unique @db.ObjectId
+type PeakTime {
+  time      DateTime
   videoTime Float
-  viewTime  DateTime @default(now())
-  record    Record   @relation(fields: [recordId], references: [id])
-  recordId  String   @db.ObjectId
+}
+
+type PauseTime {
+  start     DateTime
+  end       DateTime
+  videoTime Float
+}
+
+model ViewLog {
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  pauseTimes PauseTime[]
+  peekTimes  PeakTime[]
+  watchTime  Float
+  PastView   PastView?   @relation(fields: [pastViewId], references: [id])
+  pastViewId String?     @db.ObjectId
+}
+
+model PastView {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  videoId       String    @unique @db.ObjectId
+  viewLogs      ViewLog[]
+  lastVideoTime Float
+  lastViewTime  DateTime  @default(now())
+  record        Record    @relation(fields: [recordId], references: [id])
+  recordId      String    @unique @db.ObjectId
 }
 
 model VerificationToken {

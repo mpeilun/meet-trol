@@ -144,6 +144,10 @@ function CoursePlayer(props: { courseId: string }) {
       setVolume(newValue)
     }
   }
+  const handleChangeCommitted = (event, newValue) => {
+    console.log('拖動結束，選擇的數值為：', newValue)
+  }
+
   const [loading, setLoading] = React.useState(true)
 
   let onPlayerReady = (player: ReactPlayerType) => {
@@ -194,6 +198,7 @@ function CoursePlayer(props: { courseId: string }) {
               playedSeconds={playedSeconds}
               handleTimeSliderChange={handleTimeSliderChange}
               handleVolumeSliderChange={handleVolumeSliderChange}
+              handleChangeCommitted={handleChangeCommitted}
               volume={volume}
               setVolume={setVolume}
               showPlayerBar={showPlayerBar}
@@ -272,7 +277,7 @@ function CoursePlayer(props: { courseId: string }) {
               volume={volume}
               width={'100%'}
               height={handleFullScreen.active ? '100%' : height}
-              progressInterval={200}
+              progressInterval={1000}
               playbackRate={playbackRate}
               config={{
                 youtube: {
@@ -314,6 +319,10 @@ interface PlayerBarProps {
   playedSeconds: number
   handleTimeSliderChange: (event: Event, value: number | number[]) => void
   handleVolumeSliderChange: (event: Event, value: number | number[]) => void
+  handleChangeCommitted: (
+    event: Event | React.SyntheticEvent<Element, Event>,
+    value: number | number[]
+  ) => void
   playerRef: React.MutableRefObject<ReactPlayerType | null>
   playing: boolean
   volume: number
@@ -339,6 +348,7 @@ const PlayerBar = (props: PlayerBarProps) => {
     playedSeconds,
     handleTimeSliderChange,
     handleVolumeSliderChange,
+    handleChangeCommitted,
     playerRef,
     playing,
     play,
@@ -357,7 +367,7 @@ const PlayerBar = (props: PlayerBarProps) => {
       setVolume(0)
     }
   }
-  const volumnIcon = (volume: number) => {
+  const volumeIcon = (volume: number) => {
     if (volume == 0) {
       return <VolumeOff sx={{ fontSize: 30 }} />
     } else if (volume < 0.5) {
@@ -397,6 +407,7 @@ const PlayerBar = (props: PlayerBarProps) => {
               sx={{ position: 'absolute', bottom: -15, zIndex: 1000 }}
               value={playedSeconds}
               onChange={handleTimeSliderChange}
+              onChangeCommitted={handleChangeCommitted}
               min={0}
               max={playerRef.current ? playerRef.current.getDuration() : 0}
               marks={marks}
@@ -428,7 +439,7 @@ const PlayerBar = (props: PlayerBarProps) => {
                 sx={{ ...buttonSize }}
                 onClick={handleVolumeButtonClick}
               >
-                {volumnIcon(volume)}
+                {volumeIcon(volume)}
               </ButtonBase>
               <Slider
                 sx={{ width: 100, alignSelf: 'center', ml: 1 }}

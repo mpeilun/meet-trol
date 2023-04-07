@@ -1,7 +1,7 @@
 import {
   Chapter,
   Video,
-  LastView,
+  PastView,
   Info,
   Choice,
   ChoiceFeedback,
@@ -43,10 +43,10 @@ export interface DragData extends Drag {
   feedback: DragFeedback[]
 }
 
-export interface LastViewData {
+export interface PastViewData {
   videoId: string
-  videoTime: number
-  viewTime: Date
+  lastVideoTime: number
+  lastViewTime: Date
 }
 
 export interface ChapterCreateType extends Omit<Chapter, 'id' | 'courseId'> {}
