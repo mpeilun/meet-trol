@@ -269,7 +269,7 @@ const EditChoice = (props: {
         </Button>
         <Box ml={'auto'}>
           <ButtonGroup>
-            {select.value ? (
+            {select.value != null ? (
               <LoadingButton
                 loading={isQuestionDelete}
                 sx={{ width: '7rem', height: '3rem' }}
