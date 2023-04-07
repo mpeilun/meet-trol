@@ -21,8 +21,10 @@ import { LoadingButton } from '@mui/lab'
 import CourseCard from '../../components/courses/course-card'
 import { CourseWithOwner } from '../../types/course'
 import BodyLayout from '../../components/layout/common-body'
+import { useSession } from 'next-auth/react'
 
 function AllCoursesPage() {
+  const { data: session } = useSession()
   const [jointCourseLoading, setJointCourseLoading] = React.useState(false)
   const [courseData, setCourseData] = React.useState<CourseWithOwner[]>([])
   const [courseID, setCourseId] = React.useState('')
@@ -32,13 +34,23 @@ function AllCoursesPage() {
     const response = await fetch(`/api/course?myCourse=true`)
     const data: CourseWithOwner[] = await response.json()
     console.log(data)
-    setCourseData(data)
+    if (response.status == 200) {
+      setCourseData(data)
+    }
   }, [])
 
   React.useEffect(() => {
     fetchData()
   }, [])
 
+  if (!session)
+    return (
+      <BodyLayout>
+        <Typography variant="h3" textAlign={'center'} sx={{ color: 'grey' }}>
+          請登入以查看課程
+        </Typography>
+      </BodyLayout>
+    )
   return (
     <BodyLayout>
       <Grid
@@ -71,7 +83,10 @@ function AllCoursesPage() {
               const result = await fetch(`/api/course/joint/${courseID}`)
               if (result.status === 201) {
                 dispatch(
-                  sendMessage({ severity: 'success', message: '成功加入課程' })
+                  sendMessage({
+                    severity: 'success',
+                    message: '成功加入課程',
+                  })
                 )
                 await fetchData()
               } else if (result.status === 409) {
