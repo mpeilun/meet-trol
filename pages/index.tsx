@@ -60,7 +60,6 @@ function HomePage() {
             分析學生對課程內容的理解程度，使教育者能夠調整教學內容，提升學習的效率。
           </Typography>
           <Button
-            color={'custom_bottom'}
             variant="contained"
             size="large"
             onClick={() => {

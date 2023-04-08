@@ -74,7 +74,7 @@ function MainNavigation() {
       <Container maxWidth="md">
         <Toolbar disableGutters>
           <RemoveRedEyeIcon
-            sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}
+            sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, color: '#fff' }}
           />
           <Link href={'/'} passHref legacyBehavior>
             <Typography
@@ -88,7 +88,7 @@ function MainNavigation() {
                 fontFamily: 'monospace',
                 fontWeight: 700,
                 letterSpacing: '.0.6rem',
-                color: 'inherit',
+                color: '#fff',
                 textDecoration: 'none',
               }}
             >
@@ -203,7 +203,6 @@ function MainNavigation() {
             ) : (
               <Tooltip title={'SignIn'}>
                 <Button
-                  color={'custom_bottom'}
                   variant="contained"
                   onClick={() => {
                     window.open('/auth/signin')
@@ -219,7 +218,7 @@ function MainNavigation() {
                     flexDirection={'row'}
                     alignItems={'center'}
                   >
-                    <Typography>SIGN IN</Typography>
+                    <Typography sx={{ color: '#fff' }}>SIGN IN</Typography>
                   </Box>
                 </Button>
               </Tooltip>

@@ -80,7 +80,7 @@ function AllCoursesPage() {
           <TextField
             value={courseID}
             placeholder="請輸入課程ID"
-            sx={{ width: '50%', minWidth: '100px', bgcolor: '#FFF' }}
+            sx={{ width: '50%', minWidth: '100px' }}
             onChange={(e) => setCourseId(e.target.value)}
           ></TextField>
           <LoadingButton
