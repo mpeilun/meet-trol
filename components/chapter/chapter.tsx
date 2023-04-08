@@ -93,7 +93,7 @@ export default function CustomizedAccordions({
 
   const setLastViewVideo = React.useCallback(
     (array: PastViewData[]): PastViewData => {
-      if (!array.length)
+      if (!array.length || !array)
         return {
           videoId: chapterData[0].videos[0].id,
           lastViewTime: new Date(),
@@ -103,7 +103,7 @@ export default function CustomizedAccordions({
         const earliestTime = new Date(earliest.lastViewTime)
         const currentTime = new Date(current.lastViewTime)
         return earliestTime > currentTime ? earliest : current
-      }, pastViewData[0])
+      }, array[0])
       return lastViewVideo
     },
     []

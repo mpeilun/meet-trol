@@ -63,7 +63,7 @@ function CourseInnerPage(props: {}) {
     return <Shimmer width={2000} height={2000} />
   }
 
-  if (chapterData === 'error' || pastViewData === 'error') {
+  else if (chapterData === 'error' || pastViewData === 'error') {
     return (
       <InfoCard
         title="Error"
@@ -72,7 +72,7 @@ function CourseInnerPage(props: {}) {
       ></InfoCard>
     )
   }
-  if (chapterData) {
+  else if (chapterData) {
     return (
       <Box
         className="course-main-div"
