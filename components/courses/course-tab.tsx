@@ -53,7 +53,11 @@ interface props {
   courseId: string
 }
 
-export default function CourseTabs({ chapterData, pastViewData, courseId }: props) {
+export default function CourseTabs({
+  chapterData,
+  pastViewData,
+  courseId,
+}: props) {
   const [value, setValue] = React.useState(0)
   const [windowWidth, setWindowWidth] = React.useState(1000)
   React.useEffect(() => {
@@ -99,7 +103,7 @@ export default function CourseTabs({ chapterData, pastViewData, courseId }: prop
     return match ? match[1] : 'null'
   }
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%', background: '#fff ' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs
           value={value}
