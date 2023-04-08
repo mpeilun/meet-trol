@@ -11,7 +11,7 @@ import Link from 'next/link'
 import { Video } from '@prisma/client'
 import ReplyLog from '../replyLog'
 import CustomizedAccordions from '../chapter/chapter'
-import { ChapterListData, LastViewData, VideoData } from '../../types/chapter'
+import { ChapterListData, PastViewData, VideoData } from '../../types/chapter'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 
 interface TabPanelProps {
@@ -47,11 +47,13 @@ function a11yProps(index: number) {
   }
 }
 
-export default function CourseTabs(props: {
+interface props {
   chapterData: ChapterListData[]
-  lastView: LastViewData[]
-  pid: string
-}) {
+  pastViewData: PastViewData[]
+  courseId: string
+}
+
+export default function CourseTabs({ chapterData, pastViewData, courseId }: props) {
   const [value, setValue] = React.useState(0)
   const [windowWidth, setWindowWidth] = React.useState(1000)
   React.useEffect(() => {
@@ -88,15 +90,13 @@ export default function CourseTabs(props: {
   }
   const material = ''
 
-
-
-  const extractGoogleDriveId = (url:string) =>{
+  const extractGoogleDriveId = (url: string) => {
     // 定義正則表達式，以匹配 Google Drive 共用網址中的 ID
-    var regex = /\/(?:d|file\/d)\/([a-zA-Z0-9_-]{25,})/;
+    var regex = /\/(?:d|file\/d)\/([a-zA-Z0-9_-]{25,})/
     // 使用正則表達式提取 ID
-    var match = url.match(regex);
+    var match = url.match(regex)
     // 如果找到匹配的 ID，則返回它，否則返回 null
-    return match ? match[1] : 'null';
+    return match ? match[1] : 'null'
   }
   return (
     <Box sx={{ width: '100%' }}>
@@ -166,7 +166,9 @@ export default function CourseTabs(props: {
               <div style={{ height: '600px' }}>
                 <iframe
                   style={{ width: '100%', height: '100%' }}
-                  src={`https://drive.google.com/file/d/${extractGoogleDriveId(videoData.material ?? '')}/preview`}
+                  src={`https://drive.google.com/file/d/${extractGoogleDriveId(
+                    videoData.material ?? ''
+                  )}/preview`}
                 ></iframe>
               </div>
               {/* <PDF path={videoData.material ?? ''}></PDF> */}
@@ -188,9 +190,9 @@ export default function CourseTabs(props: {
       {/* 視窗拉大 tab 頁面還是目錄 */}
       <TabPanel value={value} index={4}>
         <CustomizedAccordions
-          chapterData={props.chapterData}
-          lastView={props.lastView}
-          pid={props.pid}
+          chapterData={chapterData}
+          pastViewData={pastViewData}
+          courseId={courseId}
         ></CustomizedAccordions>
       </TabPanel>
     </Box>

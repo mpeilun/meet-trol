@@ -21,6 +21,16 @@ import { LoadingButton } from '@mui/lab'
 import CourseCard from '../../components/courses/course-card'
 import { CourseWithOwner } from '../../types/course'
 import BodyLayout from '../../components/layout/common-body'
+import useSWR from 'swr'
+
+const fetcher = async (url: string) => {
+  return await fetch(url).then((res) => {
+    if (!res.ok) {
+      return 'error'
+    }
+    return res.json()
+  })
+}
 
 function AllCoursesPage() {
   const [jointCourseLoading, setJointCourseLoading] = React.useState(false)
@@ -31,7 +41,7 @@ function AllCoursesPage() {
   const fetchData = React.useCallback(async () => {
     const response = await fetch(`/api/course?myCourse=true`)
     const data: CourseWithOwner[] = await response.json()
-    console.log(data)
+    // console.log(data)
     setCourseData(data)
   }, [])
 
