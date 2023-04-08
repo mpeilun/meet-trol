@@ -19,7 +19,6 @@ import { Chapter, Video, PastView } from '@prisma/client'
 import { useAppSelector, useAppDispatch } from '../../hooks/redux'
 import { setVideoId, setVideoTime } from '../../store/course-data'
 import { ChapterListData, PastViewData } from '../../types/chapter'
-import { isNullOrUndefined } from 'util'
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />

@@ -43,7 +43,6 @@ function AllCoursesPage() {
   const fetchData = React.useCallback(async () => {
     const response = await fetch(`/api/course?myCourse=true`)
     const data: CourseWithOwner[] = await response.json()
-    console.log(data)
     if (response.status == 200) {
       setCourseData(data)
     }
