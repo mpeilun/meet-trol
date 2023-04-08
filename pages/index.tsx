@@ -40,7 +40,7 @@ function HomePage() {
             alt={'Meet-Trol LOGO'}
             src={'/images/logo.png'}
           />
-          <Typography variant="h2" fontWeight={400} color={'white'}>
+          <Typography variant="h2" fontWeight={400}>
             Meet-Trol
           </Typography>
         </Box>
@@ -53,9 +53,7 @@ function HomePage() {
           alignItems={'center'}
           sx={{ marginLeft: 8 }}
         >
-          <Typography
-            sx={{ textAlign: 'justify', marginTop: '64px', color: 'white' }}
-          >
+          <Typography sx={{ textAlign: 'justify', marginTop: '64px' }}>
             線上影片學習系統，透過互動問題與眼球追蹤技術，
             分析學生對課程內容的理解程度，使教育者能夠調整教學內容，提升學習的效率。
           </Typography>
@@ -72,9 +70,7 @@ function HomePage() {
               borderRadius: '6px',
             }}
           >
-            <Typography color={'white'}>
-              {session ? '開始上課' : '登入體驗'}
-            </Typography>
+            <Typography>{session ? '開始上課' : '登入體驗'}</Typography>
           </Button>
         </Box>
       </Box>

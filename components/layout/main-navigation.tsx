@@ -69,7 +69,7 @@ function MainNavigation() {
     <AppBar
       component="nav"
       position="sticky"
-      sx={{ backgroundColor: '#204c6a', boxShadow: 'none' }}
+      sx={{ color: 'secondary', boxShadow: 'none' }}
     >
       <Container maxWidth="md">
         <Toolbar disableGutters>

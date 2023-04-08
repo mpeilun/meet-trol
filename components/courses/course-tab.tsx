@@ -103,7 +103,7 @@ export default function CourseTabs({
     return match ? match[1] : 'null'
   }
   return (
-    <Box sx={{ width: '100%', background: '#fff ' }}>
+    <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs
           value={value}
