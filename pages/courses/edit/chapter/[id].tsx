@@ -29,7 +29,6 @@ import { useDispatch } from 'react-redux'
 import { sendMessage } from '../../../../store/notification'
 import EditIcon from '@mui/icons-material/Edit'
 import { title } from 'process'
-import { grey } from '@mui/material/colors'
 
 export default function CreateCoursePage() {
   const router = useRouter()
@@ -485,7 +484,7 @@ export default function CreateCoursePage() {
                 passHref
                 legacyBehavior
               >
-                <Typography component={'a'} fontSize={20} color={'#fff'}>
+                <Typography component={'a'} fontSize={20}>
                   {videoData.title}
                 </Typography>
               </Link>
