@@ -72,7 +72,7 @@ function CourseInnerPage(props: {}) {
       ></InfoCard>
     )
   }
-  else if (chapterData) {
+  else if (chapterData && pastViewData) {
     return (
       <Box
         className="course-main-div"
