@@ -159,24 +159,6 @@ const EditDrag = (props: {
     }
   }
 
-  const addOption = () => {
-    setQuestion((prev) => {
-      const prevOptions = prev.options
-      return {
-        ...prev,
-        options: [...prevOptions, { width: 50, height: 50, x: 50, y: 50 }],
-      }
-    })
-  }
-
-  const removeOption = (index: number) => {
-    setQuestion((prev) => {
-      const prevOptions = prev.options
-      prevOptions.splice(index, 1)
-      return { ...prev, options: prevOptions }
-    })
-  }
-
   const handleIsShowAnswerChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -185,39 +167,6 @@ const EditDrag = (props: {
       return { ...prev }
     })
   }
-
-  // const Options = question.options.map((item, index) => {
-  //   const handleOptionChange =
-  //     (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-  //       setQuestion((prev) => {
-  //         const prevOptions = prev.options
-  //         prevOptions[index] = event.target.value
-  //         return { ...prev, options: prevOptions }
-  //       })
-  //     }
-
-  //   return (
-  //     <Box sx={{ flexDirection: 'row' }} key={`option-${index}`}>
-  //       <TextField
-  //         sx={{ m: 1, width: '60%' }}
-  //         variant="standard"
-  //         label={`選項 ${index + 1}`}
-  //         value={item}
-  //         onChange={handleOptionChange(index)}
-  //       />
-  //       <Button
-  //         sx={{ width: '5%', mt: 2, ml: 0.5 }}
-  //         key={index}
-  //         variant="outlined"
-  //         onClick={() => {
-  //           removeOption(index)
-  //         }}
-  //       >
-  //         <DeleteIcon />
-  //       </Button>
-  //     </Box>
-  //   )
-  // })
 
   return (
     <>
@@ -270,15 +219,7 @@ const EditDrag = (props: {
             })
           }}
         ></Rector>
-        {/* {Options} */}
-        {/* <Button
-          sx={{ m: 1, width: '7rem', height: '3rem' }}
-          variant="outlined"
-          onClick={addOption}
-        >
-          新增選項
-        </Button> */}
-        <Box ml={'auto'}>
+        <Box mt={4} ml={'auto'}>
           <ButtonGroup>
             {select.value != null ? (
               <LoadingButton

@@ -37,6 +37,10 @@ function VideoTimeLine(props: {
     console.log('new value', allQuestion)
   }, [allQuestion])
 
+  useEffect(() => {
+    console.log(selectRange)
+  }, [selectRange])
+
   return (
     <Box padding={3}>
       {allQuestion.map((question, index) => {
@@ -50,7 +54,6 @@ function VideoTimeLine(props: {
         const left = ((question.start * 100) / duration).toFixed(0)
         const selectStartLeft = ((selectRange[0] * 100) / duration).toFixed(0)
         const selectEndLeft = ((selectRange[1] * 100) / duration).toFixed(0)
-        //TODO 修好紅線跟蹤時間
         return (
           <Box
             key={question.id}
@@ -69,22 +72,6 @@ function VideoTimeLine(props: {
               {icon}
               <Typography>{displayName.substring(0, 2)}</Typography>
             </Box>
-            <div
-              style={{
-                position: 'relative',
-                left: `${selectStartLeft}%`,
-                borderLeft: '2px solid red',
-                height: '100px',
-              }}
-            />
-            <div
-              style={{
-                position: 'relative',
-                left: `${selectEndLeft}%`,
-                borderLeft: '2px solid red',
-                height: '100px',
-              }}
-            />
             <Card
               sx={{
                 cursor: 'pointer',
@@ -99,57 +86,53 @@ function VideoTimeLine(props: {
                 window.scrollTo({ top: 64, behavior: 'smooth' })
               }}
             >
+              <Box position={'relative'} zIndex={10} width={'100%'}>
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: `${selectStartLeft}%`,
+                    borderLeft: '2px solid red',
+                    height: '60px',
+                  }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: `${selectEndLeft}%`,
+                    borderLeft: '2px solid red',
+                    height: '60px',
+                  }}
+                />
+              </Box>
               <Tooltip
                 title={
-                  <Typography variant="body2">
-                    {formatSeconds(question.end)}
-                  </Typography>
+                  <Box>
+                    <Typography
+                      maxWidth={'100px'}
+                      textOverflow={'ellipsis'}
+                      overflow={'hidden'}
+                      sx={{
+                        display: '-webkit-box',
+                        WebkitLineClamp: 1,
+                        WebkitBoxOrient: 'vertical',
+                      }}
+                    >
+                      {question.title}
+                    </Typography>
+                  </Box>
                 }
-                placement={'right'}
+                arrow
               >
-                <>
-                  <Tooltip
-                    title={
-                      <Typography variant="body2">
-                        {formatSeconds(question.start)}
-                      </Typography>
-                    }
-                    placement={'left'}
-                  >
-                    <>
-                      <Tooltip
-                        title={
-                          <Box>
-                            <Typography
-                              maxWidth={'100px'}
-                              textOverflow={'ellipsis'}
-                              overflow={'hidden'}
-                              sx={{
-                                display: '-webkit-box',
-                                WebkitLineClamp: 1,
-                                WebkitBoxOrient: 'vertical',
-                              }}
-                            >
-                              {question.title}
-                            </Typography>
-                          </Box>
-                        }
-                        arrow
-                      >
-                        <Card
-                          sx={{
-                            height: '60px',
-                            position: 'relative',
-                            left: `${left}%`,
-                            width: `${width}%`,
-                            boxShadow: 'none',
-                            bgcolor: color,
-                          }}
-                        />
-                      </Tooltip>
-                    </>
-                  </Tooltip>
-                </>
+                <Card
+                  sx={{
+                    height: '60px',
+                    position: 'relative',
+                    left: `${left}%`,
+                    width: `${width}%`,
+                    boxShadow: 'none',
+                    bgcolor: color,
+                  }}
+                />
               </Tooltip>
             </Card>
           </Box>
