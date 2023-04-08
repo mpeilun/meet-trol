@@ -46,7 +46,7 @@ function MainNavigation() {
   const pages = [
     { displayName: '我的課程', path: '/courses' },
     { displayName: '課程管理', path: '/courses/edit' },
-    { displayName: '關於我們', path: '/#about' },
+    { displayName: '關於我們', path: '/about' },
     // { displayName: 'course title', path: 'course/courseid' },
   ]
   const settings = [
@@ -66,7 +66,11 @@ function MainNavigation() {
   ]
 
   return (
-    <AppBar component="nav" position="sticky">
+    <AppBar
+      component="nav"
+      position="sticky"
+      sx={{ backgroundColor: '#204c6a', boxShadow: 'none' }}
+    >
       <Container maxWidth="md">
         <Toolbar disableGutters>
           <RemoveRedEyeIcon
@@ -197,17 +201,27 @@ function MainNavigation() {
                 </IconButton>
               </Tooltip>
             ) : (
-              <Tooltip title={'登入'}>
-                <IconButton
+              <Tooltip title={'SignIn'}>
+                <Button
+                  color={'custom_bottom'}
+                  variant="contained"
                   onClick={() => {
                     window.open('/auth/signin')
                   }}
-                  sx={{ p: 0 }}
+                  sx={{
+                    marginPadding: '8px',
+                    borderRadius: '6px',
+                    boxShadow: '0',
+                  }}
                 >
-                  <Avatar sx={{ bgcolor: 'primary.main' }}>
-                    <LoginIcon />
-                  </Avatar>
-                </IconButton>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignItems={'center'}
+                  >
+                    <Typography>SIGN IN</Typography>
+                  </Box>
+                </Button>
               </Tooltip>
             )}
             <Menu
