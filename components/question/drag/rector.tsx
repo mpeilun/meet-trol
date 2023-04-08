@@ -22,12 +22,12 @@ function Rector(props: {
   const [curY, setCurY] = useState(-1)
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 })
 
-  useEffect(() => {
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')
-    ctx.strokeStyle = props.strokeStyle
-    ctx.lineWidth = props.lineWidth
-  }, [])
+  // useEffect(() => {
+  //   const canvas = canvasRef.current
+  //   const ctx = canvas.getContext('2d')
+  //   ctx.strokeStyle = props.strokeStyle
+  //   ctx.lineWidth = props.lineWidth
+  // }, [])
 
   useEffect(() => {
     if (isDrag) {
@@ -57,38 +57,11 @@ function Rector(props: {
         h: curY - startY,
       }
       console.log('stroke', startX, startY, curX, curY)
+      ctx.strokeStyle = props.strokeStyle
+      ctx.lineWidth = props.lineWidth
       ctx.strokeRect(rect.x, rect.y, rect.w, rect.h)
     }
   }, [curX, curY])
-
-  //   function updateCanvas() {
-  //     console.log('updateCanvas', isDrag)
-  //     if (isDrag) {
-  //       const canvas = canvasRef.current
-  //       const ctx = canvas.getContext('2d')
-  //       ctx.clearRect(0, 0, props.width, props.height)
-  //       const rect = {
-  //         x: startX,
-  //         y: startY,
-  //         w: curX - startX,
-  //         h: curY - startY,
-  //       }
-  //       console.log('stroke', startX, startY, curX, curY)
-  //       ctx.strokeRect(rect.x, rect.y, rect.w, rect.h)
-  //     }
-  //   }
-
-  //   function addMouseEvents() {
-  //     document.addEventListener('mousedown', onMouseDown, false)
-  //     document.addEventListener('mousemove', onMouseMove, false)
-  //     document.addEventListener('mouseup', onMouseUp, false)
-  //   }
-
-  //   function removeMouseEvents() {
-  //     document.removeEventListener('mousedown', onMouseDown, false)
-  //     document.removeEventListener('mousemove', onMouseMove, false)
-  //     document.removeEventListener('mouseup', onMouseUp, false)
-  //   }
 
   function onMouseDown(e: React.MouseEvent<HTMLCanvasElement>) {
     setIsDrag(true)
@@ -110,9 +83,16 @@ function Rector(props: {
     <>
       <img
         ref={imageRef}
-        alt="fill-image"
+        alt="請填入圖片網址"
         width={'100%'}
-        style={{ objectFit: 'fill' }}
+        style={{
+          objectFit: 'fill',
+          WebkitUserSelect: 'none',
+          KhtmlUserSelect: 'none',
+          MozUserSelect: 'none',
+          msUserSelect: 'none',
+          userSelect: 'none',
+        }}
         onLoad={(e) => {
           setImageSize({
             width: e.currentTarget.clientWidth,
@@ -121,19 +101,21 @@ function Rector(props: {
         }}
         src={props.imgUrl}
       />
-      <canvas
-        style={{
-          position: 'relative',
-          top: -imageSize.height,
-          border: '1px solid red',
-        }}
-        onMouseUp={(e) => onMouseUp(e)}
-        onMouseDown={(e) => onMouseDown(e)}
-        onMouseMove={(e) => onMouseMove(e)}
-        width={imageSize.width}
-        height={imageSize.height}
-        ref={canvasRef}
-      ></canvas>
+      <Box width={imageSize.width} height={0}>
+        <canvas
+          style={{
+            position: 'relative',
+            zIndex: 10,
+            top: -imageRef.current?.offsetHeight,
+          }}
+          onMouseUp={(e) => onMouseUp(e)}
+          onMouseDown={(e) => onMouseDown(e)}
+          onMouseMove={(e) => onMouseMove(e)}
+          width={imageSize.width}
+          height={imageSize.height}
+          ref={canvasRef}
+        ></canvas>
+      </Box>
     </>
   )
 }

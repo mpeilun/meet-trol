@@ -52,11 +52,11 @@ function CoursesManagePage() {
 
   if (!session)
     return (
-      <Box>
-        <Typography variant="h2" sx={{ mt: '20%' }} fontWeight="bold">
-          請先登入
+      <BodyLayout>
+        <Typography variant="h3" textAlign={'center'} sx={{ color: 'grey' }}>
+          請登入以管理課程
         </Typography>
-      </Box>
+      </BodyLayout>
     )
   return (
     <BodyLayout>
