@@ -484,7 +484,7 @@ export default function CreateCoursePage() {
                 passHref
                 legacyBehavior
               >
-                <Typography component={'a'} fontSize={20}>
+                <Typography component={'a'} fontSize={20} color={'black'}>
                   {videoData.title}
                 </Typography>
               </Link>
