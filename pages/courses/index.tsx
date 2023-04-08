@@ -22,6 +22,16 @@ import CourseCard from '../../components/courses/course-card'
 import { CourseWithOwner } from '../../types/course'
 import BodyLayout from '../../components/layout/common-body'
 import { useSession } from 'next-auth/react'
+import useSWR from 'swr'
+
+const fetcher = async (url: string) => {
+  return await fetch(url).then((res) => {
+    if (!res.ok) {
+      return 'error'
+    }
+    return res.json()
+  })
+}
 
 function AllCoursesPage() {
   const { data: session } = useSession()

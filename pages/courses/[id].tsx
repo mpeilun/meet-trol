@@ -17,18 +17,18 @@ import InfoCard from '../../components/infoCard'
 const CoursePlayer = dynamic(
   () => import('../../components/courses/course-player'),
   {
-    loading: () => <Shimmer width={2000} height={1000} />,
+    loading: () => <Shimmer width={2000} height={800} />,
     ssr: false,
   }
 )
 const CourseTab = dynamic(() => import('../../components/courses/course-tab'), {
-  loading: () => <Shimmer width={2000} height={1000} />,
+  loading: () => <Shimmer width={2000} height={800} />,
   ssr: false,
 })
 const CustomizedAccordions = dynamic(
   () => import('../../components/chapter/chapter'),
   {
-    loading: () => <Shimmer width={2000} height={1000} />,
+    loading: () => <Shimmer width={2000} height={200} />,
     ssr: false,
   }
 )
@@ -63,7 +63,7 @@ function CourseInnerPage(props: {}) {
     return <Shimmer width={2000} height={2000} />
   }
 
-  if (chapterData === 'error' || pastViewData === 'error') {
+  else if (chapterData === 'error' || pastViewData === 'error') {
     return (
       <InfoCard
         title="Error"
@@ -72,51 +72,52 @@ function CourseInnerPage(props: {}) {
       ></InfoCard>
     )
   }
-
-  return (
-    <Box
-      className="course-main-div"
-      display="flex"
-      width="100%"
-      height={'100%'}
-      maxHeight={'calc(100vh - 68.5px)'}
-    >
+  else if (chapterData) {
+    return (
       <Box
-        className="course-nav-div"
-        display={{ width: '20vw', xs: 'none', md: 'flex' }}
-      >
-        <Card
-          elevation={0}
-          sx={{
-            height: '100%',
-            width: '100%',
-            borderRadius: 0,
-            overflowY: 'auto',
-          }}
-        >
-          <CustomizedAccordions
-            chapterData={chapterData as ChapterListData[]}
-            pastViewData={pastViewData as PastViewData[]}
-            courseId={courseId}
-          ></CustomizedAccordions>
-          <Divider />
-        </Card>
-      </Box>
-      <Box
-        className="course-material-div"
+        className="course-main-div"
+        display="flex"
         width="100%"
-        overflow="scroll"
-        sx={{ overflowX: 'hidden' }}
+        height={'100%'}
+        maxHeight={'calc(100vh - 68.5px)'}
       >
-        <CoursePlayer courseId={courseId}></CoursePlayer>
-        {/* <CourseTab
-          chapterData={chapter}
-          pid={pid}
-          lastView={lastView}
-        ></CourseTab> */}
+        <Box
+          className="course-nav-div"
+          display={{ width: '20vw', xs: 'none', md: 'flex' }}
+        >
+          <Card
+            elevation={0}
+            sx={{
+              height: '100%',
+              width: '100%',
+              borderRadius: 0,
+              overflowY: 'auto',
+            }}
+          >
+            <CustomizedAccordions
+              chapterData={chapterData as ChapterListData[]}
+              pastViewData={pastViewData as PastViewData[]}
+              courseId={courseId}
+            ></CustomizedAccordions>
+            <Divider />
+          </Card>
+        </Box>
+        <Box
+          className="course-material-div"
+          width="100%"
+          overflow="scroll"
+          sx={{ overflowX: 'hidden' }}
+        >
+          <CoursePlayer courseId={courseId}></CoursePlayer>
+          <CourseTab
+            chapterData={chapterData}
+            courseId={courseId}
+            pastViewData={pastViewData}
+          ></CourseTab>
+        </Box>
       </Box>
-    </Box>
-  )
+    )
+  }
 }
 
 export default CourseInnerPage
