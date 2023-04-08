@@ -98,9 +98,7 @@ export default function Home() {
             error={titleError}
             helperText={titleError ? '請輸入課程名稱' : ''}
             value={title}
-            id="outlined-required"
             label="名稱"
-            style={{ backgroundColor: '#F4F2F3', borderRadius: '5px' }}
             onChange={handleChangeTitle}
           />
         </Box>
@@ -112,7 +110,6 @@ export default function Home() {
             label="說明"
             multiline
             color="primary"
-            style={{ backgroundColor: '#F4F2F3', borderRadius: '5px' }}
             onChange={handleChangeDescription}
           />
         </Box>
@@ -126,13 +123,13 @@ export default function Home() {
               label="開始日期"
               value={startDate}
               onChange={(newStart) => setStartDate(newStart)}
-              sx={{ mr: 2, backgroundColor: '#F4F2F3' }}
+              sx={{ mr: 2 }}
             />
             <DatePicker
               label="結束日期"
               value={endDate}
               onChange={(newEnd) => setEndDate(newEnd)}
-              sx={{ mr: 2, backgroundColor: '#F4F2F3' }}
+              sx={{ mr: 2 }}
             />
           </LocalizationProvider>
         </Box>

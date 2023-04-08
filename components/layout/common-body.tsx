@@ -1,9 +1,9 @@
-import { Paper } from '@mui/material'
+import { Box, Paper } from '@mui/material'
 
 function BodyLayout(props: { children: React.ReactNode; other?: any }) {
   const { children, ...other } = props
   return (
-    <Paper
+    <Box
       {...other}
       key={'body-paper'}
       sx={{
@@ -13,11 +13,11 @@ function BodyLayout(props: { children: React.ReactNode; other?: any }) {
         maxWidth: 'xl',
         m: { md: '32px auto', xs: '0' },
         p: 3,
-        backgroundColor: '#d7f1fd',
+        // backgroundColor: '#11313e',
       }}
     >
       {children}
-    </Paper>
+    </Box>
   )
 }
 

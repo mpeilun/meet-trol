@@ -24,7 +24,7 @@ function Layout(props: { children: ReactNode }) {
         <CssBaseline />
         <GlobalStyles
           styles={{
-            body: { margin: 0, backgroundColor: '#ffff' },
+            body: { margin: 0, backgroundColor: '#11313e' },
           }}
         />
         <Box
