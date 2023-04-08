@@ -33,16 +33,23 @@ function HomePage() {
         >
           <Image
             width={300}
-            height={300}
+            height={200}
             style={{
               objectFit: 'contain',
             }}
             alt={'Meet-Trol LOGO'}
             src={'/images/logo.png'}
           />
-          <Typography variant="h2" fontWeight={400}>
+          <Image
+            priority
+            src="/logo-font.svg"
+            height={100}
+            width={300}
+            alt="logo-font"
+          />
+          {/* <Typography variant="h2" fontWeight={400}>
             Meet-Trol
-          </Typography>
+          </Typography> */}
         </Box>
         <Box
           display={'flex'}
