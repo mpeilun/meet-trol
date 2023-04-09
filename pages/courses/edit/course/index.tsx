@@ -45,7 +45,7 @@ export default function Home() {
             duration: 'short',
           })
         )
-        router.push('/courses/manage')
+        router.push('/courses/edit')
       } else {
         dispatch(
           sendMessage({
