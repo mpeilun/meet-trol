@@ -25,6 +25,8 @@ function EyesTracking() {
   }>()
   const dispatch = useAppDispatch()
 
+  const [eyesTrackingRecord, setEyesTrackingRecord] = useState([{ x: 0, y: 0 }])
+
   useEffect(() => {
     eyeTrackingRef.current = eyeTracking
   }, [eyeTracking])
@@ -41,11 +43,19 @@ function EyesTracking() {
         dispatch(updateEyeTracking({ x: prediction.x, y: prediction.y }))
         console.log(eyeTrackingRef.current)
         const questionLocateCurrent = questionLocateRef.current!
+
+        setEyesTrackingRecord((prev) => [
+          ...prev,
+          { x: prediction.x, y: prediction.y },
+        ])
+
+        const range = 50
+
         if (
-          prediction.x >= questionLocateCurrent.xStart &&
-          prediction.x <= questionLocateCurrent.xEnd &&
-          prediction.y >= questionLocateCurrent.yStart &&
-          prediction.y <= questionLocateCurrent.yEnd
+          prediction.x >= questionLocateCurrent.xStart - range &&
+          prediction.x <= questionLocateCurrent.xEnd + range &&
+          prediction.y >= questionLocateCurrent.yStart - range &&
+          prediction.y <= questionLocateCurrent.yEnd + range
         ) {
           dispatch(isLooking(true))
         } else {
@@ -54,7 +64,7 @@ function EyesTracking() {
       } catch {
         //webgazer is not ready yet
       }
-    }, 500)
+    }, 100)
     return () => clearInterval(interval)
   }, [webgazerScript])
 
@@ -81,17 +91,6 @@ function EyesTracking() {
           // })
         }}
       />
-      <Box
-        position={'absolute'}
-        left={questionLocate.xStart}
-        top={questionLocate.yStart}
-        zIndex={100}
-        width={questionLocate.w}
-        height={questionLocate.h}
-        border={'2px solid yellow'}
-      >
-        1
-      </Box>
       <Button
         onClick={() => {
           webgazer.begin()
@@ -112,6 +111,34 @@ function EyesTracking() {
         }}
       >
         PAUSE/RESUME
+      </Button>
+      <Button
+        onClick={() => {
+          // 計算平均運動量
+          let sumOfDeltas = 0
+          let numberOfMeasurements = 0
+          for (let i = 1; i < eyesTrackingRecord.length; i++) {
+            const previousPosition = eyesTrackingRecord[i - 1]
+            const currentPosition = eyesTrackingRecord[i]
+            const deltaX = Math.abs(currentPosition.x - previousPosition.x)
+            const deltaY = Math.abs(currentPosition.y - previousPosition.y)
+            const delta = Math.sqrt(deltaX ** 2 + deltaY ** 2)
+            sumOfDeltas += delta
+            numberOfMeasurements++
+          }
+
+          const averageMotion = sumOfDeltas / numberOfMeasurements
+          console.log('averageMotion', averageMotion)
+        }}
+      >
+        計算平均位移
+      </Button>
+      <Button
+        onClick={() => {
+          setEyesTrackingRecord([{ x: 0, y: 0 }])
+        }}
+      >
+        清除
       </Button>
       <Button
         onClick={() => {

@@ -80,6 +80,8 @@ function CoursePlayer(props: { courseId: string }) {
   const [displayCreateDiscussion, setDisplayCreateDiscussion] =
     React.useState(false) //是否顯示新增討論區
 
+  const questionLocate = useAppSelector((state) => state.course.questionLocate)
+
   const [hasWindow, setHasWindow] = React.useState(false)
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -177,6 +179,18 @@ function CoursePlayer(props: { courseId: string }) {
 
   return (
     <FullScreen handle={handleFullScreen}>
+      {/*眼動儀*/}
+      {/* <Box
+        position={'absolute'}
+        left={questionLocate.xStart}
+        top={questionLocate.yStart}
+        zIndex={2 ^ 53}
+        width={questionLocate.w}
+        height={questionLocate.h}
+        border={'2px solid yellow'}
+      >
+        Test
+      </Box> */}
       {hasWindow && (
         <Box
           sx={{ position: 'relative', width: '100%', height: '100%' }}
@@ -232,12 +246,13 @@ function CoursePlayer(props: { courseId: string }) {
                     pause={pause}
                     play={play}
                     data={data}
+                    isFullScreen={handleFullScreen.active}
                   ></PopupFab>
                 )
               })}
             </Box>
           )}
-          
+
           {loading && (
             <Box
               sx={{
