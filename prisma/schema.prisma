@@ -57,34 +57,61 @@ model Record {
   userId   String     @unique @db.ObjectId
 }
 
-type PeakTime {
-  time      DateTime
-  videoTime Float
+type PauseTime {
+  start      DateTime
+  end        DateTime
+  playSecond Float
 }
 
-type PauseTime {
-  start     DateTime
-  end       DateTime
-  videoTime Float
+type DragTime {
+  time       DateTime
+  playSecond Float
+}
+
+type WatchTime {
+  start DateTime
+  end   DateTime
+}
+
+type Focus {
+  playSecond Float
+  inWindow   Boolean
+}
+
+type EyesTrack {
+  x          Float
+  y          Float
+  playerW    Float
+  playerH    Float
+  playSecond Focus
+}
+
+type InteractionLog {
+  questionId String   @db.ObjectId
+  open       DateTime
+  close      DateTime
+  isFocus    Float
 }
 
 model ViewLog {
-  id         String      @id @default(auto()) @map("_id") @db.ObjectId
-  pauseTimes PauseTime[]
-  peekTimes  PeakTime[]
-  watchTime  Float
-  PastView   PastView?   @relation(fields: [pastViewId], references: [id])
-  pastViewId String?     @db.ObjectId
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  eyesTrack      EyesTrack[]
+  pauseTimes     PauseTime[]
+  dragTimes      DragTime[]
+  watchTime      WatchTime
+  interactionLog InteractionLog[]
+  PastView       PastView?        @relation(fields: [pastViewId], references: [id])
+  pastViewId     String?          @db.ObjectId
 }
 
 model PastView {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  videoId       String    @unique @db.ObjectId
-  viewLogs      ViewLog[]
-  lastVideoTime Float
-  lastViewTime  DateTime  @default(now())
-  record        Record    @relation(fields: [recordId], references: [id])
-  recordId      String    @unique @db.ObjectId
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  videoId        String    @unique @db.ObjectId
+  viewLogs       ViewLog[]
+  lastPlaySecond Float
+  lastViewTime   DateTime  @default(now())
+  record         Record    @relation(fields: [recordId], references: [id])
+  recordId       String    @unique @db.ObjectId
 }
 
 model VerificationToken {
@@ -166,11 +193,12 @@ model Choice {
 }
 
 model ChoiceFeedback {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  answers  Int[]
-  userId   String @db.ObjectId
-  choice   Choice @relation(fields: [choiceId], references: [id], onDelete: Cascade)
-  choiceId String @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  answers   Int[]
+  userId    String   @db.ObjectId
+  choice    Choice   @relation(fields: [choiceId], references: [id], onDelete: Cascade)
+  choiceId  String   @db.ObjectId
+  createdAt DateTime @default(now())
 }
 
 model Rank {
@@ -189,11 +217,12 @@ model Rank {
 }
 
 model RankFeedback {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  answers String[]
-  userId  String   @db.ObjectId
-  rank    Rank     @relation(fields: [rankId], references: [id], onDelete: Cascade)
-  rankId  String   @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  answers   String[]
+  userId    String   @db.ObjectId
+  rank      Rank     @relation(fields: [rankId], references: [id], onDelete: Cascade)
+  rankId    String   @db.ObjectId
+  createdAt DateTime @default(now())
 }
 
 model Fill {
@@ -212,11 +241,12 @@ model Fill {
 }
 
 model FillFeedback {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  answers String[]
-  userId  String   @db.ObjectId
-  fill    Fill     @relation(fields: [fillId], references: [id], onDelete: Cascade)
-  fillId  String   @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  answers   String[]
+  userId    String   @db.ObjectId
+  fill      Fill     @relation(fields: [fillId], references: [id], onDelete: Cascade)
+  fillId    String   @db.ObjectId
+  createdAt DateTime @default(now())
 }
 
 type Position {
@@ -241,6 +271,7 @@ model Drag {
   end          Float
   video        Video          @relation(fields: [videoId], references: [id], onDelete: Cascade)
   videoId      String         @db.ObjectId
+  createdAt    DateTime       @default(now())
 }
 
 model DragFeedback {

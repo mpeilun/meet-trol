@@ -11,6 +11,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       const data = await prisma.fillFeedback.create({
         data: {
           answers: answers,
+          createdAt: new Date(),
+
           userId: session.user.id,
           fill: {
             connect: {
