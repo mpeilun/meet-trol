@@ -61,9 +61,7 @@ function CourseInnerPage(props: {}) {
 
   if (isLoading || !courseId) {
     return <Shimmer width={2000} height={2000} />
-  }
-
-  else if (chapterData === 'error' || pastViewData === 'error') {
+  } else if (chapterData === 'error' || pastViewData === 'error') {
     return (
       <InfoCard
         title="Error"
@@ -71,8 +69,7 @@ function CourseInnerPage(props: {}) {
       in this course, or if you have already logged in."
       ></InfoCard>
     )
-  }
-  else if (chapterData && pastViewData) {
+  } else if (chapterData && pastViewData) {
     return (
       <Box
         className="course-main-div"
@@ -103,6 +100,7 @@ function CourseInnerPage(props: {}) {
           </Card>
         </Box>
         <Box
+          id="course-material-div"
           className="course-material-div"
           width="100%"
           overflow="scroll"

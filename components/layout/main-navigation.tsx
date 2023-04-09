@@ -67,6 +67,7 @@ function MainNavigation() {
 
   return (
     <AppBar
+      id="main-navigation"
       component="nav"
       position="sticky"
       sx={{ color: 'secondary', boxShadow: 'none' }}

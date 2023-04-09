@@ -43,8 +43,8 @@ function HomePage() {
           <Image
             priority
             src="/logo-font.svg"
-            height={100}
             width={300}
+            height={100}
             alt="logo-font"
           />
           {/* <Typography variant="h2" fontWeight={400}>

@@ -6,6 +6,8 @@ import styled from '@emotion/styled/types/base'
 import { useAppSelector, useAppDispatch } from '../../hooks/redux'
 import { updateEyeTracking } from '../../store/course-data'
 import { isLooking } from '../../store/course-data'
+import { red } from '@mui/material/colors'
+import { green } from '@mui/material/colors'
 
 function EyesTracking() {
   const [gazer, setGazer] = useState(false)
@@ -52,7 +54,7 @@ function EyesTracking() {
       } catch {
         //webgazer is not ready yet
       }
-    }, 100)
+    }, 500)
     return () => clearInterval(interval)
   }, [webgazerScript])
 
@@ -79,6 +81,17 @@ function EyesTracking() {
           // })
         }}
       />
+      <Box
+        position={'absolute'}
+        left={questionLocate.xStart}
+        top={questionLocate.yStart}
+        zIndex={100}
+        width={questionLocate.w}
+        height={questionLocate.h}
+        border={'2px solid yellow'}
+      >
+        1
+      </Box>
       <Button
         onClick={() => {
           webgazer.begin()

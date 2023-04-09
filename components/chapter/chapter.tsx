@@ -177,7 +177,7 @@ export default function CustomizedAccordions({
   }
 
   return (
-    <div>
+    <div id="chapter-list">
       {chapterData.map(({ title, videos }, indexOne) => {
         return (
           <Accordion

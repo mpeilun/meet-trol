@@ -16,9 +16,9 @@ const PopupModal = (props: {
   setClose: () => void
   open: boolean
   data: Info | ChoiceData | RankData | FillData | DragData
-  
 }) => {
   const questionRef = useRef<HTMLDivElement>(null)
+  const questionBoxRef = useRef<HTMLVideoElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)
   const [isRender, setIsRender] = useState(false)
   const viewPort = useWindowDimensions()
@@ -30,12 +30,27 @@ const PopupModal = (props: {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
+    console.log(document.getElementById('course-material-div').scrollTop)
+  }, [document.getElementById('course-material-div').scrollTop])
+
+  useEffect(() => {
     if (questionRef.current) {
       const questionWidth = questionRef.current.clientWidth
       const questionHeight = questionRef.current.clientHeight
-      const xEnd = viewPort.width - viewPort.width * 0.2
-      const xStart = xEnd - questionWidth
-      const yStart = viewPort.height * 0.2
+      // const xStart =
+      //   viewPort.width * 0.166 +
+      //   (viewPort.width - viewPort.width * 0.166) / 2 -
+      //   questionWidth / 2
+      const xStart =
+        document.getElementById('chapter-list').clientWidth +
+        questionRef.current.offsetLeft +
+        4
+      const xEnd = xStart + questionWidth
+      const yStart =
+        document.getElementById('main-navigation').clientHeight +
+        questionRef.current.offsetTop +
+        4 -
+        document.getElementById('course-material-div').scrollTop
       const yEnd = yStart + questionHeight
       dispatch(
         setQuestionLocate({
@@ -50,15 +65,23 @@ const PopupModal = (props: {
 
       setIsRender(true)
 
-      console.log('question width height', questionWidth, questionHeight)
+      // console.log('question width height', questionWidth, questionHeight)
+      console.log('question locate', xStart, xEnd, yStart, yEnd)
     }
-  }, [questionRef.current?.clientHeight])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    document.getElementById('course-material-div').scrollTop,
+    questionRef.current?.offsetLeft,
+    questionRef.current?.offsetTop,
+    viewPort,
+  ])
 
   return (
     <>
       {/* BUG: 全螢幕不會顯示、位置不會自適應 */}
       {/* For testing */}
       <Box
+        ref={questionBoxRef}
         sx={{
           width: '100%',
           height: '100%',
