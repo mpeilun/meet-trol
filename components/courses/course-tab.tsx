@@ -178,7 +178,11 @@ export default function CourseTabs({
               {/* <PDF path={videoData.material ?? ''}></PDF> */}
             </div>
           ) : (
-            <h3>沒有教材</h3>
+            <div>
+              <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
+                {`目前沒有教材`}
+              </Typography>
+            </div>
           ))}
       </TabPanel>
 
