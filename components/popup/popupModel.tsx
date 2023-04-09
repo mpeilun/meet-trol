@@ -16,6 +16,7 @@ const PopupModal = (props: {
   setClose: () => void
   open: boolean
   data: Info | ChoiceData | RankData | FillData | DragData
+  isFullScreen: boolean
 }) => {
   const questionRef = useRef<HTMLDivElement>(null)
   const questionBoxRef = useRef<HTMLVideoElement>(null)
@@ -41,16 +42,18 @@ const PopupModal = (props: {
       //   viewPort.width * 0.166 +
       //   (viewPort.width - viewPort.width * 0.166) / 2 -
       //   questionWidth / 2
-      const xStart =
-        document.getElementById('chapter-list').clientWidth +
-        questionRef.current.offsetLeft +
-        4
+      const xStart = props.isFullScreen
+        ? questionRef.current.offsetLeft + 4
+        : document.getElementById('chapter-list').clientWidth +
+          questionRef.current.offsetLeft +
+          4
       const xEnd = xStart + questionWidth
-      const yStart =
-        document.getElementById('main-navigation').clientHeight +
-        questionRef.current.offsetTop +
-        4 -
-        document.getElementById('course-material-div').scrollTop
+      const yStart = props.isFullScreen
+        ? questionRef.current.offsetTop + 4
+        : document.getElementById('main-navigation').clientHeight +
+          questionRef.current.offsetTop +
+          4 -
+          document.getElementById('course-material-div').scrollTop
       const yEnd = yStart + questionHeight
       dispatch(
         setQuestionLocate({
