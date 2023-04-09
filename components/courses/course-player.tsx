@@ -237,14 +237,7 @@ function CoursePlayer(props: { courseId: string }) {
               })}
             </Box>
           )}
-          {/* {showComponent && (
-          <PopupFab
-            setClose={handleClosePopupModal}
-            setOpen={handleOpenPopupModal}
-            open={openPopupModal}
-            questionType={questionType}
-          ></PopupFab>
-        )} */}
+          
           {loading && (
             <Box
               sx={{
@@ -260,7 +253,10 @@ function CoursePlayer(props: { courseId: string }) {
             </Box>
           )}
 
-          <div className="course-player">
+          <div
+            className="course-player"
+            style={{ width: '100%', height: '100%' }}
+          >
             <Box
               position="absolute"
               width={'100%'}
@@ -295,7 +291,7 @@ function CoursePlayer(props: { courseId: string }) {
               }}
             />
           </div>
-          {playerRef?.current && (
+          {/* {playerRef?.current && (
             <CreateDiscussion
               duration={playerRef.current.getDuration()}
               displayCreateDiscussion={displayCreateDiscussion}
@@ -304,7 +300,7 @@ function CoursePlayer(props: { courseId: string }) {
               courseId={courseId}
               chapterId={videoData.chapterId}
             />
-          )}
+          )} */}
         </Box>
       )}
     </FullScreen>

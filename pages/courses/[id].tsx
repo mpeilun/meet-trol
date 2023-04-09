@@ -17,12 +17,12 @@ import InfoCard from '../../components/infoCard'
 const CoursePlayer = dynamic(
   () => import('../../components/courses/course-player'),
   {
-    loading: () => <Shimmer width={2000} height={800} />,
+    // loading: () => <Shimmer width={2000} height={800} />,
     ssr: false,
   }
 )
 const CourseTab = dynamic(() => import('../../components/courses/course-tab'), {
-  loading: () => <Shimmer width={2000} height={800} />,
+  // loading: () => <Shimmer width={2000} height={800} />,
   ssr: false,
 })
 const CustomizedAccordions = dynamic(
