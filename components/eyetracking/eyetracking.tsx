@@ -1,5 +1,5 @@
 import Script from 'next/script'
-import { Modal, Fab, Button, Box, Typography } from '@mui/material'
+import { Modal, Fab, Button, Box, Typography, Card } from '@mui/material'
 import { useState, useEffect, useRef } from 'react'
 import styled from '@emotion/styled/types/base'
 import { useAppSelector, useAppDispatch } from '../../hooks/redux'
@@ -11,6 +11,7 @@ import WebGazer from '../../types/webgazer'
 import { LoadingButton } from '@mui/lab'
 import { InformedConsent } from '@prisma/client'
 import { sendMessage } from '../../store/notification'
+import { Consent } from '../consent'
 declare var webgazer: WebGazer
 
 function EyesTracking() {
@@ -127,18 +128,20 @@ function EyesTracking() {
       <Modal open={modalOpen} disableAutoFocus>
         <Box
           display="flex"
+          flexDirection="column"
           justifyContent="center"
           sx={{
             position: 'absolute',
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: 400,
+            width: 600,
             bgcolor: 'background.paper',
             boxShadow: 24,
             p: 4,
           }}
         >
+          <Consent/> 
           <LoadingButton
             loading={consentLoadingButton}
             variant="contained"
