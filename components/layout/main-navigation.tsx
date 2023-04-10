@@ -46,7 +46,7 @@ function MainNavigation() {
   const pages = [
     { displayName: '我的課程', path: '/courses' },
     { displayName: '課程管理', path: '/courses/edit' },
-    { displayName: '關於我們', path: '/#about' },
+    { displayName: '關於我們', path: '/about' },
     // { displayName: 'course title', path: 'course/courseid' },
   ]
   const settings = [
@@ -66,11 +66,16 @@ function MainNavigation() {
   ]
 
   return (
-    <AppBar component="nav" position="sticky">
+    <AppBar
+      id="main-navigation"
+      component="nav"
+      position="sticky"
+      sx={{ color: 'secondary', boxShadow: 'none' }}
+    >
       <Container maxWidth="md">
         <Toolbar disableGutters>
           <RemoveRedEyeIcon
-            sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}
+            sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, color: '#fff' }}
           />
           <Link href={'/'} passHref legacyBehavior>
             <Typography
@@ -84,7 +89,7 @@ function MainNavigation() {
                 fontFamily: 'monospace',
                 fontWeight: 700,
                 letterSpacing: '.0.6rem',
-                color: 'inherit',
+                color: '#fff',
                 textDecoration: 'none',
               }}
             >
@@ -197,17 +202,26 @@ function MainNavigation() {
                 </IconButton>
               </Tooltip>
             ) : (
-              <Tooltip title={'登入'}>
-                <IconButton
+              <Tooltip title={'SignIn'}>
+                <Button
+                  variant="contained"
                   onClick={() => {
                     window.open('/auth/signin')
                   }}
-                  sx={{ p: 0 }}
+                  sx={{
+                    marginPadding: '8px',
+                    borderRadius: '6px',
+                    boxShadow: '0',
+                  }}
                 >
-                  <Avatar sx={{ bgcolor: 'primary.main' }}>
-                    <LoginIcon />
-                  </Avatar>
-                </IconButton>
+                  <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignItems={'center'}
+                  >
+                    <Typography sx={{ color: '#fff' }}>SIGN IN</Typography>
+                  </Box>
+                </Button>
               </Tooltip>
             )}
             <Menu

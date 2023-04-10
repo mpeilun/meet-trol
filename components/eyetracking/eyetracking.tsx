@@ -1,16 +1,34 @@
 import Script from 'next/script'
-declare var webgazer: any
-import { Modal, Fab, Button, Box } from '@mui/material'
+import { Modal, Fab, Button, Box, Typography, Card } from '@mui/material'
 import { useState, useEffect, useRef } from 'react'
 import styled from '@emotion/styled/types/base'
 import { useAppSelector, useAppDispatch } from '../../hooks/redux'
 import { updateEyeTracking } from '../../store/course-data'
 import { isLooking } from '../../store/course-data'
+import { red } from '@mui/material/colors'
+import { green } from '@mui/material/colors'
+import WebGazer from '../../types/webgazer'
+import { LoadingButton } from '@mui/lab'
+import { InformedConsent } from '@prisma/client'
+import { sendMessage } from '../../store/notification'
+import { Consent } from '../docs/consent'
+import { GoogleForm } from '../docs/googleForm'
+declare var webgazer: WebGazer
 
 function EyesTracking() {
   const [gazer, setGazer] = useState(false)
   const [correction, setCorrection] = useState(false)
   const [webgazerScript, setWebgazerScript] = useState(false)
+  const [consentLoadingButton, setConsentLoadingButton] = useState(false)
+
+  const [modalOpen, setModalOpen] = useState(false)
+  const handleModalOpen = () => {
+    setModalOpen(true)
+  }
+  const handleModalClose = () => {
+    setModalOpen(false)
+    setCorrection(true)
+  }
 
   const eyeTracking = useAppSelector((state) => state.course.eyeTracking)
   const eyeTrackingRef = useRef<{ x: number; y: number }>()
@@ -21,7 +39,26 @@ function EyesTracking() {
     yStart: number
     yEnd: number
   }>()
+
+  const [consentIsAgreed, setConsentIsAgreed] = useState(false)
+  const [preTestSubmitted, setPreTestSubmitted] = useState(false)
   const dispatch = useAppDispatch()
+
+  // const [eyesTrackingRecord, setEyesTrackingRecord] = useState([{ x: 0, y: 0 }])
+
+  useEffect(() => {
+    if (webgazerScript) {
+      const fetchData = async () => {
+        const res = await fetch(`/api/consent`)
+        if (res.status != 200) {
+          handleModalOpen()
+        } else {
+          webgazer.begin()
+        }
+      }
+      fetchData()
+    }
+  }, [webgazerScript])
 
   useEffect(() => {
     eyeTrackingRef.current = eyeTracking
@@ -31,30 +68,40 @@ function EyesTracking() {
     questionLocateRef.current = questionLocate
   }, [questionLocate])
 
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      try {
-        var prediction = await webgazer.getCurrentPrediction()
-        //redux
-        dispatch(updateEyeTracking({ x: prediction.x, y: prediction.y }))
-        console.log(eyeTrackingRef.current)
-        const questionLocateCurrent = questionLocateRef.current!
-        if (
-          prediction.x >= questionLocateCurrent.xStart &&
-          prediction.x <= questionLocateCurrent.xEnd &&
-          prediction.y >= questionLocateCurrent.yStart &&
-          prediction.y <= questionLocateCurrent.yEnd
-        ) {
-          dispatch(isLooking(true))
-        } else {
-          dispatch(isLooking(false))
-        }
-      } catch {
-        //webgazer is not ready yet
-      }
-    }, 100)
-    return () => clearInterval(interval)
-  }, [webgazerScript])
+  // useEffect(() => {
+  //   const interval = setInterval(async () => {
+  //     if (webgazerScript) {
+  //       try {
+  //         var prediction = await webgazer.getCurrentPrediction()
+  //         //redux
+  //         dispatch(updateEyeTracking({ x: prediction.x, y: prediction.y }))
+  //         console.log(eyeTrackingRef.current)
+  //         const questionLocateCurrent = questionLocateRef.current!
+
+  //         // setEyesTrackingRecord((prev) => [
+  //         //   ...prev,
+  //         //   { x: prediction.x, y: prediction.y },
+  //         // ])
+
+  //         const range = 50
+
+  //         if (
+  //           prediction.x >= questionLocateCurrent.xStart - range &&
+  //           prediction.x <= questionLocateCurrent.xEnd + range &&
+  //           prediction.y >= questionLocateCurrent.yStart - range &&
+  //           prediction.y <= questionLocateCurrent.yEnd + range
+  //         ) {
+  //           dispatch(isLooking(true))
+  //         } else {
+  //           dispatch(isLooking(false))
+  //         }
+  //       } catch {
+  //         //webgazer is not ready yet
+  //       }
+  //     }
+  //   }, 200)
+  //   return () => clearInterval(interval)
+  // }, [])
 
   return (
     <>
@@ -62,6 +109,8 @@ function EyesTracking() {
         src="../external-script/webgazer.js"
         onLoad={() => {
           setWebgazerScript(true)
+          // webgazer.showVideo(false)
+          // webgazer.showPredictionPoints(false)
           // webgazer.setGazeListener(function (data: { x: any; y: any } | null, elapsedTime: any) {
           //   if (data == null) {
           //     return
@@ -79,7 +128,55 @@ function EyesTracking() {
           // })
         }}
       />
-      <Button
+      {/* onClose={handleModalClose} */}
+      <Modal open={modalOpen} disableAutoFocus>
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: consentIsAgreed&&!preTestSubmitted?'90%':600,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          {!consentIsAgreed && <Consent />}
+          {!consentIsAgreed && <Button variant='contained' onClick={() => setConsentIsAgreed(true)}>我同意</Button>}
+          {consentIsAgreed && <GoogleForm formType='preTest' isFormSubmitted={preTestSubmitted} setIsFormSubmitted={setPreTestSubmitted} />}
+          {preTestSubmitted && <LoadingButton
+            loading={consentLoadingButton}
+            variant="contained"
+            onClick={async () => {
+              setConsentLoadingButton(true)
+              const consent = await fetch('/api/consent', {
+                method: 'POST',
+                body: JSON.stringify({ isAgree: true, isComplete: false }),
+              })
+              if (consent.status === 200) {
+                webgazer.begin()
+                handleModalClose()
+              } else {
+                dispatch(
+                  sendMessage({
+                    severity: 'error',
+                    message: '發生異常',
+                    duration: 'short',
+                  })
+                )
+              }
+              setConsentLoadingButton(false)
+            }}
+          >
+            開始校正
+          </LoadingButton>}
+        </Box>
+      </Modal>
+      {/* <Button
         onClick={() => {
           webgazer.begin()
           // webgazer.showVideo(false)
@@ -102,12 +199,40 @@ function EyesTracking() {
       </Button>
       <Button
         onClick={() => {
+          // 計算平均運動量
+          let sumOfDeltas = 0
+          let numberOfMeasurements = 0
+          for (let i = 1; i < eyesTrackingRecord.length; i++) {
+            const previousPosition = eyesTrackingRecord[i - 1]
+            const currentPosition = eyesTrackingRecord[i]
+            const deltaX = Math.abs(currentPosition.x - previousPosition.x)
+            const deltaY = Math.abs(currentPosition.y - previousPosition.y)
+            const delta = Math.sqrt(deltaX ** 2 + deltaY ** 2)
+            sumOfDeltas += delta
+            numberOfMeasurements++
+          }
+
+          const averageMotion = sumOfDeltas / numberOfMeasurements
+          console.log('averageMotion', averageMotion)
+        }}
+      >
+        計算平均位移
+      </Button>
+      <Button
+        onClick={() => {
+          setEyesTrackingRecord([{ x: 0, y: 0 }])
+        }}
+      >
+        清除
+      </Button>
+      <Button
+        onClick={() => {
           setCorrection(!correction)
           console.log(correction)
         }}
       >
         校正
-      </Button>
+      </Button> */}
       {correction ? <Ball open={correction} setOpen={setCorrection} /> : null}
     </>
   )
@@ -123,7 +248,6 @@ function Ball(props: { open: boolean; setOpen: Function }) {
   const [count, setCount] = useState(9)
 
   const modalRef = useRef<HTMLDivElement>(null)
-  const eyeTracking = useAppSelector((state) => state.course.eyeTracking)
 
   const vw = modalRef.current?.clientWidth
   const vh = modalRef.current?.clientHeight
@@ -143,6 +267,21 @@ function Ball(props: { open: boolean; setOpen: Function }) {
     <>
       <Modal ref={modalRef} open={props.open}>
         <Box>
+          <Box
+            height={'100px'}
+            width={'200px'}
+            position={'absolute'}
+            sx={{
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              backgroundColor: 'white',
+            }}
+          >
+            <Typography color={'red'}>
+              校正中，請注視紅點，並不斷點擊它
+            </Typography>
+          </Box>
           <Fab
             id="ball"
             size="small"

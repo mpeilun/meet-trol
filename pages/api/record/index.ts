@@ -53,7 +53,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             },
             select: {
               videoId: true,
-              lastVideoTime: true,
+              lastPlaySecond: true,
               lastViewTime: true,
             },
           })
@@ -75,7 +75,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
               pastView: {
                 select: {
                   videoId: true,
-                  lastVideoTime: true,
+                  lastPlaySecond: true,
                   lastViewTime: true,
                 },
               },
@@ -106,26 +106,47 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           },
         })
 
-        const data = await prisma.pastView.upsert({
+        const videos = await prisma.course.findUnique({
           where: {
-            videoId: videoId,
+            id: courseId,
           },
-          update: {
-            lastVideoTime: videoTime,
-            lastViewTime: new Date(),
-          },
-          create: {
-            videoId: videoId,
-            lastVideoTime: videoTime,
-            lastViewTime: new Date(),
-            record: {
-              connect: {
-                id: record.id,
+          select: {
+            chapters: {
+              select: {
+                videos: { select: { id: true } },
               },
             },
           },
         })
-        return res.status(200).json(data)
+        // 建立課程 video 資料
+        const videoList = videos.chapters
+          .map(({ videos }) => videos.map(({ id }) => id))
+          .flat()
+        // 判斷 video 在 course 裡面
+        if (videoList.includes(videoId)) {
+          const data = await prisma.pastView.upsert({
+            where: {
+              videoId: videoId,
+            },
+            update: {
+              lastPlaySecond: videoTime,
+              lastViewTime: new Date(),
+            },
+            create: {
+              videoId: videoId,
+              lastPlaySecond: videoTime,
+              lastViewTime: new Date(),
+              record: {
+                connect: {
+                  id: record.id,
+                },
+              },
+            },
+          })
+          return res.status(200).json(data)
+        } else {
+          return res.status(400).json({ message: 'Bad Request' })
+        }
       } else {
         return res.status(400).json({ message: 'Bad Request' })
       }

@@ -53,7 +53,11 @@ interface props {
   courseId: string
 }
 
-export default function CourseTabs({ chapterData, pastViewData, courseId }: props) {
+export default function CourseTabs({
+  chapterData,
+  pastViewData,
+  courseId,
+}: props) {
   const [value, setValue] = React.useState(0)
   const [windowWidth, setWindowWidth] = React.useState(1000)
   React.useEffect(() => {
@@ -174,12 +178,16 @@ export default function CourseTabs({ chapterData, pastViewData, courseId }: prop
               {/* <PDF path={videoData.material ?? ''}></PDF> */}
             </div>
           ) : (
-            <h3>沒有教材</h3>
+            <div>
+              <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
+                {`目前沒有教材`}
+              </Typography>
+            </div>
           ))}
       </TabPanel>
 
       <TabPanel value={value} index={2}>
-        <EyesTracking />
+        {/* <EyesTracking /> */}
       </TabPanel>
 
       <TabPanel value={value} index={3}>

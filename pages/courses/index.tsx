@@ -43,7 +43,6 @@ function AllCoursesPage() {
   const fetchData = React.useCallback(async () => {
     const response = await fetch(`/api/course?myCourse=true`)
     const data: CourseWithOwner[] = await response.json()
-    console.log(data)
     if (response.status == 200) {
       setCourseData(data)
     }
@@ -80,7 +79,7 @@ function AllCoursesPage() {
           <TextField
             value={courseID}
             placeholder="請輸入課程ID"
-            sx={{ width: '50%', minWidth: '100px', bgcolor: '#FFF' }}
+            sx={{ width: '50%', minWidth: '100px' }}
             onChange={(e) => setCourseId(e.target.value)}
           ></TextField>
           <LoadingButton

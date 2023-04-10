@@ -19,7 +19,6 @@ import { Chapter, Video, PastView } from '@prisma/client'
 import { useAppSelector, useAppDispatch } from '../../hooks/redux'
 import { setVideoId, setVideoTime } from '../../store/course-data'
 import { ChapterListData, PastViewData } from '../../types/chapter'
-import { isNullOrUndefined } from 'util'
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -97,7 +96,7 @@ export default function CustomizedAccordions({
         return {
           videoId: chapterData[0].videos[0].id,
           lastViewTime: new Date(),
-          lastVideoTime: 0,
+          lastPlaySecond: 0,
         }
       const lastViewVideo = array.reduce((earliest, current) => {
         const earliestTime = new Date(earliest.lastViewTime)
@@ -154,7 +153,7 @@ export default function CustomizedAccordions({
 
   React.useEffect(() => {
     dispatch(setVideoId(lastView.videoId))
-    dispatch(setVideoTime(lastView.lastVideoTime))
+    dispatch(setVideoTime(lastView.lastPlaySecond))
   }, [])
 
   const handleChange =
@@ -178,7 +177,7 @@ export default function CustomizedAccordions({
   }
 
   return (
-    <div>
+    <div id="chapter-list">
       {chapterData.map(({ title, videos }, indexOne) => {
         return (
           <Accordion

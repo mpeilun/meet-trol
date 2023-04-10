@@ -23,17 +23,17 @@ export function questionStyle(questionType: string) {
       }
     case 'choice':
       return {
-        icon: <CameraIcon/>,
+        icon: <CameraIcon />,
         displayName: '選擇',
       }
     case 'rank':
       return {
-        icon: <CameraIcon  />,
+        icon: <CameraIcon />,
         displayName: '排序',
       }
     case 'fill':
       return {
-        icon: <CameraIcon  />,
+        icon: <CameraIcon />,
         displayName: '填充',
       }
     default: //'choice' | 'rank' | 'fill'
@@ -48,7 +48,7 @@ const PopupFab = (props: {
   pause: () => void
   play: () => void
   data: Info | ChoiceData | RankData | FillData | DragData
-  
+  isFullScreen: boolean
 }) => {
   const playedSecond = useAppSelector((state) => state.course.playedSecond)
 
@@ -110,6 +110,7 @@ const PopupFab = (props: {
             setClose={handleCloseQuestion}
             open={openQuestion}
             data={props.data}
+            isFullScreen={props.isFullScreen}
           ></PopupModal>
         </>
       )
@@ -147,6 +148,7 @@ const PopupFab = (props: {
             setClose={handleCloseQuestion}
             open={openQuestion}
             data={props.data}
+            isFullScreen={props.isFullScreen}
           ></PopupModal>
         </>
       )
@@ -179,6 +181,7 @@ const PopupFab = (props: {
             setClose={handleCloseQuestion}
             open={openQuestion}
             data={props.data}
+            isFullScreen={props.isFullScreen}
           ></PopupModal>
         </>
       )

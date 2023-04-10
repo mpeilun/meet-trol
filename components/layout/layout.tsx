@@ -24,7 +24,15 @@ function Layout(props: { children: ReactNode }) {
         <CssBaseline />
         <GlobalStyles
           styles={{
-            body: { margin: 0, backgroundColor: '#ffff' },
+            body: {
+              margin: 0,
+              backgroundColor:
+                asPath.includes('/courses') &&
+                asPath.split('/courses/')[1]?.length === 24 &&
+                /^[a-f0-9]+$/i.test(asPath.split('/courses/')[1])
+                  ? '#fff'
+                  : '#FFF3E2',
+            },
           }}
         />
         <Box

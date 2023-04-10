@@ -35,18 +35,29 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  records       Record[]
-  accounts      Account[]
-  sessions      Session[]
-  courses       Course[]  @relation("meber", fields: [coursesId], references: [id])
-  coursesId     String[]  @db.ObjectId
+  id              String           @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  name            String?
+  email           String?          @unique
+  emailVerified   DateTime?
+  image           String?
+  records         Record[]
+  accounts        Account[]
+  sessions        Session[]
+  informedConsent InformedConsent?
+  courses         Course[]         @relation("meber", fields: [coursesId], references: [id])
+  coursesId       String[]         @db.ObjectId
+}
+
+model InformedConsent {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  isAgree    Boolean
+  isComplete Boolean
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  User       User     @relation(fields: [userId], references: [id])
+  userId     String   @unique @db.ObjectId
 }
 
 model Record {
@@ -57,34 +68,67 @@ model Record {
   userId   String     @unique @db.ObjectId
 }
 
-type PeakTime {
-  time      DateTime
-  videoTime Float
+type PauseTime {
+  pauseTime  DateTime
+  playTime   DateTime
+  playSecond Float
 }
 
-type PauseTime {
-  start     DateTime
-  end       DateTime
-  videoTime Float
+type DragTime {
+  playSecond Float
+  time       DateTime
+}
+
+type Watch {
+  playSecond Float
+  time       DateTime
+}
+
+type WatchTime {
+  start Watch
+  end   Watch
+}
+
+type Focus {
+  playSecond Float
+  onWindow   Boolean
+}
+
+type EyesTrack {
+  x       Float
+  y       Float
+  playerW Float
+  playerH Float
+  focus   Focus
+  time    DateTime
+}
+
+type InteractionLog {
+  questionId String   @db.ObjectId
+  openTime   DateTime
+  closeTime  DateTime
+  focusTime  Float
 }
 
 model ViewLog {
-  id         String      @id @default(auto()) @map("_id") @db.ObjectId
-  pauseTimes PauseTime[]
-  peekTimes  PeakTime[]
-  watchTime  Float
-  PastView   PastView?   @relation(fields: [pastViewId], references: [id])
-  pastViewId String?     @db.ObjectId
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  eyesTrack      EyesTrack[]
+  pauseTimes     PauseTime[]
+  dragTimes      DragTime[]
+  watchTime      WatchTime[]
+  interactionLog InteractionLog[]
+  PastView       PastView?        @relation(fields: [pastViewId], references: [id])
+  pastViewId     String?          @db.ObjectId
 }
 
 model PastView {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  videoId       String    @unique @db.ObjectId
-  viewLogs      ViewLog[]
-  lastVideoTime Float
-  lastViewTime  DateTime  @default(now())
-  record        Record    @relation(fields: [recordId], references: [id])
-  recordId      String    @unique @db.ObjectId
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  videoId        String    @unique @db.ObjectId
+  viewLogs       ViewLog[]
+  lastPlaySecond Float
+  lastViewTime   DateTime  @default(now())
+  record         Record    @relation(fields: [recordId], references: [id])
+  recordId       String    @unique @db.ObjectId
 }
 
 model VerificationToken {
@@ -166,11 +210,12 @@ model Choice {
 }
 
 model ChoiceFeedback {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  answers  Int[]
-  userId   String @db.ObjectId
-  choice   Choice @relation(fields: [choiceId], references: [id], onDelete: Cascade)
-  choiceId String @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  answers   Int[]
+  userId    String   @db.ObjectId
+  choice    Choice   @relation(fields: [choiceId], references: [id], onDelete: Cascade)
+  choiceId  String   @db.ObjectId
+  createdAt DateTime @default(now())
 }
 
 model Rank {
@@ -189,11 +234,12 @@ model Rank {
 }
 
 model RankFeedback {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  answers String[]
-  userId  String   @db.ObjectId
-  rank    Rank     @relation(fields: [rankId], references: [id], onDelete: Cascade)
-  rankId  String   @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  answers   String[]
+  userId    String   @db.ObjectId
+  rank      Rank     @relation(fields: [rankId], references: [id], onDelete: Cascade)
+  rankId    String   @db.ObjectId
+  createdAt DateTime @default(now())
 }
 
 model Fill {
@@ -212,11 +258,12 @@ model Fill {
 }
 
 model FillFeedback {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  answers String[]
-  userId  String   @db.ObjectId
-  fill    Fill     @relation(fields: [fillId], references: [id], onDelete: Cascade)
-  fillId  String   @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  answers   String[]
+  userId    String   @db.ObjectId
+  fill      Fill     @relation(fields: [fillId], references: [id], onDelete: Cascade)
+  fillId    String   @db.ObjectId
+  createdAt DateTime @default(now())
 }
 
 type Position {
@@ -244,9 +291,10 @@ model Drag {
 }
 
 model DragFeedback {
-  id      String     @id @default(auto()) @map("_id") @db.ObjectId
-  answers Position[]
-  userId  String     @db.ObjectId
-  drag    Drag       @relation(fields: [dragId], references: [id], onDelete: Cascade)
-  dragId  String     @db.ObjectId
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  answers   Position[]
+  userId    String     @db.ObjectId
+  drag      Drag       @relation(fields: [dragId], references: [id], onDelete: Cascade)
+  dragId    String     @db.ObjectId
+  createdAt DateTime   @default(now())
 }
