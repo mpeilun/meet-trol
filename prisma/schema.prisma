@@ -69,39 +69,45 @@ model Record {
 }
 
 type PauseTime {
-  start      DateTime
-  end        DateTime
+  pauseTime  DateTime
+  playTime   DateTime
   playSecond Float
 }
 
 type DragTime {
-  time       DateTime
   playSecond Float
+  time       DateTime
+}
+
+type Watch {
+  playSecond Float
+  time       DateTime
 }
 
 type WatchTime {
-  start DateTime
-  end   DateTime
+  start Watch
+  end   Watch
 }
 
 type Focus {
   playSecond Float
-  inWindow   Boolean
+  onWindow   Boolean
 }
 
 type EyesTrack {
-  x          Float
-  y          Float
-  playerW    Float
-  playerH    Float
-  playSecond Focus
+  x       Float
+  y       Float
+  playerW Float
+  playerH Float
+  focus   Focus
+  time    DateTime
 }
 
 type InteractionLog {
   questionId String   @db.ObjectId
-  open       DateTime
-  close      DateTime
-  isFocus    Float
+  openTime   DateTime
+  closeTime  DateTime
+  focusTime  Float
 }
 
 model ViewLog {
@@ -109,7 +115,7 @@ model ViewLog {
   eyesTrack      EyesTrack[]
   pauseTimes     PauseTime[]
   dragTimes      DragTime[]
-  watchTime      WatchTime
+  watchTime      WatchTime[]
   interactionLog InteractionLog[]
   PastView       PastView?        @relation(fields: [pastViewId], references: [id])
   pastViewId     String?          @db.ObjectId

@@ -118,11 +118,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             },
           },
         })
-
+        // 建立課程 video 資料
         const videoList = videos.chapters
           .map(({ videos }) => videos.map(({ id }) => id))
           .flat()
-
+        // 判斷 video 在 course 裡面
         if (videoList.includes(videoId)) {
           const data = await prisma.pastView.upsert({
             where: {

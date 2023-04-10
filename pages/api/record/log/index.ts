@@ -121,42 +121,64 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           },
         })
 
-        const pastView = await prisma.pastView.upsert({
+        const videos = await prisma.course.findUnique({
           where: {
-            videoId: videoId,
+            id: courseId,
           },
-          update: {
-            lastPlaySecond: videoTime,
-            lastViewTime: new Date(),
-          },
-          create: {
-            videoId: videoId,
-            lastPlaySecond: videoTime,
-            lastViewTime: new Date(),
-            record: {
-              connect: {
-                id: record.id,
+          select: {
+            chapters: {
+              select: {
+                videos: { select: { id: true } },
               },
             },
           },
         })
 
-        const data = await prisma.viewLog.create({
-          data: {
-            eyesTrack: eyesTrack,
-            pauseTimes: pauseTimes,
-            dragTimes: dragTimes,
-            watchTime: watchTime,
-            interactionLog: interactionLog,
-            PastView: {
-              connect: {
-                id: pastView.id,
+        // 建立課程 video 資料
+        const videoList = videos.chapters
+          .map(({ videos }) => videos.map(({ id }) => id))
+          .flat()
+
+        if (videoList.includes(videoId)) {
+          // 建立 pastView 資料
+          const pastView = await prisma.pastView.upsert({
+            where: {
+              videoId: videoId,
+            },
+            update: {
+              lastPlaySecond: videoTime,
+              lastViewTime: new Date(),
+            },
+            create: {
+              videoId: videoId,
+              lastPlaySecond: videoTime,
+              lastViewTime: new Date(),
+              record: {
+                connect: {
+                  id: record.id,
+                },
               },
             },
-          },
-        })
+          })
+          const data = await prisma.viewLog.create({
+            data: {
+              eyesTrack: eyesTrack,
+              pauseTimes: pauseTimes,
+              dragTimes: dragTimes,
+              watchTime: watchTime,
+              interactionLog: interactionLog,
+              PastView: {
+                connect: {
+                  id: pastView.id,
+                },
+              },
+            },
+          })
+          return res.status(200).json(data)
+        } else {
+          return res.status(400).json({ message: 'Bad Request' })
+        }
 
-        return res.status(200).json(data)
       } else {
         return res.status(400).json({ message: 'Bad Request' })
       }
