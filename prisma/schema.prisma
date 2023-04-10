@@ -282,13 +282,13 @@ model Drag {
   end          Float
   video        Video          @relation(fields: [videoId], references: [id], onDelete: Cascade)
   videoId      String         @db.ObjectId
-  createdAt    DateTime       @default(now())
 }
 
 model DragFeedback {
-  id      String     @id @default(auto()) @map("_id") @db.ObjectId
-  answers Position[]
-  userId  String     @db.ObjectId
-  drag    Drag       @relation(fields: [dragId], references: [id], onDelete: Cascade)
-  dragId  String     @db.ObjectId
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  answers   Position[]
+  userId    String     @db.ObjectId
+  drag      Drag       @relation(fields: [dragId], references: [id], onDelete: Cascade)
+  dragId    String     @db.ObjectId
+  createdAt DateTime   @default(now())
 }

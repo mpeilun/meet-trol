@@ -63,38 +63,40 @@ function EyesTracking() {
     questionLocateRef.current = questionLocate
   }, [questionLocate])
 
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      try {
-        var prediction = await webgazer.getCurrentPrediction()
-        //redux
-        dispatch(updateEyeTracking({ x: prediction.x, y: prediction.y }))
-        console.log(eyeTrackingRef.current)
-        const questionLocateCurrent = questionLocateRef.current!
+  // useEffect(() => {
+  //   const interval = setInterval(async () => {
+  //     if (webgazerScript) {
+  //       try {
+  //         var prediction = await webgazer.getCurrentPrediction()
+  //         //redux
+  //         dispatch(updateEyeTracking({ x: prediction.x, y: prediction.y }))
+  //         console.log(eyeTrackingRef.current)
+  //         const questionLocateCurrent = questionLocateRef.current!
 
-        // setEyesTrackingRecord((prev) => [
-        //   ...prev,
-        //   { x: prediction.x, y: prediction.y },
-        // ])
+  //         // setEyesTrackingRecord((prev) => [
+  //         //   ...prev,
+  //         //   { x: prediction.x, y: prediction.y },
+  //         // ])
 
-        const range = 50
+  //         const range = 50
 
-        if (
-          prediction.x >= questionLocateCurrent.xStart - range &&
-          prediction.x <= questionLocateCurrent.xEnd + range &&
-          prediction.y >= questionLocateCurrent.yStart - range &&
-          prediction.y <= questionLocateCurrent.yEnd + range
-        ) {
-          dispatch(isLooking(true))
-        } else {
-          dispatch(isLooking(false))
-        }
-      } catch {
-        //webgazer is not ready yet
-      }
-    }, 200)
-    return () => clearInterval(interval)
-  }, [webgazerScript])
+  //         if (
+  //           prediction.x >= questionLocateCurrent.xStart - range &&
+  //           prediction.x <= questionLocateCurrent.xEnd + range &&
+  //           prediction.y >= questionLocateCurrent.yStart - range &&
+  //           prediction.y <= questionLocateCurrent.yEnd + range
+  //         ) {
+  //           dispatch(isLooking(true))
+  //         } else {
+  //           dispatch(isLooking(false))
+  //         }
+  //       } catch {
+  //         //webgazer is not ready yet
+  //       }
+  //     }
+  //   }, 200)
+  //   return () => clearInterval(interval)
+  // }, [])
 
   return (
     <>
@@ -102,7 +104,7 @@ function EyesTracking() {
         src="../external-script/webgazer.js"
         onLoad={() => {
           setWebgazerScript(true)
-          webgazer.showVideo(false)
+          // webgazer.showVideo(false)
           // webgazer.showPredictionPoints(false)
           // webgazer.setGazeListener(function (data: { x: any; y: any } | null, elapsedTime: any) {
           //   if (data == null) {
