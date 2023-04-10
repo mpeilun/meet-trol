@@ -14,27 +14,37 @@ import useSWR from 'swr'
 import { Shimmer } from 'react-shimmer'
 import InfoCard from '../../components/infoCard'
 
+// import CoursePlayer from '../../components/courses/course-player'
+// import CourseTab from '../../components/courses/course-tab'
+
 const CoursePlayer = dynamic(
   () => import('../../components/courses/course-player'),
   {
-    // loading: () => <Shimmer width={2000} height={800} />,
+    loading: () => (
+      <Box
+        sx={{
+          width: '100%',
+          height: '85%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    ),
     ssr: false,
   }
 )
 const CourseTab = dynamic(() => import('../../components/courses/course-tab'), {
-  // loading: () => <Shimmer width={2000} height={800} />,
   ssr: false,
 })
 const CustomizedAccordions = dynamic(
   () => import('../../components/chapter/chapter'),
   {
-    loading: () => <Shimmer width={2000} height={200} />,
     ssr: false,
   }
 )
-// import CoursePlayer from '../../components/courses/course-player'
-// import CourseTab from '../../components/courses/course-tab'
-
 const fetcher = async (url: string) => {
   return await fetch(url).then((res) => {
     if (!res.ok) {
@@ -60,7 +70,7 @@ function CourseInnerPage(props: {}) {
     !chapterData && !chapterError && !pastViewData && !recordError
 
   if (isLoading || !courseId) {
-    return <Shimmer width={2000} height={2000} />
+    return <></>
   } else if (chapterData === 'error' || pastViewData === 'error') {
     return (
       <InfoCard
@@ -70,6 +80,7 @@ function CourseInnerPage(props: {}) {
       ></InfoCard>
     )
   } else if (chapterData && pastViewData) {
+    // return <p>test</p>
     return (
       <Box
         className="course-main-div"

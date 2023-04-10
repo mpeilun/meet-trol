@@ -12,7 +12,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         data: {
           answers: answers,
           createdAt: new Date(),
-
           userId: session.user.id,
           drag: {
             connect: {

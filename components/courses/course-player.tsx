@@ -39,13 +39,20 @@ import { OnProgressProps } from 'react-player/base'
 import { VideoData } from '../../types/chapter'
 import CreateDiscussion from '../discussion/createDiscussion'
 
+import { useSpring, animated } from '@react-spring/web'
+
+
 const ReactPlayerDynamic = dynamic(() => import('react-player/lazy'), {
   loading: () => (
     <Box
-      width={'100%'}
-      height={'100%'}
-      display={'flex'}
-      justifyContent={'center'}
+      sx={{
+        width: '100%',
+        height: '100%',
+        position: 'absolute',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
     >
       <CircularProgress />
     </Box>
@@ -293,6 +300,7 @@ function CoursePlayer(props: { courseId: string }) {
               config={{
                 youtube: {
                   playerVars: {
+                    showInfo: 0,
                     start: videoTime,
                     // 此參數指定從影片開始播放時起算的秒數，表示播放器應停止播放影片的時間。參數值為正整數。
                     // 請注意，時間是從影片開頭算起，而非從 start 播放器參數的值或 startSeconds 參數 (用於在 YouTube Player API 函式中載入或排入影片)。
