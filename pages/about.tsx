@@ -27,7 +27,7 @@ function AboutPage() {
               'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyd6KaMzk2aimrtDooQA612p7vGJe0-s6TJg&usqp=CAU',
           },
           {
-            name: '賴宥臻',
+            name: '賴宥蓁',
             company: 'NIU CSIE',
             title: '',
             photo:
