@@ -96,7 +96,7 @@ export default function CustomizedAccordions({
         return {
           videoId: chapterData[0].videos[0].id,
           lastViewTime: new Date(),
-          lastVideoTime: 0,
+          lastPlaySecond: 0,
         }
       const lastViewVideo = array.reduce((earliest, current) => {
         const earliestTime = new Date(earliest.lastViewTime)
@@ -153,7 +153,7 @@ export default function CustomizedAccordions({
 
   React.useEffect(() => {
     dispatch(setVideoId(lastView.videoId))
-    dispatch(setVideoTime(lastView.lastVideoTime))
+    dispatch(setVideoTime(lastView.lastPlaySecond))
   }, [])
 
   const handleChange =

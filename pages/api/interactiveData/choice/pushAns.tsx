@@ -11,6 +11,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       const data = await prisma.choiceFeedback.create({
         data: {
           answers: answers,
+          createdAt: new Date(),
           userId: session.user.id,
           choice: {
             connect: {
