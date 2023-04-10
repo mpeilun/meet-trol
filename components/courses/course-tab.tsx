@@ -187,7 +187,7 @@ export default function CourseTabs({
       </TabPanel>
 
       <TabPanel value={value} index={2}>
-        <EyesTracking />
+        {/* <EyesTracking /> */}
       </TabPanel>
 
       <TabPanel value={value} index={3}>
