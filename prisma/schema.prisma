@@ -35,18 +35,29 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  records       Record[]
-  accounts      Account[]
-  sessions      Session[]
-  courses       Course[]  @relation("meber", fields: [coursesId], references: [id])
-  coursesId     String[]  @db.ObjectId
+  id              String           @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  name            String?
+  email           String?          @unique
+  emailVerified   DateTime?
+  image           String?
+  records         Record[]
+  accounts        Account[]
+  sessions        Session[]
+  informedConsent InformedConsent?
+  courses         Course[]         @relation("meber", fields: [coursesId], references: [id])
+  coursesId       String[]         @db.ObjectId
+}
+
+model InformedConsent {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  isAgree    Boolean
+  isComplete Boolean
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  User       User     @relation(fields: [userId], references: [id])
+  userId     String   @unique @db.ObjectId
 }
 
 model Record {

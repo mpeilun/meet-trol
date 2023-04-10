@@ -13,6 +13,7 @@ import { useRouter } from 'next/router'
 import useSWR from 'swr'
 import { Shimmer } from 'react-shimmer'
 import InfoCard from '../../components/infoCard'
+import EyesTracking from '../../components/eyetracking/eyetracking'
 
 // import CoursePlayer from '../../components/courses/course-player'
 // import CourseTab from '../../components/courses/course-tab'
@@ -89,6 +90,7 @@ function CourseInnerPage(props: {}) {
         height={'100%'}
         maxHeight={'calc(100vh - 68.5px)'}
       >
+        <EyesTracking />
         <Box
           className="course-nav-div"
           display={{ width: '20vw', xs: 'none', md: 'flex' }}
