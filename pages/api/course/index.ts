@@ -149,7 +149,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       return res.status(200).json(coursesWithOwnerData)
     } else if (req.method === 'POST') {
       const data: CourseCreateType = JSON.parse(req.body)
-      console.log(data.title)
       const create = await prisma.course.create({
         data: {
           title: data.title,

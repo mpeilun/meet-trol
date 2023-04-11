@@ -1,5 +1,5 @@
 import Script from 'next/script'
-import { Modal, Fab, Button, Box, Typography } from '@mui/material'
+import { Modal, Fab, Button, Box, Typography, Card } from '@mui/material'
 import { useState, useEffect, useRef } from 'react'
 import styled from '@emotion/styled/types/base'
 import { useAppSelector, useAppDispatch } from '../../hooks/redux'
@@ -11,6 +11,8 @@ import WebGazer from '../../types/webgazer'
 import { LoadingButton } from '@mui/lab'
 import { InformedConsent } from '@prisma/client'
 import { sendMessage } from '../../store/notification'
+import { Consent } from '../docs/consent'
+import { GoogleForm } from '../docs/googleForm'
 declare var webgazer: WebGazer
 
 function EyesTracking() {
@@ -37,6 +39,9 @@ function EyesTracking() {
     yStart: number
     yEnd: number
   }>()
+
+  const [consentIsAgreed, setConsentIsAgreed] = useState(false)
+  const [preTestSubmitted, setPreTestSubmitted] = useState(false)
   const dispatch = useAppDispatch()
 
   // const [eyesTrackingRecord, setEyesTrackingRecord] = useState([{ x: 0, y: 0 }])
@@ -128,19 +133,23 @@ function EyesTracking() {
       <Modal open={modalOpen} disableAutoFocus>
         <Box
           display="flex"
+          flexDirection="column"
           justifyContent="center"
           sx={{
             position: 'absolute',
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: 400,
+            width: consentIsAgreed&&!preTestSubmitted?'90%':600,
             bgcolor: 'background.paper',
             boxShadow: 24,
             p: 4,
           }}
         >
-          <LoadingButton
+          {!consentIsAgreed && <Consent />}
+          {!consentIsAgreed && <Button variant='contained' onClick={() => setConsentIsAgreed(true)}>我同意</Button>}
+          {consentIsAgreed && <GoogleForm formType='preTest' isFormSubmitted={preTestSubmitted} setIsFormSubmitted={setPreTestSubmitted} />}
+          {preTestSubmitted && <LoadingButton
             loading={consentLoadingButton}
             variant="contained"
             onClick={async () => {
@@ -164,8 +173,8 @@ function EyesTracking() {
               setConsentLoadingButton(false)
             }}
           >
-            我同意，並開始校正
-          </LoadingButton>
+            開始校正
+          </LoadingButton>}
         </Box>
       </Modal>
       {/* <Button
