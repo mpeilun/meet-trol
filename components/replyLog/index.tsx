@@ -103,13 +103,13 @@ const ReplyLog = (props: {
                         }}
                         unmountOnExit
                       >
-                        <QuestionType
+                        {/* <QuestionType
                           key={`${index} question`}
                           setClose={() => {}}
                           data={question}
                           isLog={true}
                           feedbackIndex={answerIndex}
-                        ></QuestionType>
+                        ></QuestionType> */}
                       </CSSTransition>
                     </Box>
                   )
