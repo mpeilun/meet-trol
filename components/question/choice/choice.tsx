@@ -4,6 +4,7 @@ import SingleChoice from './singleChoice'
 import { ChoiceData } from '../../../types/chapter'
 import MultipleChoice from './multipleChoice'
 export default function Choice(props: {
+  close: () => void
   handleQuestionClose: () => void
   data: ChoiceData
   isLog: boolean
@@ -18,14 +19,22 @@ export default function Choice(props: {
   }, 0)
   const isSingleChoice = count == 1
   // console.log(isSingleChoice)
-
+  function delay(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+  }
   return (
     <Box>
       <Box minHeight={50} display="flex" alignItems="center">
         <Typography variant="h5" sx={{ width: '100%' }}>
           {data.title ?? '選擇題'}
         </Typography>
-        <IconButton onClick={() => props.handleQuestionClose()}>
+        <IconButton
+          onClick={async () => {
+            props.close()
+            await delay(200)
+            props.handleQuestionClose()
+          }}
+        >
           <CloseIcon />
         </IconButton>
       </Box>

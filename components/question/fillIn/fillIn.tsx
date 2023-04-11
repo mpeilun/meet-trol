@@ -17,20 +17,29 @@ import { FillData } from '../../../types/chapter'
 
 // 需引入變數 questions & answers
 const FillIn = (props: {
+  close: () => void
   handleQuestionClose: () => void
   data: FillData
   isLog: boolean
   feedbackIndex: number
 }) => {
   const data = props.data
-
+  function delay(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+  }
   return (
     <Box>
       <Box minHeight={50} display="flex" alignItems="center">
         <Typography variant="h5" sx={{ width: '100%' }}>
           {data.title ?? '填充題'}
         </Typography>
-        <IconButton onClick={() => props.handleQuestionClose()}>
+        <IconButton
+          onClick={async () => {
+            props.close()
+            await delay(200)
+            props.handleQuestionClose()
+          }}
+        >
           <CloseIcon />
         </IconButton>
       </Box>

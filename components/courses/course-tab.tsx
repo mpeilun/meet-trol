@@ -167,7 +167,7 @@ export default function CourseTabs({
               >
                 下載
               </a> */}
-              <div style={{ height: '600px' }}>
+              <div style={{ height: '500px' }}>
                 <iframe
                   style={{ width: '100%', height: '100%' }}
                   src={`https://drive.google.com/file/d/${extractGoogleDriveId(

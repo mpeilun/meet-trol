@@ -39,8 +39,17 @@ import { OnProgressProps } from 'react-player/base'
 import { VideoData } from '../../types/chapter'
 import CreateDiscussion from '../discussion/createDiscussion'
 
+import {
+  ViewLog,
+  EyesTrack,
+  PauseTime,
+  DragTime,
+  WatchTime,
+  InteractionLog,
+} from '@prisma/client'
 import { useSpring, animated } from '@react-spring/web'
-
+import { useWindowDimensions } from '../../hooks/common'
+import Interaction from '../popup/interaction'
 
 const ReactPlayerDynamic = dynamic(() => import('react-player/lazy'), {
   loading: () => (
@@ -60,25 +69,28 @@ const ReactPlayerDynamic = dynamic(() => import('react-player/lazy'), {
   ssr: false,
 })
 
-// DATA
-interface questionList {
-  startTime: number
-  endTime: number
-  questionType: number
-  questionTitles: string
-  questionChoice?: Array<string>
-  isAnswer: boolean
-}
-
 function CoursePlayer(props: { courseId: string }) {
   //ReactPlayer
   // console.log('playerRender')
+  const time = React.useRef(new Date())
+  const timePause = React.useRef<Date>(new Date()) //暫停時間
   const playerRef = React.useRef<ReactPlayerType>(null) //ReactPlayer 的參照
   const [showPlayerBar, setShowPlayerBar] = React.useState(false) //是否顯示播放器控制列
   // const [mouseEnter, setMouseEnter] = React.useState(false)
   const [playing, setPlaying] = React.useState(false) //播放狀態
-  const play = () => setPlaying(true) //播放
-  const pause = () => setPlaying(false) //暫停
+  const play = React.useCallback(() => {
+    setPlaying(true)
+    pauseTime.current.push({
+      pauseTime: timePause.current,
+      playTime: new Date(),
+      playSecond: playedSeconds,
+    })
+    // console.log(pauseTime.current)
+  }, []) //播放
+  const pause = React.useCallback(() => {
+    setPlaying(false)
+    timePause.current = new Date()
+  }, []) //暫停
   // const [videoDuration, setVideoDuration] = React.useState(0)
   const [timer, setTimer] = React.useState<any>(null)
   const [volume, setVolume] = React.useState(1) //音量
@@ -86,29 +98,37 @@ function CoursePlayer(props: { courseId: string }) {
   const [playbackRate, setPlaybackRate] = React.useState(1.0) //播放速度
   const [displayCreateDiscussion, setDisplayCreateDiscussion] =
     React.useState(false) //是否顯示新增討論區
+  const viewPort = useWindowDimensions()
 
-  const questionLocate = useAppSelector((state) => state.course.questionLocate)
+  // viewLog data
+  const playerSize = React.useRef(null)
+  const eyesTrack = React.useRef<EyesTrack[]>([])
+  const pauseTime = React.useRef<PauseTime[]>([])
+  const dragTimes = React.useRef<DragTime[]>([])
+  const watchTime = React.useRef<WatchTime>()
+  const interactionLog = React.useRef<InteractionLog[]>([])
+
 
   const [hasWindow, setHasWindow] = React.useState(false)
-  React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setHasWindow(true)
-    }
-  }, [])
 
   const courseId = props.courseId
   //redux
   const videoId = useAppSelector((state) => state.course.videoId)
   const videoTime = useAppSelector((state) => state.course.videoTime)
+  const questionLocate = useAppSelector((state) => state.course.questionLocate)
+  const eyeTracking = useAppSelector((state) => state.course.eyeTracking)
+
   const dispatch = useAppDispatch()
   const [videoData, setVideoData] = React.useState<VideoData>(null)
 
   React.useEffect(() => {
+    if (playerRef.current) {
+      setLoading(true)
+    }
     const fetchData = async () => {
       const response = await fetch(`http://localhost:3000/api/video/${videoId}`)
       const data: VideoData = await response.json()
       setVideoData(data)
-      // console.log(data)
     }
     const isValidObjectId =
       typeof videoId === 'string' &&
@@ -120,24 +140,40 @@ function CoursePlayer(props: { courseId: string }) {
   }, [videoId])
 
   let handlePlayerStatus = (props: OnProgressProps) => {
-    setPlayedSeconds(props.playedSeconds)
-    dispatch(setPlayedSecond(props.playedSeconds))
+    // if (!playing) {
+    //   playerRef.current.seekTo(playedSeconds, 'seconds')
+    //   return
+    // }
+    if (Math.floor(props.playedSeconds) % 10 == 0) {
+    }
+    eyesTrack.current.push({
+      x: eyeTracking.x,
+      y: eyeTracking.y,
+      playerW: playerSize.current.getBoundingClientRect().width,
+      playerH: playerSize.current.getBoundingClientRect().height,
+      windowsW: viewPort.width,
+      windowsH: viewPort.height,
+      focus: {
+        playSecond: props.playedSeconds,
+        onWindow: document.visibilityState === 'visible',
+      },
+      time: new Date(),
+    })
 
-    // if (videoData != undefined) {
-    //   // console.log(interactionData)
-    //   interactionData.map((data, index) => {
+    // if (videoData) {
+    //   videoData.questions.map((question) => {
     //     if (
-    //       props.playedSeconds >= data.start &&
-    //       props.playedSeconds <= data.end
+    //       question.start < props.playedSeconds &&
+    //       question.end > props.playedSeconds
     //     ) {
-    //       setShowFab(data.questionType)
+    //       dispatch(setQuestionLocate(question))
     //     }
     //   })
     // }
-
-    // console.log(props.playedSeconds)
-    // console.log(playerRef.current.props.height)
-    // console.log(playerRef.current.props.width)
+    // console.log(eyesTrack.current)
+    console.log(interactionLog)
+    setPlayedSeconds(props.playedSeconds)
+    dispatch(setPlayedSecond(props.playedSeconds))
   }
 
   //Slider
@@ -154,16 +190,20 @@ function CoursePlayer(props: { courseId: string }) {
     }
   }
   const handleChangeCommitted = (event, newValue) => {
-    console.log('拖動結束，選擇的數值為：', newValue)
+    dragTimes.current.push({
+      playSecond: playedSeconds,
+      time: new Date(),
+    })
   }
 
   const [loading, setLoading] = React.useState(true)
 
-  let onPlayerReady = (player: ReactPlayerType) => {
+  const onPlayerReady = (player: ReactPlayerType) => {
     if (playerRef) {
       playerRef.current = player
-      setPlayedSeconds(videoTime)
+      playerRef.current.seekTo(videoTime, 'seconds')
       setLoading(false)
+
       // var availableQualityLevels=player.getInternalPlayer().getAvailableQualityLevels()
       // console.log(availableQualityLevels)
     }
@@ -172,6 +212,10 @@ function CoursePlayer(props: { courseId: string }) {
   const [height, setHeight] = React.useState(600)
 
   React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setHasWindow(true)
+    }
+
     function updateHeight() {
       const height = window.innerHeight / 1.35
       setHeight(height)
@@ -183,7 +227,10 @@ function CoursePlayer(props: { courseId: string }) {
       window.removeEventListener('resize', updateHeight)
     }
   }, [])
-
+  if (playerSize.current) {
+    // console.log(playerSize.current.getBoundingClientRect().width)
+    // console.log(playerSize.current.getBoundingClientRect().height)
+  }
   return (
     <FullScreen handle={handleFullScreen}>
       {/*眼動儀*/}
@@ -200,6 +247,7 @@ function CoursePlayer(props: { courseId: string }) {
       </Box> */}
       {hasWindow && (
         <Box
+          ref={playerSize}
           sx={{ position: 'relative', width: '100%', height: '100%' }}
           className="course-player-div"
           onMouseOver={() => {
@@ -232,7 +280,13 @@ function CoursePlayer(props: { courseId: string }) {
               setDisplayCreateDiscussion={setDisplayCreateDiscussion}
             />
           )}
-
+          {/* {playerRef?.current && videoData?.questions && !loading && (
+            <Interaction
+              play={play}
+              pause={pause}
+              interactionData={videoData.questions}
+            ></Interaction>
+          )} */}
           {playerRef?.current && videoData?.questions && (
             <Box
               sx={{
@@ -249,6 +303,7 @@ function CoursePlayer(props: { courseId: string }) {
               {videoData?.questions.map((data, index) => {
                 return (
                   <PopupFab
+                  interactionLog={interactionLog}
                     key={`popupfab-${index}`}
                     pause={pause}
                     play={play}
@@ -263,6 +318,7 @@ function CoursePlayer(props: { courseId: string }) {
           {loading && (
             <Box
               sx={{
+                zIndex: 99999,
                 width: '100%',
                 height: '100%',
                 position: 'absolute',
@@ -282,14 +338,16 @@ function CoursePlayer(props: { courseId: string }) {
             <Box
               position="absolute"
               width={'100%'}
-              onClick={() => setPlaying(!playing)}
+              onClick={() => {
+                playing ? pause() : play()
+              }}
               height={handleFullScreen.active ? '100%' : height}
             />
             <ReactPlayerDynamic
               url={videoData == undefined ? '' : videoData.url}
               playing={playing}
-              onPlay={play}
-              onPause={pause}
+              // onPlay={play}
+              // onPause={pause}
               onProgress={handlePlayerStatus}
               onReady={onPlayerReady}
               volume={volume}

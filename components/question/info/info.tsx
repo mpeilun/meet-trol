@@ -10,16 +10,26 @@ import {
 import { Info as InfoData } from '@prisma/client'
 
 // 還需引入 description 圖片 src 變數
-const Info = (props: { handleQuestionClose: () => void; data: InfoData }) => {
+const Info = (props: {
+  close: () => void
+  handleQuestionClose: () => void
+  data: InfoData
+}) => {
   const data = props.data
-  const isNoImage = data.url == ""
+  const isNoImage = data.url == ''
+  function delay(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+  }
   return (
     <>
       <Box minHeight={50} display="flex" alignItems="center">
         <Typography variant="h5" sx={{ width: '100%' }}>
           {data.title ?? '資訊卡'}
         </Typography>
-        <IconButton onClick={() => props.handleQuestionClose()}>
+        <IconButton onClick={async() => {
+          props.close()
+          await delay(200)
+          props.handleQuestionClose()}}>
           <CloseIcon />
         </IconButton>
       </Box>

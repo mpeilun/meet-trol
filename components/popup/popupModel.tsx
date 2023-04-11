@@ -1,18 +1,27 @@
-import { Modal, Box, Card } from '@mui/material'
+import { Modal, Box, Card, Button } from '@mui/material'
 import RankQuestion from '../question/rank/rank'
 import QuestionType from './questionType'
 import Choice from '../question/choice/choice'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { Widgets } from '@mui/icons-material'
-
+import styles from './pop.module.css'
 import { useAppSelector, useAppDispatch } from '../../hooks/redux'
 import { setQuestionLocate } from '../../store/course-data'
 
 import { useWindowDimensions } from '../../hooks/common'
 import { ChoiceData, RankData, FillData, DragData } from '../../types/chapter'
-import { Info } from '@prisma/client'
-
+import { Info, InteractionLog } from '@prisma/client'
+import React from 'react'
+import {
+  useTransition,
+  animated,
+  useSpringRef,
+  config,
+  useChain,
+  useSpring,
+} from '@react-spring/web'
 const PopupModal = (props: {
+  interactionLog: React.MutableRefObject<InteractionLog[]>
   setClose: () => void
   open: boolean
   data: Info | ChoiceData | RankData | FillData | DragData
@@ -24,6 +33,7 @@ const PopupModal = (props: {
   const [isRender, setIsRender] = useState(false)
   const viewPort = useWindowDimensions()
 
+  // console.log('modal render')
   //redux
   const look = useAppSelector((state) => state.course.lookingQuestion)
   // const questionLocate = useAppSelector((state) => state.course.questionLocate)
@@ -69,7 +79,7 @@ const PopupModal = (props: {
       setIsRender(true)
 
       // console.log('question width height', questionWidth, questionHeight)
-      console.log('question locate', xStart, xEnd, yStart, yEnd)
+      // console.log('question locate', xStart, xEnd, yStart, yEnd)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -79,9 +89,51 @@ const PopupModal = (props: {
     viewPort,
   ])
 
+
+  const secondsRef = useRef<number>(0)
+  // console.log(secondsRef.current)
+
+  useEffect(() => {
+    let intervalId
+    if (look) {
+      intervalId = setInterval(() => {
+        secondsRef.current += 1
+      }, 1000)
+    }
+
+    return () => clearInterval(intervalId)
+  }, [look])
+
+  const [opens, setOpens] = React.useState(false)
+
+  const close = React.useCallback(() => {
+    props.interactionLog.current.push({
+      questionId: props.data.id,
+      openTime: timeOpen.current,
+      closeTime: new Date(),
+      focusTime: secondsRef.current,
+    })
+    secondsRef.current = 0
+    setOpens(false)
+  }, [])
+
+  const animation = useSpring({
+    opacity: opens ? 1 : 0,
+    scale: opens ? 1 : 0,
+  })
+
+  const timeOpen = React.useRef<Date>(new Date())
+  useEffect(() => {
+    timeOpen.current = new Date()
+    setOpens(props.open)
+  }, [props.open])
+
+  if (questionRef.current) {
+    // console.log(questionRef.current.getBoundingClientRect().width)
+    // console.log(questionRef.current.getBoundingClientRect().height)
+  }
   return (
     <>
-      {/* BUG: 全螢幕不會顯示、位置不會自適應 */}
       {/* For testing */}
       <Box
         ref={questionBoxRef}
@@ -120,38 +172,42 @@ const PopupModal = (props: {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       > */}
-        <Card
-          ref={questionRef}
-          sx={{
-            display: 'inline-block',
-            // minWidth: 600,
-            maxWidth: 700,
-            maxHeight: 500,
-            border: look ? '0.3rem outset green' : '0.3rem outset red',
-          }}
-        >
-          <Box
+        <animated.div style={animation}>
+          <Card
+            ref={questionRef}
             sx={{
-              overFlowX: 'hidden',
-              overflowY: 'auto',
-              p: 2,
-              display: 'flex',
-              flexDirection: 'column',
+              boxSizing: 'border-box',
+              borderRadius: 6,
+              display: 'inline-block',
+              // minWidth: 600,
               maxWidth: 700,
-              maxHeight: 450,
+              maxHeight: 500,
+              border: look ? '0.3rem outset green' : '0.3rem outset red',
             }}
           >
-            <QuestionType
-              setClose={props.setClose}
-              data={props.data}
-            ></QuestionType>
-          </Box>
-        </Card>
-
+            <Box
+              sx={{
+                overFlowX: 'hidden',
+                overflowY: 'auto',
+                p: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                maxWidth: 700,
+                maxHeight: 450,
+              }}
+            >
+              <QuestionType
+                close={close}
+                setClose={props.setClose}
+                data={props.data}
+              ></QuestionType>
+            </Box>
+          </Card>
+        </animated.div>
         {/* </Modal> */}
       </Box>
     </>
   )
 }
 
-export default PopupModal
+export default React.memo(PopupModal)
