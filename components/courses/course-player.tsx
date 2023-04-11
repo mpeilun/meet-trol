@@ -110,7 +110,7 @@ function CoursePlayer(props: { courseId: string }) {
   const watchTime = React.useRef<WatchTime>()
   const interactionLog = React.useRef<InteractionLog[]>([])
 
-  //TODO 暫時
+  //TODO 暫時先這樣寫
   const [isFormSubmitted, setIsFormSubmitted] = React.useState(false)
   const [showInComplete, setShowInComplete] = React.useState(false)
 
@@ -245,7 +245,7 @@ function CoursePlayer(props: { courseId: string }) {
   }
   return (
     <FullScreen handle={handleFullScreen}>
-      {/* TODO 暫時這樣 */}
+      {/* TODO 暫時先這樣寫 */}
       <Modal open={showInComplete} disableAutoFocus>
         <Box
           display="flex"
