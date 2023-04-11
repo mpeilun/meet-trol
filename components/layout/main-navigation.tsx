@@ -73,7 +73,7 @@ function MainNavigation() {
       sx={{ color: 'secondary', boxShadow: 'none' }}
     >
       <Container maxWidth="md">
-        <Toolbar disableGutters>
+      <Toolbar disableGutters>
           <RemoveRedEyeIcon
             sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, color: '#fff' }}
           />

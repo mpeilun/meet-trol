@@ -65,11 +65,11 @@ interface props {
   courseId: string
 }
 
-export default function CustomizedAccordions({
+const CustomizedAccordions = ({
   chapterData,
   pastViewData,
   courseId,
-}: props) {
+}: props) => {
   // const postPastView = React.useCallback(async (videoId: string) => {
   //   await fetch(`/api/record?courseId=${courseId}&videoId=${videoId}`, {
   //     method: 'POST',
@@ -89,29 +89,27 @@ export default function CustomizedAccordions({
   //     postPastView(chapterData[0].videos[0].id)
   //   }
   // }, [])
-
-  const setLastViewVideo = React.useCallback(
-    (array: PastViewData[]): PastViewData => {
-      if (!array.length || !array)
-        return {
-          videoId: chapterData[0].videos[0].id,
-          lastViewTime: new Date(),
-          lastPlaySecond: 0,
-        }
-      const lastViewVideo = array.reduce((earliest, current) => {
-        const earliestTime = new Date(earliest.lastViewTime)
-        const currentTime = new Date(current.lastViewTime)
-        return earliestTime > currentTime ? earliest : current
-      }, array[0])
-      return lastViewVideo
-    },
-    []
-  )
-  const lastView = setLastViewVideo(pastViewData)
+  // console.log('chapter render')
+  const lastView = React.useMemo((): PastViewData => {
+    if (!pastViewData.length || !pastViewData)
+      return {
+        videoId: chapterData[0].videos[0].id,
+        lastViewTime: new Date(),
+        lastPlaySecond: 0,
+      }
+    const lastViewVideo = pastViewData.reduce((earliest, current) => {
+      const earliestTime = new Date(earliest.lastViewTime)
+      const currentTime = new Date(current.lastViewTime)
+      return earliestTime > currentTime ? earliest : current
+    }, pastViewData[0])
+    return lastViewVideo
+  }, [chapterData, pastViewData])
 
   const dispatch = useAppDispatch()
 
-  const initialSelectVideo = React.useCallback((): boolean[][] => {
+
+
+  const initialSelectVideo = React.useMemo((): boolean[][] => {
     let chapterList = []
     const initialSelected = () => {
       chapterData.map((chapter, index) => {
@@ -130,11 +128,10 @@ export default function CustomizedAccordions({
     return chapterList
   }, [])
 
-  const [selectedVideo, setSelectedVideo] = React.useState<boolean[][]>(
-    initialSelectVideo()
-  )
+  const [selectedVideo, setSelectedVideo] =
+    React.useState<boolean[][]>(initialSelectVideo)
 
-  const initialExpanded = React.useCallback((): boolean[] => {
+  const initialExpanded = React.useMemo((): boolean[] => {
     let expandedList = []
     selectedVideo.map((selected, index) => {
       if (selected.includes(true)) {
@@ -147,9 +144,7 @@ export default function CustomizedAccordions({
     return expandedList
   }, [])
 
-  const [isExpanded, setIsExpanded] = React.useState<boolean[]>(
-    initialExpanded()
-  )
+  const [isExpanded, setIsExpanded] = React.useState<boolean[]>(initialExpanded)
 
   React.useEffect(() => {
     dispatch(setVideoId(lastView.videoId))
@@ -168,11 +163,13 @@ export default function CustomizedAccordions({
       .then((response) => response.json())
       .then((data) => {
         if (data) {
-          dispatch(setVideoTime(data.videoTime))
+          dispatch(setVideoTime(data.lastPlaySecond))
+        } else {
+          dispatch(setVideoTime(0))
         }
       })
       .catch((error) => {
-        dispatch(setVideoTime(0))
+        console.log(error)
       })
   }
 
@@ -213,14 +210,16 @@ export default function CustomizedAccordions({
                     >
                       <CardActionArea
                         onClick={() => {
-                          getLastView(id)
-                          let selected = [...selectedVideo]
-                          selected.map((ele) => {
-                            ele.fill(false)
-                          })
-                          selected[indexOne][indexTwo] = true
-                          setSelectedVideo(selected)
-                          dispatch(setVideoId(id))
+                          if (!selectedVideo[indexOne][indexTwo]) {
+                            getLastView(id)
+                            let selected = [...selectedVideo]
+                            selected.map((ele) => {
+                              ele.fill(false)
+                            })
+                            selected[indexOne][indexTwo] = true
+                            setSelectedVideo(selected)
+                            dispatch(setVideoId(id))
+                          }
                         }}
                       >
                         <CardContent
@@ -263,3 +262,5 @@ export default function CustomizedAccordions({
     </div>
   )
 }
+
+export default CustomizedAccordions

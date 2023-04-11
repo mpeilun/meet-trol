@@ -23,19 +23,26 @@ interface alert {
 }
 
 interface props {
+  close: () => void
   handleQuestionClose: () => void
   isLog: boolean
   data: DragData
   feedbackIndex: number
 }
 
-const Drag = ({ handleQuestionClose, isLog, data, feedbackIndex }: props) => {
+const Drag = ({
+  close,
+  handleQuestionClose,
+  isLog,
+  data,
+  feedbackIndex,
+}: props) => {
   const boxRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLDivElement>(null)
   const isClicked = useRef<boolean>(false)
 
   const emptyRef = useRef()
-  
+
   const coords = useRef<{
     startX: number
     startY: number
@@ -165,13 +172,22 @@ const Drag = ({ handleQuestionClose, isLog, data, feedbackIndex }: props) => {
     }
   }
 
+  function delay(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+  }
   return (
     <>
       <Box minHeight={50} display="flex" alignItems="center">
         <Typography variant="h5" sx={{ width: '100%' }}>
           {data.title ?? '圖選題'}
         </Typography>
-        <IconButton onClick={() => handleQuestionClose()}>
+        <IconButton
+          onClick={async () => {
+            close()
+            await delay(200)
+            handleQuestionClose()
+          }}
+        >
           <CloseIcon />
         </IconButton>
       </Box>

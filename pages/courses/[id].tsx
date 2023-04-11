@@ -67,6 +67,8 @@ function CourseInnerPage(props: {}) {
     courseId && ['http://localhost:3000/api/record?courseId=' + courseId],
     fetcher
   )
+
+
   const isLoading =
     !chapterData && !chapterError && !pastViewData && !recordError
 
@@ -101,7 +103,7 @@ function CourseInnerPage(props: {}) {
               height: '100%',
               width: '100%',
               borderRadius: 0,
-              overflowY: 'auto',
+              borderRight: '1px solid grey', // overflowY: 'auto',
             }}
           >
             <CustomizedAccordions
@@ -109,7 +111,6 @@ function CourseInnerPage(props: {}) {
               pastViewData={pastViewData as PastViewData[]}
               courseId={courseId}
             ></CustomizedAccordions>
-            <Divider />
           </Card>
         </Box>
         <Box

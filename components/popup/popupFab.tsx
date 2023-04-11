@@ -7,7 +7,8 @@ import { Typography } from '@mui/material'
 import { useAppSelector, useAppDispatch } from '../../hooks/redux'
 import PopupModal from './popupModel'
 import { ChoiceData, RankData, FillData, DragData } from '../../types/chapter'
-import { Info } from '@prisma/client'
+import { Info, InteractionLog } from '@prisma/client'
+import { useTransition, animated } from '@react-spring/web'
 
 export function questionStyle(questionType: string) {
   switch (questionType) {
@@ -45,11 +46,13 @@ export function questionStyle(questionType: string) {
 }
 
 const PopupFab = (props: {
+  interactionLog: React.MutableRefObject<InteractionLog[]>
   pause: () => void
   play: () => void
   data: Info | ChoiceData | RankData | FillData | DragData
   isFullScreen: boolean
 }) => {
+  // console.log('pop render')
   const playedSecond = useAppSelector((state) => state.course.playedSecond)
 
   // const QuestionType = (questionType: number) => {
@@ -65,14 +68,16 @@ const PopupFab = (props: {
   // }
 
   const [openQuestion, setOpenQuestion] = React.useState(true)
-  const handleOpenQuestion = () => {
+  const handleOpenQuestion = React.useCallback(() => {
     setOpenQuestion(true)
     props.pause()
-  }
-  const handleCloseQuestion = () => {
+    // console.log('pause')
+  }, [])
+  const handleCloseQuestion = React.useCallback(() => {
     setOpenQuestion(false)
     props.play()
-  }
+    // console.log('play')
+  }, [])
 
   // console.log(props.data)
 
@@ -107,6 +112,7 @@ const PopupFab = (props: {
             {questionStyle('info').icon}
           </Fab>
           <PopupModal
+            interactionLog={props.interactionLog}
             setClose={handleCloseQuestion}
             open={openQuestion}
             data={props.data}
@@ -133,7 +139,6 @@ const PopupFab = (props: {
               // bottom: 'auto',
               zIndex: 1,
               visibility: openQuestion ? 'hidden' : 'visible',
-
               // display: props.open ? 'none' : 'flex',
             }}
             color="primary"
@@ -145,6 +150,7 @@ const PopupFab = (props: {
             {questionStyle('choice || rank || fill').icon}
           </Fab>
           <PopupModal
+            interactionLog={props.interactionLog}
             setClose={handleCloseQuestion}
             open={openQuestion}
             data={props.data}
@@ -178,6 +184,7 @@ const PopupFab = (props: {
             {questionStyle('drag').icon}
           </Fab>
           <PopupModal
+            interactionLog={props.interactionLog}
             setClose={handleCloseQuestion}
             open={openQuestion}
             data={props.data}
@@ -188,7 +195,12 @@ const PopupFab = (props: {
     } else {
       return <Typography>題目顯示失敗</Typography>
     }
+  } else {
+    if (openQuestion) {
+      // handleCloseQuestion()
+    }
+    return <></>
   }
 }
 
-export default PopupFab
+export default React.memo(PopupFab)

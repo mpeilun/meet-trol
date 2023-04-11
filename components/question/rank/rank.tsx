@@ -34,6 +34,8 @@ interface alert {
 }
 
 export default function RankQuestion(props: {
+  close: () => void
+
   handleQuestionClose: () => void
   data: RankData
   isLog: boolean
@@ -43,21 +45,21 @@ export default function RankQuestion(props: {
   const isLog = props.isLog
   const feedbackIndex = props.feedbackIndex
 
-  const shuffle = (array: string[]): string[] => {
-    let arr = array.slice()
+  const shuffle = React.useMemo((): string[] => {
+    let arr = data.options.slice()
     for (let i = arr.length - 1; i > 0; i--) {
       let j = Math.floor(Math.random() * (i + 1))
       ;[arr[i], arr[j]] = [arr[j], arr[i]]
     }
     return arr
-  }
+  }, [data.options])
 
   const [items, setItems] = useState<string[]>(
     isLog && data.feedback[0] != null
       ? data.feedback[feedbackIndex].answers
       : isLog
       ? data.options
-      : shuffle(data.options)
+      : shuffle
   )
   const [isReply, setIsReply] = React.useState(false)
   const [isAnsError, setIsAnsError] = useState<alert>({

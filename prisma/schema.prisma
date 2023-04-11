@@ -95,16 +95,18 @@ type Focus {
 }
 
 type EyesTrack {
-  x       Float
-  y       Float
-  playerW Float
-  playerH Float
-  focus   Focus
-  time    DateTime
+  x        Float
+  y        Float
+  playerW  Float
+  playerH  Float
+  windowsW Float
+  windowsH Float
+  focus    Focus
+  time     DateTime
 }
 
 type InteractionLog {
-  questionId String   @db.ObjectId
+  questionId String @db.ObjectId
   openTime   DateTime
   closeTime  DateTime
   focusTime  Float
@@ -115,7 +117,7 @@ model ViewLog {
   eyesTrack      EyesTrack[]
   pauseTimes     PauseTime[]
   dragTimes      DragTime[]
-  watchTime      WatchTime[]
+  watchTime      WatchTime
   interactionLog InteractionLog[]
   PastView       PastView?        @relation(fields: [pastViewId], references: [id])
   pastViewId     String?          @db.ObjectId

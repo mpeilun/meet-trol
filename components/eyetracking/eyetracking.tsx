@@ -68,40 +68,41 @@ function EyesTracking() {
     questionLocateRef.current = questionLocate
   }, [questionLocate])
 
-  // useEffect(() => {
-  //   const interval = setInterval(async () => {
-  //     if (webgazerScript) {
-  //       try {
-  //         var prediction = await webgazer.getCurrentPrediction()
-  //         //redux
-  //         dispatch(updateEyeTracking({ x: prediction.x, y: prediction.y }))
-  //         console.log(eyeTrackingRef.current)
-  //         const questionLocateCurrent = questionLocateRef.current!
+  useEffect(() => {
+    if (!webgazerScript) return
+    const interval = setInterval(async () => {
+        try {
+          var prediction = await webgazer.getCurrentPrediction()
+          // console.log(prediction.x)
+          // console.log(prediction.y)
+          //redux
+          dispatch(updateEyeTracking({ x: prediction.x, y: prediction.y }))
+          // console.log(eyeTrackingRef.current)
+          const questionLocateCurrent = questionLocateRef.current!
 
-  //         // setEyesTrackingRecord((prev) => [
-  //         //   ...prev,
-  //         //   { x: prediction.x, y: prediction.y },
-  //         // ])
+          // setEyesTrackingRecord((prev) => [
+          //   ...prev,
+          //   { x: prediction.x, y: prediction.y },
+          // ])
 
-  //         const range = 50
+          const range = 50
 
-  //         if (
-  //           prediction.x >= questionLocateCurrent.xStart - range &&
-  //           prediction.x <= questionLocateCurrent.xEnd + range &&
-  //           prediction.y >= questionLocateCurrent.yStart - range &&
-  //           prediction.y <= questionLocateCurrent.yEnd + range
-  //         ) {
-  //           dispatch(isLooking(true))
-  //         } else {
-  //           dispatch(isLooking(false))
-  //         }
-  //       } catch {
-  //         //webgazer is not ready yet
-  //       }
-  //     }
-  //   }, 200)
-  //   return () => clearInterval(interval)
-  // }, [])
+          if (
+            prediction.x >= questionLocateCurrent.xStart - range &&
+            prediction.x <= questionLocateCurrent.xEnd + range &&
+            prediction.y >= questionLocateCurrent.yStart - range &&
+            prediction.y <= questionLocateCurrent.yEnd + range
+          ) {
+            dispatch(isLooking(true))
+          } else {
+            dispatch(isLooking(false))
+          }
+        } catch {
+          //webgazer is not ready yet
+        }
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [webgazerScript])
 
   return (
     <>
@@ -307,9 +308,9 @@ function Ball(props: { open: boolean; setOpen: Function }) {
               } else {
                 setClickCount((prev) => prev + 1)
               }
-              console.log('max width', vw)
-              console.log(coords)
-              console.log(mousePos)
+              // console.log('max width', vw)
+              // console.log(coords)
+              // console.log(mousePos)
             }}
           ></Fab>
         </Box>

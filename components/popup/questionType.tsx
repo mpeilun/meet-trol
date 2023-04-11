@@ -6,19 +6,23 @@ import FillIn from '../question/fillIn/fillIn'
 import Drag from '../question/drag/drag'
 import { ChoiceData, RankData, FillData, DragData } from '../../types/chapter'
 import { Info as InfoData } from '@prisma/client'
+import React from 'react'
 
 const QuestionType = (props: {
+  close: () => void
   setClose: () => void
   data: InfoData | ChoiceData | RankData | FillData | DragData
   isLog?: boolean
   feedbackIndex?: number
 }) => {
+  // console.log('quesionType render')
   // console.log(props.questionType)
   switch (props.data.questionType) {
     // info
     case 'info':
       return (
         <Info
+          close={props.close}
           handleQuestionClose={props.setClose}
           data={props.data as InfoData}
         ></Info>
@@ -28,6 +32,7 @@ const QuestionType = (props: {
     case 'choice':
       return (
         <Choice
+          close={props.close}
           handleQuestionClose={props.setClose}
           data={props.data as ChoiceData}
           isLog={props.isLog ?? false}
@@ -39,6 +44,7 @@ const QuestionType = (props: {
     case 'fill':
       return (
         <FillIn
+          close={props.close}
           handleQuestionClose={props.setClose}
           data={props.data as FillData}
           isLog={props.isLog ?? false}
@@ -50,6 +56,7 @@ const QuestionType = (props: {
     case 'rank':
       return (
         <RankQuestion
+          close={props.close}
           handleQuestionClose={props.setClose}
           data={props.data as RankData}
           isLog={props.isLog ?? false}
@@ -61,6 +68,7 @@ const QuestionType = (props: {
     case 'drag':
       return (
         <Drag
+          close={props.close}
           handleQuestionClose={props.setClose}
           data={props.data as DragData}
           isLog={props.isLog ?? false}
@@ -73,4 +81,4 @@ const QuestionType = (props: {
   }
 }
 
-export default QuestionType
+export default React.memo(QuestionType)
