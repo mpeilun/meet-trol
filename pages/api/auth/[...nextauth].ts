@@ -38,7 +38,6 @@ export const authOptions = {
       user: User
     }): Promise<Session> {
       // session.account = token.account
-      console.log('token', session)
       session.user = {
         id: user.id,
         name: user.name,
