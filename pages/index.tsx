@@ -79,24 +79,38 @@ function HomePage() {
                   分析學生對課程內容的理解程度，使教育者能夠調整教學內容，提升學習的效率。
                 </Typography>
               </Box>
-              <Button
-                disableElevation
-                variant="contained"
-                size="large"
-                onClick={() => {
-                  {
-                    session
-                      ? window.open('/courses')
-                      : window.open('/auth/signin')
-                  }
-                }}
-                sx={{
-                  marginTop: '32px',
-                  borderRadius: '8px',
-                }}
-              >
-                <Typography>{session ? '開始上課' : '登入體驗'}</Typography>
-              </Button>
+              <Box>
+                <Button
+                  disableElevation
+                  variant="contained"
+                  size="large"
+                  onClick={() => {
+                    {
+                      session
+                        ? window.open('/courses')
+                        : window.open('/auth/signin')
+                    }
+                  }}
+                  sx={{
+                    marginTop: '32px',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <Typography>{session ? '開始上課' : '登入體驗'}</Typography>
+                </Button>
+                <Button 
+                  disableElevation
+                  variant="contained"
+                  size="large"
+                  sx={{
+                    ml:'5px',
+                    marginTop: '32px',
+                    borderRadius: '8px',
+                  }}
+                  onClick={() => window.location.href = 'https://youtu.be/qJ2l6mRnPP0'}>
+                  實驗流程
+                </Button>
+              </Box>
             </Grid>
           </Grid>
         </Grid>
