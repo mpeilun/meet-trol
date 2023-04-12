@@ -37,7 +37,13 @@ import {
   useFullScreenHandle,
 } from 'react-full-screen'
 import { OnProgressProps } from 'react-player/base'
-import { VideoData } from '../../types/chapter'
+import {
+  ChoiceData,
+  DragData,
+  FillData,
+  RankData,
+  VideoData,
+} from '../../types/chapter'
 import CreateDiscussion from '../discussion/createDiscussion'
 
 import {
@@ -47,6 +53,7 @@ import {
   DragTime,
   WatchTime,
   InteractionLog,
+  Info,
 } from '@prisma/client'
 import { useSpring, animated } from '@react-spring/web'
 import { useWindowDimensions } from '../../hooks/common'
@@ -424,6 +431,7 @@ function CoursePlayer(props: { courseId: string }) {
 
           {playerRef?.current && (
             <PlayerBar
+              questions={videoData.questions}
               playerRef={playerRef}
               playedSeconds={playedSeconds}
               handleTimeSliderChange={handleTimeSliderChange}
@@ -553,6 +561,7 @@ export default CoursePlayer
 
 // 播放器播放條
 interface PlayerBarProps {
+  questions: (Info | ChoiceData | RankData | FillData | DragData)[]
   showPlayerBar: boolean
   playedSeconds: number
   handleTimeSliderChange: (event: Event, value: number | number[]) => void
@@ -582,6 +591,7 @@ const PlayerBar = (props: PlayerBarProps) => {
   const [marks, setMarks] = React.useState<Array<Mark>>([])
   const [thumbnailUrl, setThumbnailUrl] = React.useState<string>('')
   const {
+    questions,
     showPlayerBar,
     playedSeconds,
     handleTimeSliderChange,
@@ -642,13 +652,29 @@ const PlayerBar = (props: PlayerBarProps) => {
         <div style={{ height: '100%', width: '100%' }}>
           <div style={{ height: 50, position: 'relative' }}>
             <Slider
-              sx={{ position: 'absolute', bottom: -15, zIndex: 1000 }}
+              sx={{
+                position: 'absolute',
+                bottom: -15,
+                zIndex: 1000,
+                '& .MuiSlider-mark': {
+                  height: '3px',
+                  width: '3px',
+                },
+                '& .MuiSlider-markLabel': {
+                  display: 'none',
+                },
+              }}
               value={playedSeconds}
               onChange={handleTimeSliderChange}
               onChangeCommitted={handleChangeCommitted}
               min={0}
               max={playerRef.current ? playerRef.current.getDuration() : 0}
-              marks={marks}
+              marks={questions.map((question) => {
+                return {
+                  value: question.start,
+                  // label: question.questionType,
+                }
+              })}
               step={0.1}
             />
           </div>
