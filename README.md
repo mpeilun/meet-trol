@@ -1,5 +1,4 @@
-<img style="width:64px" src="<img style="width:64px" src="https://user-images.githubusercontent.com/13403218/228755470-34ae31ec-eb1a-4c1c-9461-bdbaa04d9fef.png" />
-" />
+<img style="width:64px" src="https://user-images.githubusercontent.com/13403218/228755470-34ae31ec-eb1a-4c1c-9461-bdbaa04d9fef.png" />
 
 # meet-trol
 MeetTrol是一個線上非同步學習系統，透過互動問題和臉部辨識技術，分析學生對課程內容的理解程度，讓教育者能夠調整教學內容，提升學習的效率和便利性。
