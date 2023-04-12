@@ -84,8 +84,10 @@ export default function RankQuestion(props: {
     // console.log(array)
     const ans = data.options
     // console.log(ans)
+    // console.log(ans)
     for (let i = 0; i < array.length; i++) {
       if (array[i] !== ans[i]) {
+        // console.log(ans[i])
         return false
       }
     }
@@ -101,26 +103,32 @@ export default function RankQuestion(props: {
       body: JSON.stringify({ answers: items, rankId: data.id }),
     })
       .then((response) => response.json())
-      .then((data) => console.log(data))
+      .then((data) => {})
       .catch((error) => console.error(error))
-    if (!data.isShowAnswer) {
+
+    //   if (!data.isShowAnswer) {
+    //   setIsReply(true)
+    //   setIsAnsError({
+    //     isShow: true,
+    //     text: '請繼續作答',
+    //     severity: 'info',
+    //   })
+    // } else
+    if (areArraysEqual(items)) {
+      console.log('correct')
       setIsReply(true)
       setIsAnsError({
+        // isShow: data.isShowAnswer,
         isShow: true,
-        text: '請繼續作答',
-        severity: 'info',
-      })
-    } else if (areArraysEqual(items)) {
-      setIsReply(true)
-      setIsAnsError({
-        isShow: data.isShowAnswer,
         text: '正確',
         severity: 'success',
       })
     } else {
+      console.log('error')
       setIsReply(true)
       setIsAnsError({
-        isShow: data.isShowAnswer,
+        // isShow: data.isShowAnswer,
+        isShow: true,
         text: '錯誤',
         severity: 'error',
       })
