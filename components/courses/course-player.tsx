@@ -134,7 +134,7 @@ function CoursePlayer(props: { courseId: string }) {
       setLoading(true)
     }
     const fetchData = async () => {
-      const response = await fetch(`http://localhost:3000/api/video/${videoId}`)
+      const response = await fetch(`/api/video/${videoId}`)
       const data: VideoData = await response.json()
       setVideoData(data)
     }
@@ -149,26 +149,23 @@ function CoursePlayer(props: { courseId: string }) {
   // 監聽離開事件
 
   const postLog = React.useCallback(async () => {
-    await fetch(
-      `http://localhost:3000/api/record/log?courseId=${courseId}&videoId=${videoId}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+    await fetch(`/api/record/log?courseId=${courseId}&videoId=${videoId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        lastPlaySecond: playedSeconds,
+        eyesTrack: eyesTracks.current,
+        pauseTimes: pauseTimes.current,
+        dragTimes: dragTimes.current,
+        watchTime: {
+          start: { playSecond: videoTime, time: time.current },
+          end: { playSecond: playedSeconds, time: new Date() },
         },
-        body: JSON.stringify({
-          lastPlaySecond: playedSeconds,
-          eyesTrack: eyesTracks.current,
-          pauseTimes: pauseTimes.current,
-          dragTimes: dragTimes.current,
-          watchTime: {
-            start: { playSecond: videoTime, time: time.current },
-            end: { playSecond: playedSeconds, time: new Date() },
-          },
-          interactionLog: interactionLog.current,
-        }),
-      }
-    )
+        interactionLog: interactionLog.current,
+      }),
+    })
       .then((response) => response.json())
       .then((data) => {
         eyesTracks.current = null
@@ -199,7 +196,7 @@ function CoursePlayer(props: { courseId: string }) {
     //   playerRef.current.seekTo(playedSeconds, 'seconds')
     //   return
     // }
-    
+
     //TODO 暫時先這樣寫
     if (props.playedSeconds > 730) {
       console.log('showInComplete')
