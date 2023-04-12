@@ -110,8 +110,8 @@ function EyesTracking() {
         src="../external-script/webgazer.js"
         onLoad={() => {
           setWebgazerScript(true)
-          // webgazer.showVideo(false)
-          // webgazer.showPredictionPoints(false)
+          webgazer.showVideo(false)
+          webgazer.showPredictionPoints(false)
           // webgazer.setGazeListener(function (data: { x: any; y: any } | null, elapsedTime: any) {
           //   if (data == null) {
           //     return
@@ -284,21 +284,22 @@ function Ball(props: { open: boolean; setOpen: Function }) {
     <>
       <Modal ref={modalRef} open={props.open}>
         <Box>
-          <Box
-            height={'100px'}
-            width={'200px'}
-            position={'absolute'}
+          <Card
             sx={{
+              padding: '24px',
+              position: 'absolute',
+              height: '100px',
+              width: '300px',
               top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
               backgroundColor: 'white',
             }}
           >
-            <Typography color={'red'}>
+            <Typography textAlign={'center'} color={'#fa535a'}>
               校正中，請注視紅點，並不斷點擊它
             </Typography>
-          </Box>
+          </Card>
           <Fab
             id="ball"
             size="small"

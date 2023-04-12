@@ -112,8 +112,8 @@ export default function CourseTabs({
         >
           <Tab label="總覽" {...a11yProps(0)} />
           <Tab label="教材" {...a11yProps(1)} />
-          <Tab label="學習紀錄" {...a11yProps(2)} />
-          <Tab label="作答紀錄" {...a11yProps(3)} />
+          {/* <Tab label="學習紀錄" {...a11yProps(2)} /> */}
+          {/* <Tab label="作答紀錄" {...a11yProps(3)} /> */}
           <Tab
             label="目錄"
             {...a11yProps(4)}
@@ -186,13 +186,13 @@ export default function CourseTabs({
           ))}
       </TabPanel>
 
-      <TabPanel value={value} index={2}>
-        {/* <EyesTracking /> */}
-      </TabPanel>
+      {/* <TabPanel value={value} index={2}>
+        <EyesTracking /> 
+      </TabPanel> */}
 
-      <TabPanel value={value} index={3}>
+      {/* <TabPanel value={value} index={3}>
         {videoData && <ReplyLog questions={videoData.questions}></ReplyLog>}
-      </TabPanel>
+      </TabPanel> */}
 
       {/* 已知BUG 左側和下方tab的目錄不會同步 */}
       {/* 視窗拉大 tab 頁面還是目錄 */}

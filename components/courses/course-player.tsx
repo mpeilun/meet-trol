@@ -13,6 +13,7 @@ import {
   Grid,
   CircularProgress,
   Typography,
+  Modal,
 } from '@mui/material'
 import {
   PlayArrow,
@@ -50,6 +51,7 @@ import {
 import { useSpring, animated } from '@react-spring/web'
 import { useWindowDimensions } from '../../hooks/common'
 import Interaction from '../popup/interaction'
+import { GoogleForm } from '../docs/googleForm'
 
 const ReactPlayerDynamic = dynamic(() => import('react-player/lazy'), {
   loading: () => (
@@ -110,6 +112,10 @@ function CoursePlayer(props: { courseId: string }) {
   const dragTimes = React.useRef<DragTime[]>([])
   const watchTime = React.useRef<WatchTime>()
   const interactionLog = React.useRef<InteractionLog[]>([])
+
+  //TODO 暫時先這樣寫
+  const [isFormSubmitted, setIsFormSubmitted] = React.useState(false)
+  const [showInComplete, setShowInComplete] = React.useState(false)
 
   const [hasWindow, setHasWindow] = React.useState(false)
 
@@ -193,6 +199,12 @@ function CoursePlayer(props: { courseId: string }) {
     //   playerRef.current.seekTo(playedSeconds, 'seconds')
     //   return
     // }
+    
+    //TODO 暫時先這樣寫
+    if (props.playedSeconds > 730) {
+      console.log('showInComplete')
+      setShowInComplete(true)
+    }
     // if (Math.floor(props.playedSeconds) % 10 == 0) {
     // }
     eyesTracks.current.push({
@@ -208,8 +220,6 @@ function CoursePlayer(props: { courseId: string }) {
       },
       time: new Date(),
     })
-    // console.log(playedSeconds)
-    // console.log(pauseTimes.current)
 
     // if (videoData) {
     //   videoData.questions.map((question) => {
@@ -284,6 +294,32 @@ function CoursePlayer(props: { courseId: string }) {
   }
   return (
     <FullScreen handle={handleFullScreen}>
+      {/* TODO 暫時先這樣寫 */}
+      <Modal open={showInComplete} disableAutoFocus>
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: showInComplete && !isFormSubmitted ? '90%' : 600,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          {showInComplete && (
+            <GoogleForm
+              formType="postTest"
+              isFormSubmitted={isFormSubmitted}
+              setIsFormSubmitted={setIsFormSubmitted}
+            />
+          )}
+        </Box>
+      </Modal>
       {/*眼動儀*/}
       {/* <Box
         position={'absolute'}
