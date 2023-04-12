@@ -158,26 +158,23 @@ function CoursePlayer(props: { courseId: string }) {
 
   const postLog = async () => {
     if (interactionLog.current.length > 1) {
-      await fetch(
-        `http://localhost:3000/api/record/log?courseId=${courseId}&videoId=${videoId}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+      await fetch(`/api/record/log?courseId=${courseId}&videoId=${videoId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          lastPlaySecond: playedSeconds,
+          eyesTrack: eyesTracks.current,
+          pauseTimes: pauseTimes.current,
+          dragTimes: dragTimes.current,
+          watchTime: {
+            start: { playSecond: videoTime, time: time.current },
+            end: { playSecond: playedSeconds, time: new Date() },
           },
-          body: JSON.stringify({
-            lastPlaySecond: playedSeconds,
-            eyesTrack: eyesTracks.current,
-            pauseTimes: pauseTimes.current,
-            dragTimes: dragTimes.current,
-            watchTime: {
-              start: { playSecond: videoTime, time: time.current },
-              end: { playSecond: playedSeconds, time: new Date() },
-            },
-            interactionLog: interactionLog.current,
-          }),
-        }
-      )
+          interactionLog: interactionLog.current,
+        }),
+      })
         .then((response) => response.json())
         .then((data) => {
           eyesTracks.current = []
