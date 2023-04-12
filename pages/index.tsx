@@ -20,6 +20,8 @@ import { useSession } from 'next-auth/react'
 import { useAppDispatch } from '../hooks/redux'
 import { sendMessage } from '../store/notification'
 import { useSpring, animated } from '@react-spring/web'
+import React from 'react'
+import GoButton from '../components/goButton'
 
 function HomePage() {
   const router = useRouter()
@@ -34,13 +36,6 @@ function HomePage() {
   const handleModalClose = () => {
     setModalOpen(false)
   }
-
-  const [hovered, setHovered] = useState(false)
-  const { x } = useSpring({
-    from: { x: 0 },
-    x: hovered ? 1 : 0,
-    config: { duration: 1000 },
-  })
 
   return (
     <>
@@ -202,61 +197,8 @@ function HomePage() {
                     </Box>
                   </Card>
                 </Modal>
-                <Button
-                  disableElevation
-                  variant="contained"
-                  size="large"
-                  onClick={
-                    session
-                      ? async () => {
-                          const testingCourseId = '6433dbbe63a37fb092f46f4b'
-                          const response = await fetch(
-                            `/api/course/joint/${testingCourseId}`
-                          )
-                          if (
-                            response.status === 409 ||
-                            response.status === 201
-                          ) {
-                            handleModalOpen()
-                          } else {
-                            dispatch(
-                              sendMessage({
-                                severity: 'error',
-                                message: '失敗！請重新嘗試',
-                              })
-                            )
-                          }
-                        }
-                      : () => {
-                          {
-                            window.open('/auth/signin')
-                          }
-                        }
-                  }
-                  sx={{
-                    px: 3.5,
-                    py: 1,
-                    marginTop: '32px',
-                    borderRadius: 8,
-                  }}
-                >
-                  <animated.div
-                 onMouseEnter={() => setHovered(true)}
-                 onMouseLeave={() => setHovered(false)}
-                  style={{
-                    fontSize: '20px',
-                    fontWeight: 600,
-                    opacity: x.to({ range: [0, 1], output: [1, 0.5] }),
-                    scale: x.to({
-                      range: [0, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 1],
-                      output: [1, 0.97, 0.9, 1.1, 0.9, 1.1, 1.03, 1],
-                    }),
-                  }}
-                >
-                  {session ? '開始測試' : '點此登入'}
-                </animated.div>
-                </Button>
-                
+                <GoButton handleModalOpen={handleModalOpen} />
+
                 {/* <Button 
                   disableElevation
                   variant="contained"
