@@ -71,35 +71,35 @@ function EyesTracking() {
   useEffect(() => {
     if (!webgazerScript) return
     const interval = setInterval(async () => {
-        try {
-          var prediction = await webgazer.getCurrentPrediction()
-          // console.log(prediction.x)
-          // console.log(prediction.y)
-          //redux
-          dispatch(updateEyeTracking({ x: prediction.x, y: prediction.y }))
-          // console.log(eyeTrackingRef.current)
-          const questionLocateCurrent = questionLocateRef.current!
+      try {
+        var prediction = await webgazer.getCurrentPrediction()
+        // console.log(prediction.x)
+        // console.log(prediction.y)
+        //redux
+        dispatch(updateEyeTracking({ x: prediction.x, y: prediction.y }))
+        // console.log(eyeTrackingRef.current)
+        const questionLocateCurrent = questionLocateRef.current!
 
-          // setEyesTrackingRecord((prev) => [
-          //   ...prev,
-          //   { x: prediction.x, y: prediction.y },
-          // ])
+        // setEyesTrackingRecord((prev) => [
+        //   ...prev,
+        //   { x: prediction.x, y: prediction.y },
+        // ])
 
-          const range = 50
+        const range = 50
 
-          if (
-            prediction.x >= questionLocateCurrent.xStart - range &&
-            prediction.x <= questionLocateCurrent.xEnd + range &&
-            prediction.y >= questionLocateCurrent.yStart - range &&
-            prediction.y <= questionLocateCurrent.yEnd + range
-          ) {
-            dispatch(isLooking(true))
-          } else {
-            dispatch(isLooking(false))
-          }
-        } catch {
-          //webgazer is not ready yet
+        if (
+          prediction.x >= questionLocateCurrent.xStart - range &&
+          prediction.x <= questionLocateCurrent.xEnd + range &&
+          prediction.y >= questionLocateCurrent.yStart - range &&
+          prediction.y <= questionLocateCurrent.yEnd + range
+        ) {
+          dispatch(isLooking(true))
+        } else {
+          dispatch(isLooking(false))
         }
+      } catch {
+        //webgazer is not ready yet
+      }
     }, 1000)
     return () => clearInterval(interval)
   }, [webgazerScript])
@@ -136,45 +136,61 @@ function EyesTracking() {
           flexDirection="column"
           justifyContent="center"
           sx={{
+            maxHeight: '80vh',
             position: 'absolute',
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: consentIsAgreed&&!preTestSubmitted?'90%':600,
+            width: consentIsAgreed && !preTestSubmitted ? '90%' : 600,
             bgcolor: 'background.paper',
             boxShadow: 24,
             p: 4,
           }}
         >
           {!consentIsAgreed && <Consent />}
-          {!consentIsAgreed && <Button variant='contained' onClick={() => setConsentIsAgreed(true)}>我同意</Button>}
-          {consentIsAgreed && <GoogleForm formType='preTest' isFormSubmitted={preTestSubmitted} setIsFormSubmitted={setPreTestSubmitted} />}
-          {preTestSubmitted && <LoadingButton
-            loading={consentLoadingButton}
-            variant="contained"
-            onClick={async () => {
-              setConsentLoadingButton(true)
-              const consent = await fetch('/api/consent', {
-                method: 'POST',
-                body: JSON.stringify({ isAgree: true, isComplete: false }),
-              })
-              if (consent.status === 200) {
-                webgazer.begin()
-                handleModalClose()
-              } else {
-                dispatch(
-                  sendMessage({
-                    severity: 'error',
-                    message: '發生異常',
-                    duration: 'short',
-                  })
-                )
-              }
-              setConsentLoadingButton(false)
-            }}
-          >
-            開始校正
-          </LoadingButton>}
+          {!consentIsAgreed && (
+            <Button
+              variant="contained"
+              onClick={() => setConsentIsAgreed(true)}
+            >
+              我同意
+            </Button>
+          )}
+          {consentIsAgreed && (
+            <GoogleForm
+              formType="preTest"
+              isFormSubmitted={preTestSubmitted}
+              setIsFormSubmitted={setPreTestSubmitted}
+            />
+          )}
+          {preTestSubmitted && (
+            <LoadingButton
+              loading={consentLoadingButton}
+              variant="contained"
+              onClick={async () => {
+                setConsentLoadingButton(true)
+                const consent = await fetch('/api/consent', {
+                  method: 'POST',
+                  body: JSON.stringify({ isAgree: true, isComplete: false }),
+                })
+                if (consent.status === 200) {
+                  webgazer.begin()
+                  handleModalClose()
+                } else {
+                  dispatch(
+                    sendMessage({
+                      severity: 'error',
+                      message: '發生異常',
+                      duration: 'short',
+                    })
+                  )
+                }
+                setConsentLoadingButton(false)
+              }}
+            >
+              開始校正
+            </LoadingButton>
+          )}
         </Box>
       </Modal>
       {/* <Button

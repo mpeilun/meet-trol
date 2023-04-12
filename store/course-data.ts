@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from './store'
-import { InteractionLog } from '@prisma/client'
 
 const initialState = {
   playedSecond: 0,
@@ -10,6 +9,7 @@ const initialState = {
   lookingQuestion: false,
   videoId: '',
   videoTime: 0,
+  focusQuestionTime: 0,
 }
 
 export const courseSlice = createSlice({
@@ -49,7 +49,9 @@ export const courseSlice = createSlice({
     setVideoTime: (state, action: PayloadAction<number>) => {
       state.videoTime = action.payload
     },
-    
+    setFocusQuestionTime: (state, action: PayloadAction<number>) => {
+      state.focusQuestionTime = action.payload
+    },
   },
 })
 
@@ -60,6 +62,7 @@ export const {
   isLooking,
   setVideoId,
   setVideoTime,
+  setFocusQuestionTime,
 } = courseSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
@@ -72,6 +75,7 @@ export const selectLookingQuestion = (state: RootState) =>
   state.course.lookingQuestion
 export const selectVideoId = (state: RootState) => state.course.videoId
 export const selectVideoTime = (state: RootState) => state.course.videoTime
-
+export const selectFocusQuestionTime = (state: RootState) =>
+  state.course.focusQuestionTime
 
 export default courseSlice.reducer

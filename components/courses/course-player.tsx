@@ -78,15 +78,18 @@ function CoursePlayer(props: { courseId: string }) {
   const [showPlayerBar, setShowPlayerBar] = React.useState(false) //是否顯示播放器控制列
   // const [mouseEnter, setMouseEnter] = React.useState(false)
   const [playing, setPlaying] = React.useState(false) //播放狀態
+  const [playedSeconds, setPlayedSeconds] = React.useState(0)
+  // console.log(playedSeconds)
   const play = React.useCallback(() => {
+    // console.log(playedSeconds)
     setPlaying(true)
-    pauseTime.current.push({
+    pauseTimes.current.push({
       pauseTime: timePause.current,
       playTime: new Date(),
       playSecond: playedSeconds,
     })
     // console.log(pauseTime.current)
-  }, []) //播放
+  }, [playedSeconds]) //播放
   const pause = React.useCallback(() => {
     setPlaying(false)
     timePause.current = new Date()
@@ -102,21 +105,20 @@ function CoursePlayer(props: { courseId: string }) {
 
   // viewLog data
   const playerSize = React.useRef(null)
-  const eyesTrack = React.useRef<EyesTrack[]>([])
-  const pauseTime = React.useRef<PauseTime[]>([])
+  const eyesTracks = React.useRef<EyesTrack[]>([])
+  const pauseTimes = React.useRef<PauseTime[]>([])
   const dragTimes = React.useRef<DragTime[]>([])
   const watchTime = React.useRef<WatchTime>()
   const interactionLog = React.useRef<InteractionLog[]>([])
-
 
   const [hasWindow, setHasWindow] = React.useState(false)
 
   const courseId = props.courseId
   //redux
   const videoId = useAppSelector((state) => state.course.videoId)
-  const videoTime = useAppSelector((state) => state.course.videoTime)
   const questionLocate = useAppSelector((state) => state.course.questionLocate)
   const eyeTracking = useAppSelector((state) => state.course.eyeTracking)
+  const videoTime = useAppSelector((state) => state.course.videoTime)
 
   const dispatch = useAppDispatch()
   const [videoData, setVideoData] = React.useState<VideoData>(null)
@@ -138,15 +140,62 @@ function CoursePlayer(props: { courseId: string }) {
       fetchData()
     }
   }, [videoId])
+  // 監聽離開事件
 
+  const postLog = React.useCallback(async () => {
+    await fetch(
+      `http://localhost:3000/api/record/log?courseId=${courseId}&videoId=${videoId}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          lastPlaySecond: playedSeconds,
+          eyesTrack: eyesTracks.current,
+          pauseTimes: pauseTimes.current,
+          dragTimes: dragTimes.current,
+          watchTime: {
+            start: { playSecond: videoTime, time: time.current },
+            end: { playSecond: playedSeconds, time: new Date() },
+          },
+          interactionLog: interactionLog.current,
+        }),
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        eyesTracks.current = null
+        pauseTimes.current = null
+        dragTimes.current = null
+        interactionLog.current = null
+        watchTime.current = null
+        time.current = new Date()
+        return console.log(data)
+      })
+      .catch((error) => console.error(error))
+  }, [playedSeconds])
+
+  React.useEffect(() => {
+    const handleBeforeUnload = async (e) => {
+      if (interactionLog.current.length > 0) {
+        postLog()
+      }
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [postLog])
   let handlePlayerStatus = (props: OnProgressProps) => {
     // if (!playing) {
     //   playerRef.current.seekTo(playedSeconds, 'seconds')
     //   return
     // }
-    if (Math.floor(props.playedSeconds) % 10 == 0) {
-    }
-    eyesTrack.current.push({
+    // if (Math.floor(props.playedSeconds) % 10 == 0) {
+    // }
+    eyesTracks.current.push({
       x: eyeTracking.x,
       y: eyeTracking.y,
       playerW: playerSize.current.getBoundingClientRect().width,
@@ -159,6 +208,8 @@ function CoursePlayer(props: { courseId: string }) {
       },
       time: new Date(),
     })
+    // console.log(playedSeconds)
+    // console.log(pauseTimes.current)
 
     // if (videoData) {
     //   videoData.questions.map((question) => {
@@ -170,14 +221,14 @@ function CoursePlayer(props: { courseId: string }) {
     //     }
     //   })
     // }
-    // console.log(eyesTrack.current)
-    console.log(interactionLog)
+    // console.log(pauseTimes.current)
+    // console.log(eyesTracks.current)
+    // console.log(interactionLog)
     setPlayedSeconds(props.playedSeconds)
     dispatch(setPlayedSecond(props.playedSeconds))
   }
 
   //Slider
-  const [playedSeconds, setPlayedSeconds] = React.useState(0)
   const handleTimeSliderChange = (event: any, newValue: any) => {
     if (playedSeconds != newValue) {
       React.startTransition(() => setPlayedSeconds(newValue))
@@ -303,7 +354,7 @@ function CoursePlayer(props: { courseId: string }) {
               {videoData?.questions.map((data, index) => {
                 return (
                   <PopupFab
-                  interactionLog={interactionLog}
+                    interactionLog={interactionLog}
                     key={`popupfab-${index}`}
                     pause={pause}
                     play={play}
@@ -318,7 +369,7 @@ function CoursePlayer(props: { courseId: string }) {
           {loading && (
             <Box
               sx={{
-                zIndex: 99999,
+                zIndex: 10,
                 width: '100%',
                 height: '100%',
                 position: 'absolute',

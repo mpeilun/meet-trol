@@ -98,11 +98,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       }
     }
     if (req.method === 'POST') {
-      const { videoTime } = req.body as { videoTime: number }
+      const { lastPlaySecond } = req.body as { lastPlaySecond: number }
       const { eyesTrack, pauseTimes, dragTimes, watchTime, interactionLog } =
         req.body as ViewLog
       if (
-        videoTime != null &&
+        lastPlaySecond != null &&
         eyesTrack &&
         pauseTimes &&
         dragTimes &&
@@ -146,12 +146,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
               videoId: videoId,
             },
             update: {
-              lastPlaySecond: videoTime,
+              lastPlaySecond: lastPlaySecond,
               lastViewTime: new Date(),
             },
             create: {
               videoId: videoId,
-              lastPlaySecond: videoTime,
+              lastPlaySecond: lastPlaySecond,
               lastViewTime: new Date(),
               record: {
                 connect: {

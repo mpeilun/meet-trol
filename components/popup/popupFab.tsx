@@ -72,12 +72,12 @@ const PopupFab = (props: {
     setOpenQuestion(true)
     props.pause()
     // console.log('pause')
-  }, [])
+  }, [playedSecond])
   const handleCloseQuestion = React.useCallback(() => {
     setOpenQuestion(false)
     props.play()
     // console.log('play')
-  }, [])
+  }, [playedSecond])
 
   // console.log(props.data)
 
