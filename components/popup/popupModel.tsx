@@ -172,7 +172,7 @@ const PopupModal = (props: {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       > */}
-        <animated.div style={animation}>
+        <animated.div >
           <Card
             ref={questionRef}
             sx={{
