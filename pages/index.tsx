@@ -19,6 +19,7 @@ import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
 import { useAppDispatch } from '../hooks/redux'
 import { sendMessage } from '../store/notification'
+import { useSpring, animated } from '@react-spring/web'
 
 function HomePage() {
   const router = useRouter()
@@ -33,6 +34,13 @@ function HomePage() {
   const handleModalClose = () => {
     setModalOpen(false)
   }
+
+  const [hovered, setHovered] = useState(false)
+  const { x } = useSpring({
+    from: { x: 0 },
+    x: hovered ? 1 : 0,
+    config: { duration: 1000 },
+  })
 
   return (
     <>
@@ -87,26 +95,27 @@ function HomePage() {
               height="100%"
             >
               <Box width={{ xs: '300px', sm: '90%' }}>
-                <Typography sx={{ textAlign: 'justify' }}>
+                <Typography
+                  variant={'h6'}
+                  sx={{ fontWeight: 'bold', textAlign: 'justify' }}
+                >
                   親愛的使用者您好：
                 </Typography>
+                <div style={{ paddingLeft: '8px' }}>
+                  <ol>
+                    <li>請先進行登入</li>
+                    <li>登入成功回到此頁</li>
+                    <li>點擊『開始測試』</li>
+                    <li>協助我們完成進行測試</li>
+                  </ol>
+                </div>
                 <Typography
                   sx={{
                     textAlign: 'justify',
-                    marginTop: '8px',
-                    marginLeft: '8px',
+                    marginTop: '12px',
                   }}
                 >
-                  請先進行登入，登入成功後，回到此頁 點擊『開始測試』。
-                </Typography>
-                <Typography
-                  sx={{
-                    textAlign: 'justify',
-                    marginTop: '8px',
-                    marginLeft: '8px',
-                  }}
-                >
-                  協助我們完成進行測試。您的幫助對我們非常重要，感謝您的參與！
+                  感謝您的參與，您的幫助對我們非常重要！
                 </Typography>
                 {/* <Typography color={grey[600]} sx={{ textAlign: 'justify' }}>
                   線上影片學習系統，透過互動問題與眼球追蹤技術，
@@ -160,7 +169,6 @@ function HomePage() {
                         borderRadius: '10px',
                       }}
                       title="測試流程說明"
-                      frameBorder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       allowFullScreen
                     />
@@ -226,12 +234,29 @@ function HomePage() {
                         }
                   }
                   sx={{
+                    px: 3.5,
+                    py: 1,
                     marginTop: '32px',
-                    borderRadius: '8px',
+                    borderRadius: 8,
                   }}
                 >
-                  <Typography>{session ? '開始測試' : '點此登入'}</Typography>
+                  <animated.div
+                 onMouseEnter={() => setHovered(true)}
+                 onMouseLeave={() => setHovered(false)}
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: 600,
+                    opacity: x.to({ range: [0, 1], output: [1, 0.5] }),
+                    scale: x.to({
+                      range: [0, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 1],
+                      output: [1, 0.97, 0.9, 1.1, 0.9, 1.1, 1.03, 1],
+                    }),
+                  }}
+                >
+                  {session ? '開始測試' : '點此登入'}
+                </animated.div>
                 </Button>
+                
                 {/* <Button 
                   disableElevation
                   variant="contained"
