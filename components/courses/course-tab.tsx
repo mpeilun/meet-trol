@@ -76,7 +76,7 @@ export default function CourseTabs({
 
   React.useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(`http://localhost:3000/api/video/${videoId}`)
+      const response = await fetch(`/api/video/${videoId}`)
       const data: VideoData = await response.json()
       setVideoData(data)
     }
