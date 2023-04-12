@@ -60,11 +60,11 @@ function CourseInnerPage(props: {}) {
   const courseId = router.query.id as string
 
   const { data: chapterData, error: chapterError } = useSWR(
-    courseId && ['http://localhost:3000/api/chapter?courseId=' + courseId],
+    courseId && ['/api/chapter?courseId=' + courseId],
     fetcher
   )
   const { data: pastViewData, error: recordError } = useSWR(
-    courseId && ['http://localhost:3000/api/record?courseId=' + courseId],
+    courseId && ['/api/record?courseId=' + courseId],
     fetcher
   )
 

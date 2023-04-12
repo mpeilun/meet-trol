@@ -136,40 +136,6 @@ function CoursePlayer(props: { courseId: string }) {
   const dispatch = useAppDispatch()
   const [videoData, setVideoData] = React.useState<VideoData>(null)
 
-  // const postLog = React.useCallback(async () => {
-  //   await fetch(
-  //     `http://localhost:3000/api/record/log?courseId=${courseId}&videoId=${videoId}`,
-  //     {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({
-  //         lastPlaySecond: playedSeconds,
-  //         eyesTrack: eyesTracks.current,
-  //         pauseTimes: pauseTimes.current,
-  //         dragTimes: dragTimes.current,
-  //         watchTime: {
-  //           start: { playSecond: videoTime, time: time.current },
-  //           end: { playSecond: playedSeconds, time: new Date() },
-  //         },
-  //         interactionLog: interactionLog.current,
-  //       }),
-  //     }
-  //   )
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       eyesTracks.current = null
-  //       pauseTimes.current = null
-  //       dragTimes.current = null
-  //       interactionLog.current = null
-  //       watchTime.current = null
-  //       time.current = new Date()
-  //       return console.log(data)
-  //     })
-  //     .catch((error) => console.error(error))
-  // }, [])
-
   React.useEffect(() => {
     if (playerRef.current) {
       setLoading(true)
@@ -192,26 +158,23 @@ function CoursePlayer(props: { courseId: string }) {
 
   const postLog = async () => {
     if (interactionLog.current.length > 1) {
-      await fetch(
-        `http://localhost:3000/api/record/log?courseId=${courseId}&videoId=${videoId}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+      await fetch(`/api/record/log?courseId=${courseId}&videoId=${videoId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          lastPlaySecond: playedSeconds,
+          eyesTrack: eyesTracks.current,
+          pauseTimes: pauseTimes.current,
+          dragTimes: dragTimes.current,
+          watchTime: {
+            start: { playSecond: videoTime, time: time.current },
+            end: { playSecond: playedSeconds, time: new Date() },
           },
-          body: JSON.stringify({
-            lastPlaySecond: playedSeconds,
-            eyesTrack: eyesTracks.current,
-            pauseTimes: pauseTimes.current,
-            dragTimes: dragTimes.current,
-            watchTime: {
-              start: { playSecond: videoTime, time: time.current },
-              end: { playSecond: playedSeconds, time: new Date() },
-            },
-            interactionLog: interactionLog.current,
-          }),
-        }
-      )
+          interactionLog: interactionLog.current,
+        }),
+      })
         .then((response) => response.json())
         .then((data) => {
           eyesTracks.current = []
@@ -227,48 +190,18 @@ function CoursePlayer(props: { courseId: string }) {
     }
   }
 
-  // React.useEffect(() => {
-  //   const handleBeforeUnload = async (e) => {
-  //     if (interactionLog.current.length > 0) {
-  //       await fetch(
-  //         `http://localhost:3000/api/record/log?courseId=${courseId}&videoId=${videoId}`,
-  //         {
-  //           method: 'POST',
-  //           headers: {
-  //             'Content-Type': 'application/json',
-  //           },
-  //           body: JSON.stringify({
-  //             lastPlaySecond: playedSeconds,
-  //             eyesTrack: eyesTracks.current,
-  //             pauseTimes: pauseTimes.current,
-  //             dragTimes: dragTimes.current,
-  //             watchTime: {
-  //               start: { playSecond: videoTime, time: time.current },
-  //               end: { playSecond: playedSeconds, time: new Date() },
-  //             },
-  //             interactionLog: interactionLog.current,
-  //           }),
-  //         }
-  //       )
-  //         .then((response) => response.json())
-  //         .then((data) => {
-  //           eyesTracks.current = null
-  //           pauseTimes.current = null
-  //           dragTimes.current = null
-  //           interactionLog.current = null
-  //           watchTime.current = null
-  //           time.current = new Date()
-  //           return console.log(data)
-  //         })
-  //         .catch((error) => console.error(error))
-  //     }
-  //   }
+  React.useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      e.preventDefault()
+      e.returnValue = '請正確提交後測表單在離開此頁面！'
+    }
 
-  //   window.addEventListener('beforeunload', handleBeforeUnload)
-  //   return () => {
-  //     window.removeEventListener('beforeunload', handleBeforeUnload)
-  //   }
-  // }, [playedSeconds])
+    window.addEventListener('beforeunload', handleBeforeUnload)
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [])
 
   let handlePlayerStatus = (props: OnProgressProps) => {
     // if (!playing) {
@@ -278,6 +211,7 @@ function CoursePlayer(props: { courseId: string }) {
 
     //TODO 暫時先這樣寫
     if (props.playedSeconds > 732) {
+      handleFullScreen.exit
       setPlaying(false)
       // console.log('showInComplete')
       postLog()

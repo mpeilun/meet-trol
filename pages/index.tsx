@@ -1,31 +1,28 @@
 // import Link from 'next/link'
 // import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, Button, Tooltip, MenuItem } from '@mui/material'
 // import { CourseDataType, getAllCourses } from '../lib/dummy-data'
-import CourseList from '../components/courses/course-list'
 import { useContext, useState } from 'react'
 import Image from 'next/image'
 import {
   Box,
   Button,
-  ButtonBase,
   Card,
   Container,
   Grid,
   Modal,
   Typography,
 } from '@mui/material'
-import { grey } from '@mui/material/colors'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
 import { useAppDispatch } from '../hooks/redux'
-import { sendMessage } from '../store/notification'
+import React from 'react'
+import GoButton from '../components/goButton'
 
 function HomePage() {
   const router = useRouter()
   const { data: session } = useSession()
 
   const [modalOpen, setModalOpen] = useState(false)
-  const dispatch = useAppDispatch()
 
   const handleModalOpen = () => {
     setModalOpen(true)
@@ -87,26 +84,27 @@ function HomePage() {
               height="100%"
             >
               <Box width={{ xs: '300px', sm: '90%' }}>
-                <Typography sx={{ textAlign: 'justify' }}>
+                <Typography
+                  variant={'h6'}
+                  sx={{ fontWeight: 'bold', textAlign: 'justify' }}
+                >
                   親愛的使用者您好：
                 </Typography>
+                <div style={{ paddingLeft: '8px' }}>
+                  <ol>
+                    <li>請先進行登入</li>
+                    <li>登入成功回到此頁</li>
+                    <li>點擊『開始測試』</li>
+                    <li>協助我們完成進行測試</li>
+                  </ol>
+                </div>
                 <Typography
                   sx={{
                     textAlign: 'justify',
-                    marginTop: '8px',
-                    marginLeft: '8px',
+                    marginTop: '12px',
                   }}
                 >
-                  請先進行登入，登入成功後，回到此頁 點擊『開始測試』。
-                </Typography>
-                <Typography
-                  sx={{
-                    textAlign: 'justify',
-                    marginTop: '8px',
-                    marginLeft: '8px',
-                  }}
-                >
-                  協助我們完成進行測試。您的幫助對我們非常重要，感謝您的參與！
+                  感謝您的參與，您的幫助對我們非常重要！
                 </Typography>
                 {/* <Typography color={grey[600]} sx={{ textAlign: 'justify' }}>
                   線上影片學習系統，透過互動問題與眼球追蹤技術，
@@ -160,7 +158,6 @@ function HomePage() {
                         borderRadius: '10px',
                       }}
                       title="測試流程說明"
-                      frameBorder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       allowFullScreen
                     />
@@ -194,44 +191,8 @@ function HomePage() {
                     </Box>
                   </Card>
                 </Modal>
-                <Button
-                  disableElevation
-                  variant="contained"
-                  size="large"
-                  onClick={
-                    session
-                      ? async () => {
-                          const testingCourseId = '6433dbbe63a37fb092f46f4b'
-                          const response = await fetch(
-                            `/api/course/joint/${testingCourseId}`
-                          )
-                          if (
-                            response.status === 409 ||
-                            response.status === 201
-                          ) {
-                            handleModalOpen()
-                          } else {
-                            dispatch(
-                              sendMessage({
-                                severity: 'error',
-                                message: '失敗！請重新嘗試',
-                              })
-                            )
-                          }
-                        }
-                      : () => {
-                          {
-                            window.open('/auth/signin')
-                          }
-                        }
-                  }
-                  sx={{
-                    marginTop: '32px',
-                    borderRadius: '8px',
-                  }}
-                >
-                  <Typography>{session ? '開始測試' : '點此登入'}</Typography>
-                </Button>
+                <GoButton handleModalOpen={handleModalOpen} />
+
                 {/* <Button 
                   disableElevation
                   variant="contained"

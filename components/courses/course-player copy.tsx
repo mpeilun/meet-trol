@@ -131,7 +131,7 @@ function CoursePlayer(props: { courseId: string }) {
 
   const postLog = React.useCallback(async () => {
     await fetch(
-      `http://localhost:3000/api/record/log?courseId=${courseId}&videoId=${videoId}`,
+      `/api/record/log?courseId=${courseId}&videoId=${videoId}`,
       {
         method: 'POST',
         headers: {
@@ -170,7 +170,7 @@ function CoursePlayer(props: { courseId: string }) {
     postLog()
     console.log('data')
     const fetchData = async () => {
-      const response = await fetch(`http://localhost:3000/api/video/${videoId}`)
+      const response = await fetch(`/api/video/${videoId}`)
       const data: VideoData = await response.json()
       setVideoData(data)
     }
@@ -203,7 +203,7 @@ function CoursePlayer(props: { courseId: string }) {
     // }
 
     //TODO 暫時先這樣寫
-    if (props.playedSeconds > 730) {
+    if (props.playedSeconds > 729) {
       console.log('showInComplete')
       setShowInComplete(true)
     }
@@ -544,7 +544,7 @@ const PlayerBar = (props: PlayerBarProps) => {
     }
   }
 
-  
+
   const handleDiscussionButtonClick = () => {
     // setMarks([...marks, { value: playedSeconds }])
     // console.log(marks)
