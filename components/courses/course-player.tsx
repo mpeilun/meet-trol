@@ -193,7 +193,7 @@ function CoursePlayer(props: { courseId: string }) {
   React.useEffect(() => {
     const handleBeforeUnload = (e) => {
       e.preventDefault()
-      e.returnValue = ''
+      e.returnValue = '請正確提交後測表單在離開此頁面！'
     }
 
     window.addEventListener('beforeunload', handleBeforeUnload)
@@ -211,6 +211,7 @@ function CoursePlayer(props: { courseId: string }) {
 
     //TODO 暫時先這樣寫
     if (props.playedSeconds > 732) {
+      handleFullScreen.exit
       setPlaying(false)
       // console.log('showInComplete')
       postLog()
