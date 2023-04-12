@@ -43,7 +43,7 @@ const CourseCard = (props: {
         <CardMedia
           component="img"
           height="140"
-          image={'/images/image-2.jpg'}
+          image={'/images/image-2.png'}
           alt={'courseImage'}
         />
         <CardContent>

@@ -18,7 +18,7 @@ export const Consent = () => {
       <Typography variant="body2">
         　因應個人資料保護法之規定，在向您蒐集個人資料之前，依法向您告知下列事項，當您簽署這份同意書，表示您已閱讀、瞭解並同意接受本同意書之所有內容：
       </Typography>
-      <Typography variant="body2">
+      <Typography variant="body2" sx={{ marginTop: '8px' }}>
         <strong>一、蒐集目的及類別</strong>
       </Typography>
       <Typography variant="body2">
@@ -44,7 +44,7 @@ export const Consent = () => {
       <Typography variant="body2">
         　依據個人資料保護法第3條規定，您可向本實驗單位請求查詢或閱覽、製給複製本、補充或更正、停止蒐集/處理/利用或刪除您的個人資料。
       </Typography>
-      <Typography variant="body2">
+      <Typography variant="body2" sx={{ marginTop: '8px' }}>
         <strong>個人資料同意提供：</strong>
       </Typography>
       <Typography variant="body2">
