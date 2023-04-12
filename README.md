@@ -1,4 +1,4 @@
-<img style="width:64px" src="https://user-images.githubusercontent.com/13403218/231497608-31407e45-86d0-4181-88c7-f513f5d24300.png" />
+<img style="width:64px" src="https://user-images.githubusercontent.com/13403218/231497858-8fc3c51e-b4a0-492d-9853-0f804e852e66.png" />
 
 # meet-trol
 MeetTrol是一個線上非同步學習系統，透過互動問題和眼球追蹤技術，分析學生對課程內容的理解程度，讓教育者能夠調整教學內容，提升學習的效率和便利性。
