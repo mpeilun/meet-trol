@@ -136,6 +136,7 @@ function EyesTracking() {
           flexDirection="column"
           justifyContent="center"
           sx={{
+            maxHeight: '80vh',
             position: 'absolute',
             top: '50%',
             left: '50%',

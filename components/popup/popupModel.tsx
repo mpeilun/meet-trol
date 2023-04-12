@@ -41,7 +41,7 @@ const PopupModal = (props: {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    console.log(document.getElementById('course-material-div').scrollTop)
+    // console.log(document.getElementById('course-material-div').scrollTop)
   }, [document.getElementById('course-material-div').scrollTop])
 
   useEffect(() => {

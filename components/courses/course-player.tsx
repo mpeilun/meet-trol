@@ -80,15 +80,18 @@ function CoursePlayer(props: { courseId: string }) {
   const [showPlayerBar, setShowPlayerBar] = React.useState(false) //是否顯示播放器控制列
   // const [mouseEnter, setMouseEnter] = React.useState(false)
   const [playing, setPlaying] = React.useState(false) //播放狀態
+  const [playedSeconds, setPlayedSeconds] = React.useState(0)
+  // console.log(playedSeconds)
   const play = React.useCallback(() => {
+    // console.log(playedSeconds)
     setPlaying(true)
-    pauseTime.current.push({
+    pauseTimes.current.push({
       pauseTime: timePause.current,
       playTime: new Date(),
       playSecond: playedSeconds,
     })
     // console.log(pauseTime.current)
-  }, []) //播放
+  }, [playedSeconds]) //播放
   const pause = React.useCallback(() => {
     setPlaying(false)
     timePause.current = new Date()
@@ -104,13 +107,13 @@ function CoursePlayer(props: { courseId: string }) {
 
   // viewLog data
   const playerSize = React.useRef(null)
-  const eyesTrack = React.useRef<EyesTrack[]>([])
-  const pauseTime = React.useRef<PauseTime[]>([])
+  const eyesTracks = React.useRef<EyesTrack[]>([])
+  const pauseTimes = React.useRef<PauseTime[]>([])
   const dragTimes = React.useRef<DragTime[]>([])
   const watchTime = React.useRef<WatchTime>()
   const interactionLog = React.useRef<InteractionLog[]>([])
 
-  //TODO 暫時
+  //TODO 暫時先這樣寫
   const [isFormSubmitted, setIsFormSubmitted] = React.useState(false)
   const [showInComplete, setShowInComplete] = React.useState(false)
 
@@ -119,9 +122,9 @@ function CoursePlayer(props: { courseId: string }) {
   const courseId = props.courseId
   //redux
   const videoId = useAppSelector((state) => state.course.videoId)
-  const videoTime = useAppSelector((state) => state.course.videoTime)
   const questionLocate = useAppSelector((state) => state.course.questionLocate)
   const eyeTracking = useAppSelector((state) => state.course.eyeTracking)
+  const videoTime = useAppSelector((state) => state.course.videoTime)
 
   const dispatch = useAppDispatch()
   const [videoData, setVideoData] = React.useState<VideoData>(null)
@@ -143,34 +146,80 @@ function CoursePlayer(props: { courseId: string }) {
       fetchData()
     }
   }, [videoId])
+  // 監聽離開事件
 
+  const postLog = React.useCallback(async () => {
+    await fetch(
+      `http://localhost:3000/api/record/log?courseId=${courseId}&videoId=${videoId}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          lastPlaySecond: playedSeconds,
+          eyesTrack: eyesTracks.current,
+          pauseTimes: pauseTimes.current,
+          dragTimes: dragTimes.current,
+          watchTime: {
+            start: { playSecond: videoTime, time: time.current },
+            end: { playSecond: playedSeconds, time: new Date() },
+          },
+          interactionLog: interactionLog.current,
+        }),
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        eyesTracks.current = null
+        pauseTimes.current = null
+        dragTimes.current = null
+        interactionLog.current = null
+        watchTime.current = null
+        time.current = new Date()
+        return console.log(data)
+      })
+      .catch((error) => console.error(error))
+  }, [playedSeconds])
+
+  React.useEffect(() => {
+    const handleBeforeUnload = async (e) => {
+      if (interactionLog.current.length > 0) {
+        postLog()
+      }
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [postLog])
   let handlePlayerStatus = (props: OnProgressProps) => {
     // if (!playing) {
     //   playerRef.current.seekTo(playedSeconds, 'seconds')
     //   return
     // }
-
+    
     //TODO 暫時先這樣寫
     if (props.playedSeconds > 730) {
       console.log('showInComplete')
       setShowInComplete(true)
     }
-
-    if (Math.floor(props.playedSeconds) % 10 == 0) {
-      eyesTrack.current.push({
-        x: eyeTracking.x,
-        y: eyeTracking.y,
-        playerW: playerSize.current.getBoundingClientRect().width,
-        playerH: playerSize.current.getBoundingClientRect().height,
-        windowsW: viewPort.width,
-        windowsH: viewPort.height,
-        focus: {
-          playSecond: props.playedSeconds,
-          onWindow: document.visibilityState === 'visible',
-        },
-        time: new Date(),
-      })
-    }
+    // if (Math.floor(props.playedSeconds) % 10 == 0) {
+    // }
+    eyesTracks.current.push({
+      x: eyeTracking.x,
+      y: eyeTracking.y,
+      playerW: playerSize.current.getBoundingClientRect().width,
+      playerH: playerSize.current.getBoundingClientRect().height,
+      windowsW: viewPort.width,
+      windowsH: viewPort.height,
+      focus: {
+        playSecond: props.playedSeconds,
+        onWindow: document.visibilityState === 'visible',
+      },
+      time: new Date(),
+    })
 
     // if (videoData) {
     //   videoData.questions.map((question) => {
@@ -182,14 +231,14 @@ function CoursePlayer(props: { courseId: string }) {
     //     }
     //   })
     // }
-    // console.log(eyesTrack.current)
-    console.log(interactionLog)
+    // console.log(pauseTimes.current)
+    // console.log(eyesTracks.current)
+    // console.log(interactionLog)
     setPlayedSeconds(props.playedSeconds)
     dispatch(setPlayedSecond(props.playedSeconds))
   }
 
   //Slider
-  const [playedSeconds, setPlayedSeconds] = React.useState(0)
   const handleTimeSliderChange = (event: any, newValue: any) => {
     if (playedSeconds != newValue) {
       React.startTransition(() => setPlayedSeconds(newValue))
@@ -245,7 +294,7 @@ function CoursePlayer(props: { courseId: string }) {
   }
   return (
     <FullScreen handle={handleFullScreen}>
-      {/* TODO 暫時這樣 */}
+      {/* TODO 暫時先這樣寫 */}
       <Modal open={showInComplete} disableAutoFocus>
         <Box
           display="flex"
@@ -356,7 +405,7 @@ function CoursePlayer(props: { courseId: string }) {
           {loading && (
             <Box
               sx={{
-                zIndex: 99999,
+                zIndex: 10,
                 width: '100%',
                 height: '100%',
                 position: 'absolute',

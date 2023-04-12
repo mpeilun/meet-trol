@@ -12,19 +12,39 @@ export const authOptions = {
       clientSecret: process.env.GOOGLE_SECRET,
     }),
   ],
+  secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: '/auth/signin',
   },
   callbacks: {
-    async jwt({ token, account }: { token: JWT; account: Account }): Promise<JWT> {
+    async jwt({
+      token,
+      account,
+    }: {
+      token: JWT
+      account: Account
+    }): Promise<JWT> {
       if (account) {
         // token.account = account
       }
       return token
     },
-    async session({ session, token, user }: { session: Session; token: JWT; user: User }): Promise<Session> {
+    async session({
+      session,
+      token,
+      user,
+    }: {
+      session: Session
+      token: JWT
+      user: User
+    }): Promise<Session> {
       // session.account = token.account
-      session.user = { id: user.id, name: user.name, email: user.email, image: user.image }
+      session.user = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        image: user.image,
+      }
       return session
     },
   },
