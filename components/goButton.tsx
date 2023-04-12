@@ -5,10 +5,9 @@ import { sendMessage } from '../store/notification'
 import { useAppDispatch } from '../hooks/redux'
 import { useSession } from 'next-auth/react'
 
-const GoButton = ( handleModalOpen: () => void) => {
+const GoButton = ({ handleModalOpen }: { handleModalOpen: () => void }) => {
   const dispatch = useAppDispatch()
   const { data: session } = useSession()
-
 
   const [hovered, setHovered] = React.useState(false)
   const { x } = useSpring({

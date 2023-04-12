@@ -1,25 +1,20 @@
 // import Link from 'next/link'
 // import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, Button, Tooltip, MenuItem } from '@mui/material'
 // import { CourseDataType, getAllCourses } from '../lib/dummy-data'
-import CourseList from '../components/courses/course-list'
 import { useContext, useState } from 'react'
 import Image from 'next/image'
 import {
   Box,
   Button,
-  ButtonBase,
   Card,
   Container,
   Grid,
   Modal,
   Typography,
 } from '@mui/material'
-import { grey } from '@mui/material/colors'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
 import { useAppDispatch } from '../hooks/redux'
-import { sendMessage } from '../store/notification'
-import { useSpring, animated } from '@react-spring/web'
 import React from 'react'
 import GoButton from '../components/goButton'
 
@@ -28,7 +23,6 @@ function HomePage() {
   const { data: session } = useSession()
 
   const [modalOpen, setModalOpen] = useState(false)
-  const dispatch = useAppDispatch()
 
   const handleModalOpen = () => {
     setModalOpen(true)
