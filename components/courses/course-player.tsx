@@ -95,7 +95,7 @@ function CoursePlayer(props: { courseId: string }) {
     pauseTimes.current.push({
       pauseTime: timePause.current,
       playTime: new Date(),
-      playSecond: playedSeconds,
+      playSecond: Math.round(playedSeconds),
     })
     // console.log(pauseTime.current)
   }, [playedSeconds]) //播放
@@ -164,13 +164,13 @@ function CoursePlayer(props: { courseId: string }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          lastPlaySecond: playedSeconds,
+          lastPlaySecond: Math.round(playedSeconds),
           eyesTrack: eyesTracks.current,
           pauseTimes: pauseTimes.current,
           dragTimes: dragTimes.current,
           watchTime: {
-            start: { playSecond: videoTime, time: time.current },
-            end: { playSecond: playedSeconds, time: new Date() },
+            start: { playSecond: Math.round(videoTime), time: time.current },
+            end: { playSecond: Math.round(playedSeconds), time: new Date() },
           },
           interactionLog: interactionLog.current,
         }),
@@ -212,7 +212,7 @@ function CoursePlayer(props: { courseId: string }) {
         windowsW: viewPort.width,
         windowsH: viewPort.height,
         focus: {
-          playSecond: props.playedSeconds,
+          playSecond: Math.round(props.playedSeconds),
           onWindow: document.visibilityState === 'visible',
         },
         time: new Date(),
@@ -250,7 +250,7 @@ function CoursePlayer(props: { courseId: string }) {
   }
   const handleChangeCommitted = (event, newValue) => {
     dragTimes.current.push({
-      playSecond: playedSeconds,
+      playSecond: Math.round(playedSeconds),
       time: new Date(),
     })
   }

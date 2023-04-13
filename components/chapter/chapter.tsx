@@ -148,7 +148,7 @@ const CustomizedAccordions = ({
 
   React.useEffect(() => {
     dispatch(setVideoId(lastView.videoId))
-    dispatch(setVideoTime(lastView.lastPlaySecond))
+    dispatch(setVideoTime(Math.round(lastView.lastPlaySecond)))
   }, [])
 
   const handleChange =
@@ -163,7 +163,7 @@ const CustomizedAccordions = ({
       .then((response) => response.json())
       .then((data) => {
         if (data) {
-          dispatch(setVideoTime(data.lastPlaySecond))
+          dispatch(setVideoTime(Math.round(data.lastPlaySecond)))
         } else {
           dispatch(setVideoTime(0))
         }
