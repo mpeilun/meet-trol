@@ -191,7 +191,7 @@ function CoursePlayer(props: { courseId: string }) {
 
   let handlePlayerStatus = (props: OnProgressProps) => {
     //TODO 暫時先這樣寫
-    console.log(interactionLog.current)
+    // console.log(interactionLog.current)
     if (props.playedSeconds > 732) {
       if (interactionLog.current.length > 2) {
         handleFullScreen.exit()
@@ -203,13 +203,17 @@ function CoursePlayer(props: { courseId: string }) {
     // if (Math.floor(props.playedSeconds) % 10 == 0) {
     // }
     else if (eyesTracks && playerSize && viewPort) {
+      const left = playerSize.current.getBoundingClientRect().left
+      const top = playerSize.current.getBoundingClientRect().top
+      const width = playerSize.current.getBoundingClientRect().width
+      const height = playerSize.current.getBoundingClientRect().height
       eyesTracks.current.push({
         x: eyeTracking.x,
         y: eyeTracking.y,
-        playerX: playerSize.current.getBoundingClientRect().left,
-        playerY: playerSize.current.getBoundingClientRect().top,
-        playerW: playerSize.current.getBoundingClientRect().width,
-        playerH: playerSize.current.getBoundingClientRect().height,
+        playerX: left,
+        playerY: top,
+        playerW: width,
+        playerH: height,
         windowsW: viewPort.width,
         windowsH: viewPort.height,
         focus: {
