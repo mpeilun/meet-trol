@@ -203,10 +203,10 @@ function CoursePlayer(props: { courseId: string }) {
     // if (Math.floor(props.playedSeconds) % 10 == 0) {
     // }
     else if (eyesTracks && playerSize && viewPort) {
-      const left = playerSize.current.getBoundingClientRect().left
-      const top = playerSize.current.getBoundingClientRect().top
-      const width = playerSize.current.getBoundingClientRect().width
-      const height = playerSize.current.getBoundingClientRect().height
+      const left: number = playerSize.current.getBoundingClientRect().left
+      const top: number = playerSize.current.getBoundingClientRect().top
+      const width: number = playerSize.current.getBoundingClientRect().width
+      const height: number = playerSize.current.getBoundingClientRect().height
       eyesTracks.current.push({
         x: eyeTracking.x,
         y: eyeTracking.y,
