@@ -156,7 +156,7 @@ function CoursePlayer(props: { courseId: string }) {
   // 監聽離開事件
 
   const postLog = async () => {
-    if (interactionLog.current.length > 1 && showInComplete) {
+    if (interactionLog.current.length > 2 && showInComplete) {
       await fetch(`/api/record/log?courseId=${courseId}&videoId=${videoId}`, {
         method: 'POST',
         headers: {
@@ -201,17 +201,12 @@ function CoursePlayer(props: { courseId: string }) {
   }, [])
 
   let handlePlayerStatus = (props: OnProgressProps) => {
-    // if (!playing) {
-    //   playerRef.current.seekTo(playedSeconds, 'seconds')
-    //   return
-    // }
-
     //TODO 暫時先這樣寫
+
     if (props.playedSeconds > 732) {
-      if (interactionLog.current.length > 1) {
-        handleFullScreen.exit
+      if (interactionLog.current.length > 2) {
+        handleFullScreen.exit()
         setPlaying(false)
-        // console.log('showInComplete')
         setShowInComplete(true)
         postLog()
       }
