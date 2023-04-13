@@ -48,12 +48,13 @@ import CreateDiscussion from '../discussion/createDiscussion'
 
 import {
   ViewLog,
-  EyesTrack,
   PauseTime,
   DragTime,
   WatchTime,
   InteractionLog,
   Info,
+  Focus,
+  EyesTrack,
 } from '@prisma/client'
 import { useSpring, animated } from '@react-spring/web'
 import { useWindowDimensions } from '../../hooks/common'
@@ -190,7 +191,7 @@ function CoursePlayer(props: { courseId: string }) {
 
   let handlePlayerStatus = (props: OnProgressProps) => {
     //TODO 暫時先這樣寫
-
+    console.log(interactionLog.current)
     if (props.playedSeconds > 732) {
       if (interactionLog.current.length > 2) {
         handleFullScreen.exit()
@@ -201,7 +202,7 @@ function CoursePlayer(props: { courseId: string }) {
     }
     // if (Math.floor(props.playedSeconds) % 10 == 0) {
     // }
-    else if (eyesTracks) {
+    else if (eyesTracks && playerSize && viewPort) {
       eyesTracks.current.push({
         x: eyeTracking.x,
         y: eyeTracking.y,

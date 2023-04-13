@@ -20,8 +20,9 @@ function FillItem(props: { title: string; index: number; isReply: boolean }) {
       // whiteSpace="normal"
       sx={{
         // my: 1,
-        border:2,
-        px: 3,
+        border: 2,
+        px: 2,
+        py: 0.5,
         borderRadius: 12,
         bgcolor: 'primary.light',
       }}
@@ -31,8 +32,9 @@ function FillItem(props: { title: string; index: number; isReply: boolean }) {
       }}
     >
       <Typography
-      // variant="body1"
-      // style={{ whiteSpace: 'normal' }}
+        sx={{ fontSize: 20, fontWeight: 'bold' }}
+        // variant="body1"
+        // style={{ whiteSpace: 'normal' }}
       >
         {props.title}
       </Typography>

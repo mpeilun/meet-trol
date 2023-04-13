@@ -117,7 +117,11 @@ const DragDrop = (props: {
           answerIndex++
         }
       } else {
-        questionElement.push(<span key={`${i}text`}>{question[i]}</span>)
+        questionElement.push(
+          <span style={{ fontSize: 24 }} key={`${i}text`}>
+            {question[i]}
+          </span>
+        )
       }
     }
   }

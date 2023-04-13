@@ -24,7 +24,11 @@ export default function SingleChoice(props: {
   const isLog = props.isLog
   const feedbackIndex = props.feedbackIndex
   const [value, setValue] = React.useState(
-    `${isLog && data.feedback[0] != null ? data.feedback[feedbackIndex].answers[0] : ''}`
+    `${
+      isLog && data.feedback[0] != null
+        ? data.feedback[feedbackIndex].answers[0]
+        : ''
+    }`
   )
   const [isReply, setIsReply] = React.useState(false)
 
@@ -95,7 +99,12 @@ export default function SingleChoice(props: {
   return (
     <form onSubmit={handleSubmit}>
       <FormControl sx={{ pt: 1, width: '100%' }} variant="standard">
-        <FormLabel id="demo-error-radios">{data.question ?? ''}</FormLabel>
+        <FormLabel
+          id="demo-error-radios"
+          sx={{ fontSize: 24, letterSpacing: 2 }}
+        >
+          {data.question ?? ''}
+        </FormLabel>
         <Box sx={{ height: 0 }}></Box>
         <RadioGroup
           aria-labelledby="demo-error-radios"

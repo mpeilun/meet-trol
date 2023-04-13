@@ -33,7 +33,6 @@ export default function MultipleChoice(props: {
   const feedbackIndex = props.feedbackIndex
   const defaultAnswer = useCallback((): boolean[] => {
     if (props.isLog && data.feedback[0] != null) {
-      
       let arr = Array(data.options.length).fill(false)
       data.feedback[feedbackIndex].answers.map((answerIndex) => {
         arr[answerIndex] = true
@@ -41,7 +40,7 @@ export default function MultipleChoice(props: {
       return arr
     } else return new Array(data.options.length).fill(false)
   }, [])
-  
+
   const [checked, setChecked] = React.useState<boolean[]>(defaultAnswer)
 
   const [isReply, setIsReply] = React.useState(false)
@@ -120,7 +119,12 @@ export default function MultipleChoice(props: {
   return (
     <form onSubmit={handleSubmit}>
       <FormControl sx={{ pt: 1, width: '100%' }} variant="standard">
-        <FormLabel id="demo-error-radios">{data.question ?? ''}</FormLabel>
+        <FormLabel
+          id="demo-error-radios"
+          sx={{ letterSpacing: 2, fontSize: 24 }}
+        >
+          {data.question ?? ''}
+        </FormLabel>
         <Box sx={{ height: 0 }}></Box>
         <FormGroup>
           {data.options.map((option, index) => {

@@ -178,13 +178,13 @@ const Drag = ({
   return (
     <>
       <Box minHeight={50} display="flex" alignItems="center">
-        <Typography variant="h5" sx={{ width: '100%' }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', width: '100%' }}>
           {data.title ?? '圖選題'}
         </Typography>
         <IconButton
           onClick={async () => {
             close()
-            await delay(200)
+            // await delay(200)
             handleQuestionClose()
           }}
         >
@@ -193,7 +193,10 @@ const Drag = ({
       </Box>
       <Divider />
       {data.question && (
-        <Typography variant="body2" sx={{ pt: 1.5 }}>
+        <Typography
+          variant="body2"
+          sx={{ pt: 1.5, fontSize: 24, letterSpacing: 2 }}
+        >
           {data.question ?? ''}
         </Typography>
       )}
@@ -202,6 +205,7 @@ const Drag = ({
           ref={isReply ? emptyRef : boxRef}
           sx={{
             width: 600,
+            height: '100%',
             mt: 1.5,
             position: 'relative',
             border: 1.5,

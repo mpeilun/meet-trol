@@ -23,15 +23,15 @@ export default function Choice(props: {
     return new Promise((resolve) => setTimeout(resolve, ms))
   }
   return (
-    <Box>
+    <Box sx={{ height: '100%' }}>
       <Box minHeight={50} display="flex" alignItems="center">
-        <Typography variant="h5" sx={{ width: '100%' }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', width: '100%' }}>
           {data.title ?? '選擇題'}
         </Typography>
         <IconButton
           onClick={async () => {
             props.close()
-            await delay(200)
+            // await delay(200)
             props.handleQuestionClose()
           }}
         >
@@ -41,7 +41,7 @@ export default function Choice(props: {
       <Divider />
 
       {isSingleChoice ? (
-        <Box sx={{ minWidth: 400 }}>
+        <Box sx={{ minWidth: 400, height: '100%' }}>
           <SingleChoice
             data={data}
             isLog={props.isLog}

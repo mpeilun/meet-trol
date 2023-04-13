@@ -30,13 +30,13 @@ const FillIn = (props: {
   return (
     <Box>
       <Box minHeight={50} display="flex" alignItems="center">
-        <Typography variant="h5" sx={{ width: '100%' }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', width: '100%' }}>
           {data.title ?? '填充題'}
         </Typography>
         <IconButton
           onClick={async () => {
             props.close()
-            await delay(200)
+            // await delay(200)
             props.handleQuestionClose()
           }}
         >

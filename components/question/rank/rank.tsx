@@ -35,7 +35,6 @@ interface alert {
 
 export default function RankQuestion(props: {
   close: () => void
-
   handleQuestionClose: () => void
   data: RankData
   isLog: boolean
@@ -137,19 +136,31 @@ export default function RankQuestion(props: {
 
   resetServerContext()
 
+  function delay(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+  }
   return (
     <Box sx={{ minWidth: 450, overFlowX: 'hidden' }}>
       <Box minHeight={50} display="flex" alignItems="center">
-        <Typography variant="h5" sx={{ fontWeight: 'bold', width: '100%' }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', width: '100%' }}>
           {data.title ?? '排序題'}
         </Typography>
-        <IconButton onClick={() => props.handleQuestionClose()}>
+        <IconButton
+          onClick={async () => {
+            props.close()
+            // await delay(200)
+            props.handleQuestionClose()
+          }}
+        >
           <CloseIcon />
         </IconButton>
       </Box>
       <Divider />
       {data.question && (
-        <Typography variant="body2" sx={{ pt: 1 }}>
+        <Typography
+          variant="body2"
+          sx={{ pt: 1, fontSize: 24, letterSpacing: 2 }}
+        >
           {data.question ?? ''}
         </Typography>
       )}
@@ -198,7 +209,7 @@ export default function RankQuestion(props: {
                           <ListItemText>
                             <MenuIcon
                               sx={{
-                                p: 0.75,
+                                // p: 0.75,
                                 mr: 1,
                                 color: isLog
                                   ? 'grey'
@@ -213,6 +224,8 @@ export default function RankQuestion(props: {
                               component="span"
                               width="100%"
                               sx={{
+                                fontSize: 24,
+                                letterSpacing: 2,
                                 color: isLog
                                   ? 'grey'
                                   : isReply

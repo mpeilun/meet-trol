@@ -23,19 +23,26 @@ const Info = (props: {
   return (
     <>
       <Box minHeight={50} display="flex" alignItems="center">
-        <Typography variant="h5" sx={{ width: '100%' }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', width: '100%' }}>
           {data.title ?? '資訊卡'}
         </Typography>
-        <IconButton onClick={async() => {
-          props.close()
-          await delay(200)
-          props.handleQuestionClose()}}>
+        <IconButton
+          onClick={async () => {
+            props.close()
+            // await delay(200)
+            props.handleQuestionClose()
+          }}
+        >
           <CloseIcon />
         </IconButton>
       </Box>
       <Divider />
-      <Box sx={{ pt: 1 }}>
-        {data.content && <Typography>{data.content ?? ''}</Typography>}
+      <Box sx={{ pt: 1, minHeight: 150 }}>
+        {data.content && (
+          <Typography variant="body1" sx={{ letterSpacing: 2, fontSize: 24 }}>
+            {data.content ?? ''}
+          </Typography>
+        )}
         {/* 顯示圖片 */}
         <Box sx={{ width: '600px', mt: 1 }}>
           {!isNoImage && (

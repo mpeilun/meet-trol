@@ -89,7 +89,6 @@ const PopupModal = (props: {
     viewPort,
   ])
 
-
   const secondsRef = useRef<number>(0)
   // console.log(secondsRef.current)
 
@@ -172,7 +171,7 @@ const PopupModal = (props: {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       > */}
-        <animated.div >
+        <animated.div>
           <Card
             ref={questionRef}
             sx={{
@@ -182,6 +181,7 @@ const PopupModal = (props: {
               // minWidth: 600,
               maxWidth: 700,
               maxHeight: 500,
+
               border: look ? '0.3rem outset green' : '0.3rem outset red',
             }}
           >
@@ -194,6 +194,7 @@ const PopupModal = (props: {
                 flexDirection: 'column',
                 maxWidth: 700,
                 maxHeight: 450,
+                minWidth: 600,
               }}
             >
               <QuestionType
