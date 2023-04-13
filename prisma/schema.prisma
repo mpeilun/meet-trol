@@ -97,6 +97,8 @@ type Focus {
 type EyesTrack {
   x        Float
   y        Float
+  playerX  Float?
+  playerY  Float?
   playerW  Float
   playerH  Float
   windowsW Float
@@ -106,14 +108,15 @@ type EyesTrack {
 }
 
 type InteractionLog {
-  questionId String @db.ObjectId
+  questionId String   @db.ObjectId
   openTime   DateTime
   closeTime  DateTime
   focusTime  Float
 }
 
 model ViewLog {
-  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
   eyesTrack      EyesTrack[]
   pauseTimes     PauseTime[]
   dragTimes      DragTime[]

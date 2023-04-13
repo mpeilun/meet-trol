@@ -67,7 +67,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
               viewLogs: true,
             },
           })
-          return res.status(200).json(data.viewLogs)
+          return res.status(200).json(data)
         } else {
           return res.status(400).json({ message: 'Bad Request' })
         }
@@ -99,10 +99,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     }
     if (req.method === 'POST') {
       const { lastPlaySecond } = req.body as { lastPlaySecond: number }
-      const { eyesTrack, pauseTimes, dragTimes, watchTime, interactionLog } =
-        req.body as ViewLog
+      const {
+        
+        eyesTrack,
+        pauseTimes,
+        dragTimes,
+        watchTime,
+        interactionLog,
+      } = req.body as ViewLog
       if (
         lastPlaySecond != null &&
+        
         eyesTrack &&
         pauseTimes &&
         dragTimes &&
@@ -188,6 +195,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             })
             const data = await prisma.viewLog.create({
               data: {
+                
                 eyesTrack: eyesTrack,
                 pauseTimes: pauseTimes,
                 dragTimes: dragTimes,

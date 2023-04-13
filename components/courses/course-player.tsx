@@ -111,8 +111,10 @@ function CoursePlayer(props: { courseId: string }) {
   const [displayCreateDiscussion, setDisplayCreateDiscussion] =
     React.useState(false) //是否顯示新增討論區
   const viewPort = useWindowDimensions()
+  const playRef = React.useRef(null)
 
   // viewLog data
+
   const playerSize = React.useRef(null)
   const eyesTracks = React.useRef<EyesTrack[]>([])
   const pauseTimes = React.useRef<PauseTime[]>([])
@@ -128,7 +130,6 @@ function CoursePlayer(props: { courseId: string }) {
   const courseId = props.courseId
   //redux
   const videoId = useAppSelector((state) => state.course.videoId)
-  const questionLocate = useAppSelector((state) => state.course.questionLocate)
   const eyeTracking = useAppSelector((state) => state.course.eyeTracking)
   const videoTime = useAppSelector((state) => state.course.videoTime)
 
@@ -187,19 +188,6 @@ function CoursePlayer(props: { courseId: string }) {
     }
   }
 
-  React.useEffect(() => {
-    const handleBeforeUnload = (e) => {
-      e.preventDefault()
-      e.returnValue = '請正確提交後測表單在離開此頁面！'
-    }
-
-    window.addEventListener('beforeunload', handleBeforeUnload)
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload)
-    }
-  }, [])
-
   let handlePlayerStatus = (props: OnProgressProps) => {
     //TODO 暫時先這樣寫
 
@@ -217,6 +205,8 @@ function CoursePlayer(props: { courseId: string }) {
       eyesTracks.current.push({
         x: eyeTracking.x,
         y: eyeTracking.y,
+        playerX: playerSize.current.getBoundingClientRect().left,
+        playerY: playerSize.current.getBoundingClientRect().top,
         playerW: playerSize.current.getBoundingClientRect().width,
         playerH: playerSize.current.getBoundingClientRect().height,
         windowsW: viewPort.width,
@@ -286,14 +276,21 @@ function CoursePlayer(props: { courseId: string }) {
       setHasWindow(true)
     }
 
-    function updateHeight() {
+    const updateHeight = () => {
       const height = window.innerHeight / 1.35
       setHeight(height)
     }
-
     updateHeight()
+
+    const handleBeforeUnload = (e) => {
+      e.preventDefault()
+      e.returnValue = '請正確提交後測表單在離開此頁面！'
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
     window.addEventListener('resize', updateHeight)
     return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
       window.removeEventListener('resize', updateHeight)
     }
   }, [])
@@ -302,186 +299,188 @@ function CoursePlayer(props: { courseId: string }) {
     // console.log(playerSize.current.getBoundingClientRect().height)
   }
   return (
-    <FullScreen handle={handleFullScreen}>
-      {/* TODO 暫時先這樣寫 */}
-      <Modal open={showInComplete} disableAutoFocus>
-        <Box
-          display="flex"
-          flexDirection="column"
-          justifyContent="center"
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: showInComplete && !isFormSubmitted ? '90%' : 600,
-            bgcolor: 'background.paper',
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          {showInComplete && (
-            <GoogleForm
-              formType="postTest"
-              isFormSubmitted={isFormSubmitted}
-              setIsFormSubmitted={setIsFormSubmitted}
-            />
-          )}
-        </Box>
-      </Modal>
-      {/*眼動儀*/}
-      {/* <Box
-        position={'absolute'}
-        left={questionLocate.xStart}
-        top={questionLocate.yStart}
-        zIndex={2 ^ 53}
-        width={questionLocate.w}
-        height={questionLocate.h}
-        border={'2px solid yellow'}
-      >
-        Test
-      </Box> */}
-      {hasWindow && (
-        <Box
-          ref={playerSize}
-          sx={{ position: 'relative', width: '100%', height: '100%' }}
-          className="course-player-div"
-          onMouseOver={() => {
-            setShowPlayerBar(true)
-            // setMouseEnter(true)
-          }}
-          onMouseLeave={() => {
-            // setMouseEnter(false)
-            setShowPlayerBar(false)
-          }}
-        >
-          {/* 自訂播放bar */}
-
-          {playerRef?.current && (
-            <PlayerBar
-              questions={videoData.questions}
-              playerRef={playerRef}
-              playedSeconds={playedSeconds}
-              handleTimeSliderChange={handleTimeSliderChange}
-              handleVolumeSliderChange={handleVolumeSliderChange}
-              handleChangeCommitted={handleChangeCommitted}
-              volume={volume}
-              setVolume={setVolume}
-              showPlayerBar={showPlayerBar}
-              playing={playing}
-              play={play}
-              pause={pause}
-              handleFullScreen={handleFullScreen}
-              playbackRate={playbackRate}
-              setPlaybackRate={setPlaybackRate}
-              setDisplayCreateDiscussion={setDisplayCreateDiscussion}
-            />
-          )}
-          {/* {playerRef?.current && videoData?.questions && !loading && (
-            <Interaction
-              play={play}
-              pause={pause}
-              interactionData={videoData.questions}
-            ></Interaction>
-          )} */}
-          {playerRef?.current && videoData?.questions && (
-            <Box
-              sx={{
-                visibility: 'hidden',
-                height: '100%',
-                width: '100%',
-                left: '5%',
-                top: '10%',
-                position: 'absolute',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              {videoData?.questions.map((data, index) => {
-                return (
-                  <PopupFab
-                    interactionLog={interactionLog}
-                    key={`popupfab-${index}`}
-                    pause={pause}
-                    play={play}
-                    data={data}
-                    isFullScreen={handleFullScreen.active}
-                  ></PopupFab>
-                )
-              })}
-            </Box>
-          )}
-
-          {loading && (
-            <Box
-              sx={{
-                zIndex: 10,
-                width: '100%',
-                height: '100%',
-                position: 'absolute',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          )}
-
-          <div
-            className="course-player"
-            style={{ width: '100%', height: '100%' }}
+    <div>
+      <FullScreen handle={handleFullScreen}>
+        {/* TODO 暫時先這樣寫 */}
+        <Modal open={showInComplete} disableAutoFocus>
+          <Box
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: showInComplete && !isFormSubmitted ? '90%' : 600,
+              bgcolor: 'background.paper',
+              boxShadow: 24,
+              p: 4,
+            }}
           >
-            <Box
-              position="absolute"
-              width={'100%'}
-              onClick={() => {
-                playing ? pause() : play()
-              }}
-              height={handleFullScreen.active ? '100%' : height}
-            />
-            <ReactPlayerDynamic
-              url={videoData == undefined ? '' : videoData.url}
-              playing={playing}
-              // onPlay={play}
-              // onPause={pause}
-              onProgress={handlePlayerStatus}
-              onReady={onPlayerReady}
-              volume={volume}
-              width={'100%'}
-              height={handleFullScreen.active ? '100%' : height}
-              progressInterval={1000}
-              playbackRate={playbackRate}
-              config={{
-                youtube: {
-                  playerVars: {
-                    showInfo: 0,
-                    start: videoTime,
-                    // 此參數指定從影片開始播放時起算的秒數，表示播放器應停止播放影片的時間。參數值為正整數。
-                    // 請注意，時間是從影片開頭算起，而非從 start 播放器參數的值或 startSeconds 參數 (用於在 YouTube Player API 函式中載入或排入影片)。
-                    controls: 0, // 0, 播放器控制項不會顯示播放器的控制項。
-                    modestbranding: 0,
-                    // 此參數可用來避免未顯示 YouTube 標誌的 YouTube 播放器。將參數值設為 1
-                    // 可避免在控制列中顯示 YouTube 標誌。請注意，當使用者的滑鼠遊標懸停在播放器上時，暫停顯示的右上角仍會顯示小型的 YouTube 文字標籤。
-                    rel: 0, // 0, 相關影片則會從播放過的影片來自同一個頻道。
+            {showInComplete && (
+              <GoogleForm
+                formType="postTest"
+                isFormSubmitted={isFormSubmitted}
+                setIsFormSubmitted={setIsFormSubmitted}
+              />
+            )}
+          </Box>
+        </Modal>
+        {/*眼動儀*/}
+        {/* <Box
+      position={'absolute'}
+      left={questionLocate.xStart}
+      top={questionLocate.yStart}
+      zIndex={2 ^ 53}
+      width={questionLocate.w}
+      height={questionLocate.h}
+      border={'2px solid yellow'}
+    >
+      Test
+    </Box> */}
+        {hasWindow && (
+          <Box
+            ref={playerSize}
+            sx={{ position: 'relative', width: '100%', height: '100%' }}
+            className="course-player-div"
+            onMouseOver={() => {
+              setShowPlayerBar(true)
+              // setMouseEnter(true)
+            }}
+            onMouseLeave={() => {
+              // setMouseEnter(false)
+              setShowPlayerBar(false)
+            }}
+          >
+            {/* 自訂播放bar */}
+
+            {playerRef?.current && (
+              <PlayerBar
+                questions={videoData.questions}
+                playerRef={playerRef}
+                playedSeconds={playedSeconds}
+                handleTimeSliderChange={handleTimeSliderChange}
+                handleVolumeSliderChange={handleVolumeSliderChange}
+                handleChangeCommitted={handleChangeCommitted}
+                volume={volume}
+                setVolume={setVolume}
+                showPlayerBar={showPlayerBar}
+                playing={playing}
+                play={play}
+                pause={pause}
+                handleFullScreen={handleFullScreen}
+                playbackRate={playbackRate}
+                setPlaybackRate={setPlaybackRate}
+                setDisplayCreateDiscussion={setDisplayCreateDiscussion}
+              />
+            )}
+            {/* {playerRef?.current && videoData?.questions && !loading && (
+          <Interaction
+            play={play}
+            pause={pause}
+            interactionData={videoData.questions}
+          ></Interaction>
+        )} */}
+            {playerRef?.current && videoData?.questions && (
+              <Box
+                sx={{
+                  visibility: 'hidden',
+                  height: '100%',
+                  width: '100%',
+                  left: '5%',
+                  top: '10%',
+                  position: 'absolute',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                {videoData?.questions.map((data, index) => {
+                  return (
+                    <PopupFab
+                      interactionLog={interactionLog}
+                      key={`popupfab-${index}`}
+                      pause={pause}
+                      play={play}
+                      data={data}
+                      isFullScreen={handleFullScreen.active}
+                    ></PopupFab>
+                  )
+                })}
+              </Box>
+            )}
+
+            {loading && (
+              <Box
+                sx={{
+                  zIndex: 10,
+                  width: '100%',
+                  height: '100%',
+                  position: 'absolute',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <CircularProgress />
+              </Box>
+            )}
+
+            <div
+              className="course-player"
+              style={{ width: '100%', height: '100%' }}
+            >
+              <Box
+                position="absolute"
+                width={'100%'}
+                onClick={() => {
+                  playing ? pause() : play()
+                }}
+                height={handleFullScreen.active ? '100%' : height}
+              />
+              <ReactPlayerDynamic
+                url={videoData == undefined ? '' : videoData.url}
+                playing={playing}
+                // onPlay={play}
+                // onPause={pause}
+                onProgress={handlePlayerStatus}
+                onReady={onPlayerReady}
+                volume={volume}
+                width={'100%'}
+                height={handleFullScreen.active ? '100%' : height}
+                progressInterval={1000}
+                playbackRate={playbackRate}
+                config={{
+                  youtube: {
+                    playerVars: {
+                      showInfo: 0,
+                      start: videoTime,
+                      // 此參數指定從影片開始播放時起算的秒數，表示播放器應停止播放影片的時間。參數值為正整數。
+                      // 請注意，時間是從影片開頭算起，而非從 start 播放器參數的值或 startSeconds 參數 (用於在 YouTube Player API 函式中載入或排入影片)。
+                      controls: 0, // 0, 播放器控制項不會顯示播放器的控制項。
+                      modestbranding: 0,
+                      // 此參數可用來避免未顯示 YouTube 標誌的 YouTube 播放器。將參數值設為 1
+                      // 可避免在控制列中顯示 YouTube 標誌。請注意，當使用者的滑鼠遊標懸停在播放器上時，暫停顯示的右上角仍會顯示小型的 YouTube 文字標籤。
+                      rel: 0, // 0, 相關影片則會從播放過的影片來自同一個頻道。
+                    },
                   },
-                },
-              }}
-            />
-          </div>
-          {/* {playerRef?.current && (
-            <CreateDiscussion
-              duration={playerRef.current.getDuration()}
-              displayCreateDiscussion={displayCreateDiscussion}
-              setDisplayCreateDiscussion={setDisplayCreateDiscussion}
-              timing={playedSeconds}
-              courseId={courseId}
-              chapterId={videoData.chapterId}
-            />
-          )} */}
-        </Box>
-      )}
-    </FullScreen>
+                }}
+              />
+            </div>
+            {/* {playerRef?.current && (
+          <CreateDiscussion
+            duration={playerRef.current.getDuration()}
+            displayCreateDiscussion={displayCreateDiscussion}
+            setDisplayCreateDiscussion={setDisplayCreateDiscussion}
+            timing={playedSeconds}
+            courseId={courseId}
+            chapterId={videoData.chapterId}
+          />
+        )} */}
+          </Box>
+        )}
+      </FullScreen>
+    </div>
   )
 }
 
