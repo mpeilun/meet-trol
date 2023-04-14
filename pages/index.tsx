@@ -53,6 +53,7 @@ function HomePage() {
               alignItems="center"
               direction="column"
               height="100%"
+              sx={{ pt: 2 }}
             >
               <Image
                 width={300}
@@ -181,9 +182,11 @@ function HomePage() {
                           }
                         }}
                         sx={{
-                          marginTop: '16px',
-                          marginRight: '32px',
-                          borderRadius: '8px',
+                          fontSize: '22px',
+                          fontWeight: 600,
+                          px: 3.5,
+                          py: 1,
+                          borderRadius: 8,
                         }}
                       >
                         <Typography>{'下一步'}</Typography>

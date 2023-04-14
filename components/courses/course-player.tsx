@@ -274,6 +274,21 @@ function CoursePlayer(props: { courseId: string }) {
     }
   }
 
+
+  // hide cursor when mouse is not moving
+  const [isMouseMoving, setIsMouseMoving] = React.useState(true)
+  const timerRef = React.useRef(null)
+
+  const handleMouseMove = React.useCallback(() => {
+    setIsMouseMoving(true)
+    setShowPlayerBar(true)
+    clearTimeout(timerRef.current)
+    timerRef.current = setTimeout(() => {
+      setShowPlayerBar(false)
+      setIsMouseMoving(false)
+    }, 1500) // Set timeout for 5 seconds
+  }, [])
+
   const [height, setHeight] = React.useState(600)
 
   React.useEffect(() => {
@@ -299,12 +314,9 @@ function CoursePlayer(props: { courseId: string }) {
       window.removeEventListener('resize', updateHeight)
     }
   }, [])
-  if (playerSize.current) {
-    // console.log(playerSize.current.getBoundingClientRect().width)
-    // console.log(playerSize.current.getBoundingClientRect().height)
-  }
+
   return (
-    <div>
+    <div style={{ cursor: isMouseMoving ? 'default' : 'none' }}>
       <FullScreen handle={handleFullScreen}>
         {/* TODO 暫時先這樣寫 */}
         <Modal open={showInComplete} disableAutoFocus>
@@ -347,10 +359,15 @@ function CoursePlayer(props: { courseId: string }) {
         {hasWindow && (
           <Box
             ref={playerSize}
-            sx={{ position: 'relative', width: '100%', height: '100%' }}
+            sx={{
+              position: 'relative',
+              width: '100%',
+              height: '100%',
+            }}
             className="course-player-div"
+            onMouseMove={handleMouseMove}
             onMouseOver={() => {
-              setShowPlayerBar(true)
+              setShowPlayerBar(isMouseMoving)
               // setMouseEnter(true)
             }}
             onMouseLeave={() => {
