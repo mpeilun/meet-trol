@@ -91,7 +91,7 @@ function CourseInnerPage(props: {}) {
         height={'100%'}
         maxHeight={'calc(100vh - 68.5px)'}
       >
-        {/* <EyesTracking /> */}
+        <EyesTracking />
         <Box
           className="course-nav-div"
           display={{ width: '20vw', xs: 'none', md: 'flex' }}
