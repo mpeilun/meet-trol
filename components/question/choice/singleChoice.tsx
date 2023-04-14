@@ -101,7 +101,7 @@ export default function SingleChoice(props: {
       <FormControl sx={{ pt: 1, width: '100%' }} variant="standard">
         <FormLabel
           id="demo-error-radios"
-          sx={{ fontSize: 24, letterSpacing: 2 }}
+          sx={{ fontSize: 24, letterSpacing: 1 }}
         >
           {data.question ?? ''}
         </FormLabel>
@@ -115,6 +115,11 @@ export default function SingleChoice(props: {
           {data.options.map((option, index) => {
             return (
               <FormControlLabel
+                sx={{
+                  '& .MuiFormControlLabel-label': {
+                    fontSize: 24,
+                  },
+                }}
                 disabled={isLog ? isLog : isReply}
                 key={`${index}- ${option.option} option`}
                 value={index}

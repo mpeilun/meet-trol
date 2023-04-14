@@ -40,7 +40,7 @@ const FillIn = (props: {
             props.handleQuestionClose()
           }}
         >
-          <CloseIcon />
+          <CloseIcon sx={{fontSize:40, color: 'black'}}/>
         </IconButton>
       </Box>
       <Divider />

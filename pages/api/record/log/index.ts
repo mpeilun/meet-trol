@@ -55,19 +55,53 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             },
             select: { id: true },
           })
-          const data = await prisma.pastView.findFirst({
+
+          const videos = await prisma.course.findUnique({
             where: {
-              videoId: videoId,
-              record: {
-                id: record.id,
-              },
+              id: courseId,
             },
             select: {
-              videoId: true,
-              viewLogs: true,
+              chapters: {
+                select: {
+                  videos: { select: { id: true } },
+                },
+              },
             },
           })
-          return res.status(200).json(data)
+
+          // 建立課程 video 資料
+          const videoList = videos.chapters
+            .map(({ videos }) => videos.map(({ id }) => id))
+            .flat()
+
+          if (videoList.includes(videoId)) {
+            // 建立 pastView 資料
+
+            const pastView = await prisma.pastView.findFirst({
+              where: {
+                videoId: videoId,
+                recordId: record.id,
+              },
+            })
+            if (pastView) {
+              const data = await prisma.pastView.findFirst({
+                where: {
+                  videoId: videoId,
+                  record: {
+                    id: record.id,
+                  },
+                },
+                select: {
+                  viewLogs: true,
+                },
+              })
+              return res.status(200).json(data.viewLogs)
+            } else {
+              return res.status(400).json([])
+            }
+          } else {
+            return res.status(400).json({ message: 'Bad Request' })
+          }
         } else {
           return res.status(400).json({ message: 'Bad Request' })
         }
@@ -99,17 +133,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     }
     if (req.method === 'POST') {
       const { lastPlaySecond } = req.body as { lastPlaySecond: number }
-      const {
-        
-        eyesTrack,
-        pauseTimes,
-        dragTimes,
-        watchTime,
-        interactionLog,
-      } = req.body as ViewLog
+      const { eyesTrack, pauseTimes, dragTimes, watchTime, interactionLog } =
+        req.body as ViewLog
       if (
         lastPlaySecond != null &&
-        
         eyesTrack &&
         pauseTimes &&
         dragTimes &&
@@ -195,7 +222,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             })
             const data = await prisma.viewLog.create({
               data: {
-                
                 eyesTrack: eyesTrack,
                 pauseTimes: pauseTimes,
                 dragTimes: dragTimes,
