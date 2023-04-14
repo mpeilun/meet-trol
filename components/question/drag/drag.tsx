@@ -188,14 +188,12 @@ const Drag = ({
             handleQuestionClose()
           }}
         >
-          <CloseIcon sx={{fontSize:24, color: 'black'}}/>
+          <CloseIcon sx={{ fontSize: 40, color: 'black' }} />
         </IconButton>
       </Box>
       <Divider />
       {data.question && (
-        <Typography
-          sx={{ pt: 1.5, fontSize: 40, letterSpacing: 1 }}
-        >
+        <Typography sx={{ pt: 1.5, fontSize: 24, letterSpacing: 1 }}>
           {data.question ?? ''}
         </Typography>
       )}
