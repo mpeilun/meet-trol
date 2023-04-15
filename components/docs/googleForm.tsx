@@ -45,9 +45,16 @@ export const GoogleForm = (props: Props) => {
         />
       )}
       {props.isFormSubmitted && (
-        <Typography variant="h6" textAlign="center">
-          感謝填寫表單！
-        </Typography>
+        <div>
+          <Typography variant="h6" textAlign="center">
+            感謝填寫表單！
+          </Typography>
+          {props.formType === 'postTest' && (
+            <Typography variant="h6" textAlign="center">
+              謝謝您參與測試，可以直接關閉視窗並離開了。
+            </Typography>
+          )}
+        </div>
       )}
     </>
   )

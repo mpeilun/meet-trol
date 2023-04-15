@@ -21,6 +21,27 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (session) {
     // GET DATA
     if (req.method === 'GET') {
+      if (courseId && videoId) {
+        if (isValidObjectId(courseId) && isValidObjectId(videoId)) {
+          const check = await prisma.course.findUnique({
+            where: {
+              id: courseId,
+            },
+            select: {
+              ownerId: true,
+            },
+          })
+          if (check.ownerId.includes(session.user.id)) {
+            // 處理全部的 feedback
+          } else {
+            return res.status(403).json({ message: 'Forbidden' })
+          }
+        } else {
+          return res.status(400).json({ message: 'Bad Request' })
+        }
+      } else {
+        return res.status(400).json({ message: 'Bad Request' })
+      }
     }
     if (req.method === 'POST') {
     }

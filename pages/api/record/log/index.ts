@@ -55,52 +55,99 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             },
             select: { id: true },
           })
-
-          const videos = await prisma.course.findUnique({
-            where: {
-              id: courseId,
-            },
-            select: {
-              chapters: {
-                select: {
-                  videos: { select: { id: true } },
-                },
-              },
-            },
-          })
-
-          // 建立課程 video 資料
-          const videoList = videos.chapters
-            .map(({ videos }) => videos.map(({ id }) => id))
-            .flat()
-
-          if (videoList.includes(videoId)) {
-            // 建立 pastView 資料
-
-            const pastView = await prisma.pastView.findFirst({
+          if (record) {
+            const videos = await prisma.course.findUnique({
               where: {
-                videoId: videoId,
-                recordId: record.id,
+                id: courseId,
               },
-            })
-            if (pastView) {
-              const data = await prisma.pastView.findFirst({
-                where: {
-                  videoId: videoId,
-                  record: {
-                    id: record.id,
+              select: {
+                chapters: {
+                  select: {
+                    videos: { select: { id: true } },
                   },
                 },
-                select: {
-                  viewLogs: true,
+              },
+            })
+            // 建立課程 video 資料
+            const videoList = videos.chapters
+              .map(({ videos }) => videos.map(({ id }) => id))
+              .flat()
+            // 判斷videoId是否為課程內的video
+            if (videoList.includes(videoId)) {
+              // 建立 pastView 資料
+              const pastView = await prisma.pastView.findFirst({
+                where: {
+                  videoId: videoId,
+                  recordId: record.id,
                 },
               })
-              return res.status(200).json(data.viewLogs)
+              // 判斷是否有pastView
+              if (pastView) {
+                const data = await prisma.pastView.findFirst({
+                  where: {
+                    videoId: videoId,
+                    record: {
+                      id: record.id,
+                    },
+                  },
+                  select: {
+                    viewLogs: true,
+                  },
+                })
+                const course = await prisma.course.findUnique({
+                  where: {
+                    id: courseId,
+                  },
+                  select: {
+                    ownerId: true,
+                  },
+                })
+                if (course.ownerId.includes(session.user.id)) {
+                  const allPastView = await prisma.pastView.findMany({
+                    where: {
+                      videoId: videoId,
+                    },
+                    select: {
+                      viewLogs: true,
+                    },
+                  })
+
+                  // 建立眼動資料
+                  const eyesTrackMap = new Map<number, EyeTrackingLog[]>()
+                  // 新增value到map
+                  const addValue = (key: number, value: EyeTrackingLog) => {
+                    if (eyesTrackMap.has(key)) {
+                      eyesTrackMap.get(key)!.push(value)
+                    } else {
+                      eyesTrackMap.set(key, [value])
+                    }
+                  }
+
+                  const data = allPastView.flatMap((pastView) => {
+                    if (pastView.viewLogs && Array.isArray(pastView.viewLogs)) {
+                      // 將物件列表攤平並返回
+                      const viewLog = pastView.viewLogs.map((viewLog) => {
+                        return viewLog.eyesTrack
+                      })
+                      return pastView.viewLogs
+                    }
+                    return [] // 如果找不到目標鍵，返回空列表
+                  })
+
+                  return res.status(200).json(data)
+                }
+                // 回傳個別viewLog
+                return res.status(200).json(data.viewLogs)
+              } else {
+                // no pastView 課程無人觀課
+                return res.status(200).json([])
+              }
             } else {
-              return res.status(400).json([])
+              return res.status(400).json({ message: 'Bad Request' })
             }
           } else {
-            return res.status(400).json({ message: 'Bad Request' })
+            // no record 課程無人加入
+            return res.status(200).json([])
           }
         } else {
           return res.status(400).json({ message: 'Bad Request' })
