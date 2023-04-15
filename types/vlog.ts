@@ -2,15 +2,15 @@
 // drag status start time
 // youtube video length
 
-type InteractiveLog = [
+export type InteractiveLog = [
   {
     status: 'play' | 'pause' | 'drag' | 'leave'
   }
 ]
 
-interface EyeTrackingLog {
-    x: number;
-    y: number;
-    playerW: number;
-    playerH: number;
-  }
+export type EyeTrackingLog = {
+  x: number
+  y: number
+  playerW: number
+  playerH: number
+}

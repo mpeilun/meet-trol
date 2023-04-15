@@ -3,6 +3,7 @@ import prisma from '../../../../prisma/prisma'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../../auth/[...nextauth]'
 import { ViewLog } from '@prisma/client'
+import { EyeTrackingLog } from '../../../../types/vlog'
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await getServerSession(req, res, authOptions)
@@ -222,7 +223,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
         if (videoList.includes(videoId)) {
           // 建立 pastView 資料
-
           const pastView = await prisma.pastView.findFirst({
             where: {
               videoId: videoId,
