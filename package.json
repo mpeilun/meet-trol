@@ -15,6 +15,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@mars3d/heatmap.js": "^2.0.7",
     "@mui/icons-material": "^5.11.0",
     "@mui/lab": "^5.0.0-alpha.115",
     "@mui/material": "^5.11.0",
