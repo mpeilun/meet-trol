@@ -141,6 +141,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                   } => {
                     const ratio = 16 / 9
                     // 寬 > 高
+                    
                     if (playerW / playerH < ratio) {
                       const newPlayerW = playerH * ratio
                       const diff = newPlayerW - playerW
