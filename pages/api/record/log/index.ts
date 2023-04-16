@@ -124,13 +124,57 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     }
                   }
 
-                  const data = allPastView.flatMap((pastView) => {
+                  const transformXY = (
+                    x: number,
+                    y: number,
+                    playerX: number,
+                    playerY: number,
+                    playerW: number,
+                    playerH: number,
+                    windowX: number,
+                    windowY: number
+                  ): {
+                    x: number
+                    y: number
+                    playerW: number
+                    playerH: number
+                  } => {
+                    const ratio = 16 / 9
+                    // 寬 > 高
+                    if (playerW / playerH < ratio) {
+                      const newPlayerW = playerH * ratio
+                      const diff = newPlayerW - playerW
+                      const newPlayerX = playerX + diff / 2
+                      if (
+                        x >= newPlayerX &&
+                        x <= newPlayerX + newPlayerW &&
+                        y >= playerY &&
+                        y <= playerY + playerH
+                      ) {
+                        return {
+                          x: x - newPlayerX,
+                          y: y - playerY,
+                          playerW: newPlayerW,
+                          playerH: playerH,
+                        }
+                      }
+                    } // 高 > 寬
+                    else if (playerW / playerH > ratio) {
+                    } else {
+                    }
+                  }
+
+                  allPastView.map((pastView) => {
                     if (pastView.viewLogs && Array.isArray(pastView.viewLogs)) {
                       // 將物件列表攤平並返回
                       const viewLog = pastView.viewLogs.map((viewLog) => {
-                        return viewLog.eyesTrack
+                        viewLog.eyesTrack.forEach((eyesTrack) => {
+                          if (eyesTrack) {
+                            if (!eyesTrack.playerX || !eyesTrack.playerY) {
+                            }
+                          }
+                        })
                       })
-                      return pastView.viewLogs
                     }
                     return [] // 如果找不到目標鍵，返回空列表
                   })
