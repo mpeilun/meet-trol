@@ -3,6 +3,9 @@ import prisma from '../../../../prisma/prisma'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../../auth/[...nextauth]'
 import { ViewLog } from '@prisma/client'
+import { EyeTrackingLog } from '../../../../types/videoLog'
+import { transformXY } from '../../../../util/calculate'
+
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await getServerSession(req, res, authOptions)
@@ -55,19 +58,122 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             },
             select: { id: true },
           })
-          const data = await prisma.pastView.findFirst({
-            where: {
-              videoId: videoId,
-              record: {
-                id: record.id,
+          if (record) {
+            const videos = await prisma.course.findUnique({
+              where: {
+                id: courseId,
               },
-            },
-            select: {
-              videoId: true,
-              viewLogs: true,
-            },
-          })
-          return res.status(200).json(data)
+              select: {
+                chapters: {
+                  select: {
+                    videos: { select: { id: true } },
+                  },
+                },
+              },
+            })
+            // 建立課程 video 資料
+            const videoList = videos.chapters
+              .map(({ videos }) => videos.map(({ id }) => id))
+              .flat()
+            // 判斷videoId是否為課程內的video
+            if (videoList.includes(videoId)) {
+              // 建立 pastView 資料
+              const pastView = await prisma.pastView.findFirst({
+                where: {
+                  videoId: videoId,
+                  recordId: record.id,
+                },
+              })
+              // 判斷是否有pastView
+              if (pastView) {
+                const data = await prisma.pastView.findFirst({
+                  where: {
+                    videoId: videoId,
+                    record: {
+                      id: record.id,
+                    },
+                  },
+                  select: {
+                    viewLogs: true,
+                  },
+                })
+                const course = await prisma.course.findUnique({
+                  where: {
+                    id: courseId,
+                  },
+                  select: {
+                    ownerId: true,
+                  },
+                })
+                if (course.ownerId.includes(session.user.id)) {
+                  const allPastView = await prisma.pastView.findMany({
+                    where: {
+                      videoId: videoId,
+                    },
+                    select: {
+                      viewLogs: true,
+                    },
+                  })
+
+                  // 建立眼動資料
+                  const videoLength = 753
+                  const eyeTrackingLogs: {
+                    [playSecond: number]: EyeTrackingLog[]
+                  } = {}
+
+                  for (let i = 0; i <= videoLength; i++) {
+                    eyeTrackingLogs[i] = []
+                  }
+
+                  const addValue = (
+                    playSecond: number,
+                    value: EyeTrackingLog
+                  ) => {
+                    if (value && playSecond >= 0 && playSecond <= videoLength) {
+                      eyeTrackingLogs[playSecond].push(value)
+                    }
+                  }
+
+                  await allPastView.map((pastView) => {
+                    if (pastView.viewLogs && Array.isArray(pastView.viewLogs)) {
+                      // 將物件列表攤平並返回
+                      const viewLog = pastView.viewLogs.map((viewLog) => {
+                        viewLog.eyesTrack.forEach((eyesTrack) => {
+                          if (eyesTrack && eyesTrack.focus.onWindow) {
+                            const trackLog = transformXY({
+                              x: eyesTrack.x,
+                              y: eyesTrack.y,
+                              playerX:
+                                eyesTrack.playerX ?? eyesTrack.windowsW / 4.9,
+                              playerY: eyesTrack.playerY ?? 68.5,
+                              playerW: eyesTrack.playerW,
+                              playerH: eyesTrack.playerH,
+                            })
+                            addValue(
+                              Math.floor(eyesTrack.focus.playSecond),
+                              trackLog
+                            )
+                          }
+                        })
+                      })
+                    }
+                    return [] // 如果找不到目標鍵，返回空列表
+                  })
+                  return res.status(200).json(eyeTrackingLogs)
+                }
+                // 回傳個別viewLog
+                return res.status(200).json(data.viewLogs)
+              } else {
+                // no pastView 課程無人觀課
+                return res.status(200).json([])
+              }
+            } else {
+              return res.status(400).json({ message: 'Bad Request' })
+            }
+          } else {
+            // no record 課程無人加入
+            return res.status(200).json([])
+          }
         } else {
           return res.status(400).json({ message: 'Bad Request' })
         }
@@ -99,17 +205,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     }
     if (req.method === 'POST') {
       const { lastPlaySecond } = req.body as { lastPlaySecond: number }
-      const {
-        
-        eyesTrack,
-        pauseTimes,
-        dragTimes,
-        watchTime,
-        interactionLog,
-      } = req.body as ViewLog
+      const { eyesTrack, pauseTimes, dragTimes, watchTime, interactionLog } =
+        req.body as ViewLog
       if (
         lastPlaySecond != null &&
-        
         eyesTrack &&
         pauseTimes &&
         dragTimes &&
@@ -148,7 +247,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
         if (videoList.includes(videoId)) {
           // 建立 pastView 資料
-
           const pastView = await prisma.pastView.findFirst({
             where: {
               videoId: videoId,
@@ -195,7 +293,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             })
             const data = await prisma.viewLog.create({
               data: {
-                
                 eyesTrack: eyesTrack,
                 pauseTimes: pauseTimes,
                 dragTimes: dragTimes,

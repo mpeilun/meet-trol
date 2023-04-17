@@ -152,14 +152,13 @@ export default function RankQuestion(props: {
             props.handleQuestionClose()
           }}
         >
-          <CloseIcon />
+          <CloseIcon sx={{fontSize:40, color: 'black'}}/>
         </IconButton>
       </Box>
       <Divider />
       {data.question && (
         <Typography
-          variant="body2"
-          sx={{ pt: 1, fontSize: 24, letterSpacing: 2 }}
+          sx={{ pt: 1, fontSize: 24, letterSpacing: 1 }}
         >
           {data.question ?? ''}
         </Typography>
@@ -224,8 +223,7 @@ export default function RankQuestion(props: {
                               component="span"
                               width="100%"
                               sx={{
-                                fontSize: 24,
-                                letterSpacing: 2,
+                                fontSize: 20,
                                 color: isLog
                                   ? 'grey'
                                   : isReply

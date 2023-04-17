@@ -96,7 +96,7 @@ function CoursePlayer(props: { courseId: string }) {
     pauseTimes.current.push({
       pauseTime: timePause.current,
       playTime: new Date(),
-      playSecond: Math.round(playedSeconds),
+      playSecond: playedSeconds,
     })
     // console.log(pauseTime.current)
   }, [playedSeconds]) //播放
@@ -165,13 +165,13 @@ function CoursePlayer(props: { courseId: string }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          lastPlaySecond: Math.round(playedSeconds),
+          lastPlaySecond: playedSeconds,
           eyesTrack: eyesTracks.current,
           pauseTimes: pauseTimes.current,
           dragTimes: dragTimes.current,
           watchTime: {
-            start: { playSecond: Math.round(videoTime), time: time.current },
-            end: { playSecond: Math.round(playedSeconds), time: new Date() },
+            start: { playSecond: videoTime, time: time.current },
+            end: { playSecond: playedSeconds, time: new Date() },
           },
           interactionLog: interactionLog.current,
         }),
@@ -217,12 +217,13 @@ function CoursePlayer(props: { courseId: string }) {
         windowsW: viewPort.width,
         windowsH: viewPort.height,
         focus: {
-          playSecond: Math.round(props.playedSeconds),
+          playSecond: props.playedSeconds,
           onWindow: document.visibilityState === 'visible',
         },
         time: new Date(),
       })
     }
+    console.log(eyesTracks.current)
 
     // if (videoData) {
     //   videoData.questions.map((question) => {
@@ -255,7 +256,7 @@ function CoursePlayer(props: { courseId: string }) {
   }
   const handleChangeCommitted = (event, newValue) => {
     dragTimes.current.push({
-      playSecond: Math.round(playedSeconds),
+      playSecond: playedSeconds,
       time: new Date(),
     })
   }
@@ -327,6 +328,7 @@ function CoursePlayer(props: { courseId: string }) {
               position: 'absolute',
               top: '50%',
               left: '50%',
+              borderRadius:8,
               transform: 'translate(-50%, -50%)',
               width: showInComplete && !isFormSubmitted ? '90%' : 600,
               bgcolor: 'background.paper',
@@ -409,8 +411,8 @@ function CoursePlayer(props: { courseId: string }) {
                   visibility: 'hidden',
                   height: '100%',
                   width: '100%',
-                  left: '5%',
-                  top: '10%',
+                  left: '15%',
+                  top: '15%',
                   position: 'absolute',
                   display: 'flex',
                   flexDirection: 'column',

@@ -41,7 +41,7 @@ function AnsItem(props: {
           px: 1,
           mx: 1,
           fontWeight: 'bold',
-          fontSize: 24,
+          fontSize: 20,
           display: 'flex-inline',
           alignItems: 'center',
           border: 2,

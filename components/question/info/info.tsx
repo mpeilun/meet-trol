@@ -33,13 +33,13 @@ const Info = (props: {
             props.handleQuestionClose()
           }}
         >
-          <CloseIcon />
+          <CloseIcon sx={{fontSize:40, color: 'black'}}/>
         </IconButton>
       </Box>
       <Divider />
       <Box sx={{ pt: 1, minHeight: 150 }}>
         {data.content && (
-          <Typography variant="body1" sx={{ letterSpacing: 2, fontSize: 24 }}>
+          <Typography variant="body1" sx={{ letterSpacing: 1.5, fontSize: 24 }}>
             {data.content ?? ''}
           </Typography>
         )}

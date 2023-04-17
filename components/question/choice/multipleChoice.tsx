@@ -121,7 +121,7 @@ export default function MultipleChoice(props: {
       <FormControl sx={{ pt: 1, width: '100%' }} variant="standard">
         <FormLabel
           id="demo-error-radios"
-          sx={{ letterSpacing: 2, fontSize: 24 }}
+          sx={{ letterSpacing: 1, fontSize: 24 }}
         >
           {data.question ?? ''}
         </FormLabel>
@@ -130,6 +130,11 @@ export default function MultipleChoice(props: {
           {data.options.map((option, index) => {
             return (
               <FormControlLabel
+                sx={{
+                  '& .MuiFormControlLabel-label': {
+                    fontSize:24,
+                  },
+                }}
                 disabled={isLog ? isLog : isReply}
                 key={`${index}- ${option.option} option`}
                 value={index}
