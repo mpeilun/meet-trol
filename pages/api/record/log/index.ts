@@ -4,7 +4,8 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../../auth/[...nextauth]'
 import { ViewLog } from '@prisma/client'
 import { EyeTrackingLog } from '../../../../types/videoLog'
-import { transformXY } from '@/util/calculate'
+import { transformXY } from '../../../../util/calculate'
+
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await getServerSession(req, res, authOptions)
