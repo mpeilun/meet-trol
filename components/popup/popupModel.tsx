@@ -8,7 +8,7 @@ import styles from './pop.module.css'
 import { useAppSelector, useAppDispatch } from '../../hooks/redux'
 import { setQuestionLocate } from '../../store/course-data'
 
-import { useWindowDimensions } from '../../hooks/common'
+import { useWindowDimensions } from '../../hooks/useWindowDimensions'
 import { ChoiceData, RankData, FillData, DragData } from '../../types/chapter'
 import { Info, InteractionLog } from '@prisma/client'
 import React from 'react'

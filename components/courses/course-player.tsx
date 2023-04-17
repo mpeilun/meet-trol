@@ -57,7 +57,7 @@ import {
   EyesTrack,
 } from '@prisma/client'
 import { useSpring, animated } from '@react-spring/web'
-import { useWindowDimensions } from '../../hooks/common'
+import { useWindowDimensions } from '../../hooks/useWindowDimensions'
 import Interaction from '../popup/interaction'
 import { GoogleForm } from '../docs/googleForm'
 
@@ -273,7 +273,6 @@ function CoursePlayer(props: { courseId: string }) {
       // console.log(availableQualityLevels)
     }
   }
-
 
   // hide cursor when mouse is not moving
   const [isMouseMoving, setIsMouseMoving] = React.useState(true)
