@@ -11,10 +11,16 @@ import {
   Select,
   IconButton,
 } from '@mui/material'
-import { useState, useEffect, useRef, SetStateAction, Dispatch } from 'react'
+import {
+  useState,
+  useEffect,
+  useRef,
+  SetStateAction,
+  Dispatch,
+  useCallback,
+} from 'react'
 import { useRouter } from 'next/router'
 import { Video } from '../../../../types/video-edit'
-import { ViewLog } from '@prisma/client'
 import TimeRangeSlider from '../../../../components/analyze/video-timeline'
 import dynamic from 'next/dynamic'
 import { PlayerProgress, ReactPlayerType } from '../../../../types/react-player'
@@ -23,6 +29,8 @@ import h337, { Heatmap } from '@mars3d/heatmap.js'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import PauseIcon from '@mui/icons-material/Pause'
 import ViewChart from '../../../../components/analyze/view-chart'
+import { ViewLog } from '../../../../types/videoLog'
+import { calculateXY, scaleXY, transformXY } from '../../../../util/calculate'
 
 const ReactPlayerDynamic = dynamic(() => import('react-player/lazy'), {
   loading: () => (
@@ -52,7 +60,7 @@ function AnalyzeVideoPage() {
 
   // Fetch video and view log
   const [video, setVideo] = useState<Video>(null)
-  const [viewLog, setViewLog] = useState<ViewLog[]>([])
+  const [viewLog, setViewLog] = useState<ViewLog>(null)
   useEffect(() => {
     if (!router.isReady) return
     const fetchVideo = async () => {
@@ -64,8 +72,9 @@ function AnalyzeVideoPage() {
       const res = await fetch(
         `/api/record/log?courseId=${courseId}&videoId=${videoId}`
       )
-      const data = await res.json()
+      const data: ViewLog = await res.json()
       setViewLog(data)
+      console.log(data)
     }
     fetchVideo()
     fetchViewLog()
@@ -116,6 +125,7 @@ function AnalyzeVideoPage() {
     if (ready && !heatmapRef.current) {
       heatmapRef.current = h337.create({
         container: document.querySelector('#analyze-player'),
+        blur: 0.8,
       })
       document
         .querySelector('.heatmap-canvas')
@@ -126,26 +136,65 @@ function AnalyzeVideoPage() {
     }
   }, [ready])
 
+  const videoX = useRef<number>()
+  const videoY = useRef<number>()
+  const videoW = useRef<number>()
+  const videoH = useRef<number>()
+
+  const playerXY = useCallback(() => {
+    if (playerBoxRef.current) {
+      const playerW = playerBoxRef.current.clientWidth
+      const playerH = playerBoxRef.current.clientHeight
+      const playerX = playerBoxRef.current.offsetLeft
+      const playerY = playerBoxRef.current.offsetTop
+      console.log(playerW, playerH, playerX, playerY)
+      const { newPlayerX, newPlayerY, newPlayerW, newPlayerH } = calculateXY(
+        playerX,
+        playerY,
+        playerW,
+        playerH
+      )
+      videoX.current = newPlayerX
+      videoY.current = newPlayerY
+      videoW.current = newPlayerW
+      videoH.current = newPlayerH
+    }
+  }, [playerBoxRef.current?.clientWidth])
+  useEffect(() => {
+    playerXY()
+  }, [playerXY])
   // Update heatmap
   useEffect(() => {
-    if (heatmapRef?.current != null && playerProgress.playedSeconds > 0) {
+    if (
+      heatmapRef?.current != null &&
+      playerProgress.playedSeconds > 0 &&
+      viewLog
+    ) {
       // now generate some random data
       var points = []
       var max = 0
-      var width = document.querySelector('#analyze-player').clientWidth
-      var height = document.querySelector('#analyze-player').clientHeight
-      var len = 200
+      // console.log(playerWidth, playerHeight, playerX, playerY)
+      // console.log(viewLog[Math.floor(playerProgress.playedSeconds)])
 
-      while (len--) {
-        var val = Math.floor(Math.random() * 100)
-        max = Math.max(max, val)
-        var point = {
-          x: Math.floor(Math.random() * width),
-          y: Math.floor(Math.random() * height),
-          value: val,
+      viewLog[Math.floor(playerProgress.playedSeconds)].map((v) => {
+        const widthBlackBlock = videoX.current - playerBoxRef.current.offsetLeft
+        const heightBlackBlock = videoY.current - playerBoxRef.current.offsetTop
+        const { x, y } = scaleXY(
+          v.x,
+          v.y,
+          v.playerW,
+          v.playerH,
+          videoW.current,
+          videoH.current
+        )
+        const point = {
+          x: Math.floor(x + widthBlackBlock),
+          y: Math.floor(y + heightBlackBlock),
+          value: 1,
         }
         points.push(point)
-      }
+      })
+
       // heatmap data format
       var data = {
         min: 0,
@@ -170,7 +219,7 @@ function AnalyzeVideoPage() {
     return item.viewer < min ? item.viewer : min
   }, Infinity)
 
-  if (!video || viewLog.length === 0) {
+  if (!video || !viewLog) {
     return (
       <CircularProgress
         sx={{

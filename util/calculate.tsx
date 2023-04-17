@@ -9,9 +9,10 @@ interface transformXY {
   playerY: number
   playerW: number
   playerH: number
-  windowX?: number
-  windowY?: number
+  widthRate?: number
+  heightRate?: number
 }
+
 export const transformXY = ({
   x,
   y,
@@ -19,59 +20,90 @@ export const transformXY = ({
   playerY,
   playerW,
   playerH,
-  windowX,
-  windowY,
+  widthRate = 16,
+  heightRate = 9,
 }: transformXY): EyeTrackingLog => {
-  const ratio = 16 / 9
+  const { newPlayerX, newPlayerY, newPlayerW, newPlayerH } = calculateXY(
+    playerX,
+    playerY,
+    playerW,
+    playerH,
+    widthRate,
+    heightRate
+  )
+  if (
+    x >= newPlayerX &&
+    x <= newPlayerX + newPlayerW &&
+    y >= newPlayerY &&
+    y <= newPlayerY + newPlayerH
+  ) {
+    return {
+      x: x - newPlayerX,
+      y: y - newPlayerY,
+      playerW: newPlayerW,
+      playerH: newPlayerH,
+    }
+  }
+}
+
+export const calculateXY = (
+  playerX: number,
+  playerY: number,
+  playerW: number,
+  playerH: number,
+  widthRate: number = 16,
+  heightRate: number = 9
+): {
+  newPlayerX: number
+  newPlayerY: number
+  newPlayerW: number
+  newPlayerH: number
+} => {
+  const ratio = widthRate / heightRate
   // 寬 > 高
-  if (playerW / playerH < ratio) {
+  if (playerW / playerH > ratio) {
     const newPlayerW = playerH * ratio
-    const diff = newPlayerW - playerW
+    const diff = playerW - newPlayerW
     const newPlayerX = playerX + diff / 2
-    if (
-      x >= newPlayerX &&
-      x <= newPlayerX + newPlayerW &&
-      y >= playerY &&
-      y <= playerY + playerH
-    ) {
-      return {
-        x: x - newPlayerX,
-        y: y - playerY,
-        playerW: newPlayerW,
-        playerH: playerH,
-      }
+    return {
+      newPlayerX: newPlayerX,
+      newPlayerY: playerY,
+      newPlayerW: newPlayerW,
+      newPlayerH: playerH,
     }
   } // 高 > 寬
-  else if (playerW / playerH > ratio) {
+  else if (playerW / playerH < ratio) {
     const newPlayerH = playerW / ratio
-    const diff = newPlayerH - playerH
+    const diff = playerH - newPlayerH
     const newPlayerY = playerY + diff / 2
-    if (
-      x >= playerX &&
-      x <= playerX + playerW &&
-      y >= newPlayerY &&
-      y <= newPlayerY + newPlayerH
-    ) {
-      return {
-        x: x - playerX,
-        y: y - newPlayerY,
-        playerW: playerW,
-        playerH: newPlayerH,
-      }
+    return {
+      newPlayerX: playerY,
+      newPlayerY: newPlayerY,
+      newPlayerW: playerW,
+      newPlayerH: newPlayerH,
     }
   } else {
-    if (
-      x >= playerX &&
-      x <= playerX + playerW &&
-      y >= playerY &&
-      y <= playerY + playerH
-    ) {
-      return {
-        x: x - playerX,
-        y: y - playerY,
-        playerW: playerW,
-        playerH: playerH,
-      }
+    return {
+      newPlayerX: playerX,
+      newPlayerY: playerY,
+      newPlayerW: playerW,
+      newPlayerH: playerH,
     }
+  }
+}
+
+export const scaleXY = (
+  x: number,
+  y: number,
+  playerW: number,
+  playerH: number,
+  toPlayerW: number,
+  toPlayerH: number
+) => {
+  const xRate = toPlayerW / playerW
+  const yRate = toPlayerH / playerH
+  return {
+    x: x * xRate,
+    y: y * yRate,
   }
 }
