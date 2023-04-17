@@ -1,4 +1,4 @@
-import { EyeTrackingLog } from '@/types/vlog'
+import { EyeTrackingLog } from '../types/videoLog'
 
 // 將眼動儀座標換算成影片座標 排除黑邊
 
