@@ -14,3 +14,7 @@ export type EyeTrackingLog = {
   playerW: number
   playerH: number
 }
+
+export type ViewLog = {
+  [playSecond: number]: EyeTrackingLog[]
+}

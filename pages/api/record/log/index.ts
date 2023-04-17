@@ -6,7 +6,6 @@ import { ViewLog } from '@prisma/client'
 import { EyeTrackingLog } from '../../../../types/videoLog'
 import { transformXY } from '../../../../util/calculate'
 
-
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await getServerSession(req, res, authOptions)
   const { courseId, videoId } = req.query as {
@@ -115,7 +114,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     },
                   })
 
-                  // 建立眼動資料
+                  // /// 建立眼動資料
                   const videoLength = 753
                   const eyeTrackingLogs: {
                     [playSecond: number]: EyeTrackingLog[]
@@ -148,6 +147,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                               playerY: eyesTrack.playerY ?? 68.5,
                               playerW: eyesTrack.playerW,
                               playerH: eyesTrack.playerH,
+                              widthRate: 16,
+                              heightRate: 9,
                             })
                             addValue(
                               Math.floor(eyesTrack.focus.playSecond),
@@ -159,6 +160,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     }
                     return [] // 如果找不到目標鍵，返回空列表
                   })
+
                   return res.status(200).json(eyeTrackingLogs)
                 }
                 // 回傳個別viewLog
