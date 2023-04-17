@@ -158,7 +158,7 @@ function CoursePlayer(props: { courseId: string }) {
   // 監聽離開事件
 
   const postLog = async () => {
-    if (interactionLog.current.length > 2 && showInComplete) {
+    if (true) {
       await fetch(`/api/record/log?courseId=${courseId}&videoId=${videoId}`, {
         method: 'POST',
         headers: {
@@ -192,7 +192,7 @@ function CoursePlayer(props: { courseId: string }) {
   let handlePlayerStatus = (props: OnProgressProps) => {
     //TODO 暫時先這樣寫
     // console.log(interactionLog.current)
-    console.log(Math.floor(playerRef.current.getDuration() * 0.97))
+    // console.log(Math.floor(playerRef.current.getDuration() * 0.97))
     if (
       props.playedSeconds > Math.floor(playerRef.current.getDuration() * 0.97)
     ) {
@@ -202,8 +202,8 @@ function CoursePlayer(props: { courseId: string }) {
       //   setShowInComplete(true)
       //   postLog()
       // }
-        postLog()
-
+      setPlaying(false)
+      postLog()
     }
     // if (Math.floor(props.playedSeconds) % 10 == 0) {
     // }
@@ -228,7 +228,7 @@ function CoursePlayer(props: { courseId: string }) {
         time: new Date(),
       })
     }
-    console.log(eyesTracks.current)
+    // console.log(eyesTracks.current)
 
     // if (videoData) {
     //   videoData.questions.map((question) => {
