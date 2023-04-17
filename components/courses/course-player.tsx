@@ -192,15 +192,18 @@ function CoursePlayer(props: { courseId: string }) {
   let handlePlayerStatus = (props: OnProgressProps) => {
     //TODO 暫時先這樣寫
     // console.log(interactionLog.current)
+    console.log(Math.floor(playerRef.current.getDuration() * 0.97))
     if (
       props.playedSeconds > Math.floor(playerRef.current.getDuration() * 0.97)
     ) {
-      if (interactionLog.current.length > 2) {
-        handleFullScreen.exit()
-        setPlaying(false)
-        setShowInComplete(true)
+      // if (interactionLog.current.length > 2) {
+      //   handleFullScreen.exit()
+      //   setPlaying(false)
+      //   setShowInComplete(true)
+      //   postLog()
+      // }
         postLog()
-      }
+
     }
     // if (Math.floor(props.playedSeconds) % 10 == 0) {
     // }
