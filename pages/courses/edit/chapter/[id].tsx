@@ -439,6 +439,12 @@ export default function CreateCoursePage() {
         </Typography>
       </Tooltip>
 
+      <Tooltip title={'課程代碼'}>
+        <Typography variant="h6" sx={{ alignSelf: 'center' }} fontWeight="bold">
+          {course.id}
+        </Typography>
+      </Tooltip>
+
       {/* Chapter & Video Item */}
       {course.chapters.map((chapterData, index) => (
         <Box key={`chapterItem-${index}`}>

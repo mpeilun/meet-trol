@@ -192,7 +192,9 @@ function CoursePlayer(props: { courseId: string }) {
   let handlePlayerStatus = (props: OnProgressProps) => {
     //TODO 暫時先這樣寫
     // console.log(interactionLog.current)
-    if (props.playedSeconds > 732) {
+    if (
+      props.playedSeconds > Math.floor(playerRef.current.getDuration() * 0.97)
+    ) {
       if (interactionLog.current.length > 2) {
         handleFullScreen.exit()
         setPlaying(false)
@@ -269,7 +271,7 @@ function CoursePlayer(props: { courseId: string }) {
       setPlayedSeconds(videoTime)
       playerRef.current.seekTo(videoTime, 'seconds')
       setLoading(false)
-
+      // console.log(Math.floor(playerRef.current.getDuration() * 0.97))
       // var availableQualityLevels=player.getInternalPlayer().getAvailableQualityLevels()
       // console.log(availableQualityLevels)
     }
@@ -328,7 +330,7 @@ function CoursePlayer(props: { courseId: string }) {
               position: 'absolute',
               top: '50%',
               left: '50%',
-              borderRadius:8,
+              borderRadius: 8,
               transform: 'translate(-50%, -50%)',
               width: showInComplete && !isFormSubmitted ? '90%' : 600,
               bgcolor: 'background.paper',

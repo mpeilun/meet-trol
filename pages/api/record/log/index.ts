@@ -115,16 +115,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     },
                   })
 
-                  // 建立眼動資料
+                  // set videoLength
+                  // TODO: save video length instead of hard code
                   const videoLength = 753
                   const eyeTrackingLogs: {
                     [playSecond: number]: EyeTrackingLog[]
                   } = {}
-
+                  // create video length default key addValue
                   for (let i = 0; i <= videoLength; i++) {
                     eyeTrackingLogs[i] = []
                   }
-
+                  
                   const addValue = (
                     playSecond: number,
                     value: EyeTrackingLog
