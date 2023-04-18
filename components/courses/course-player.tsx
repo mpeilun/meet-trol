@@ -226,7 +226,6 @@ function CoursePlayer(props: { courseId: string }) {
         time: new Date(),
       })
     }
-    console.log(eyesTracks.current)
 
     // if (videoData) {
     //   videoData.questions.map((question) => {

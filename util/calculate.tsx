@@ -38,11 +38,41 @@ export const transformXY = ({
     y <= newPlayerY + newPlayerH
   ) {
     return {
-      x: x - newPlayerX,
-      y: y - newPlayerY,
+      x: Math.round(x - newPlayerX),
+      y: Math.round(y - newPlayerY),
       playerW: newPlayerW,
       playerH: newPlayerH,
     }
+  }
+}
+
+export const isFocusOnVideo = ({
+  x,
+  y,
+  playerX,
+  playerY,
+  playerW,
+  playerH,
+  widthRate = 16,
+  heightRate = 9,
+}: transformXY): boolean => {
+  const { newPlayerX, newPlayerY, newPlayerW, newPlayerH } = calculateXY(
+    playerX,
+    playerY,
+    playerW,
+    playerH,
+    widthRate,
+    heightRate
+  )
+  if (
+    x >= newPlayerX &&
+    x <= newPlayerX + newPlayerW &&
+    y >= newPlayerY &&
+    y <= newPlayerY + newPlayerH
+  ) {
+    return true
+  } else {
+    return false
   }
 }
 
@@ -103,7 +133,7 @@ export const scaleXY = (
   const xRate = toPlayerW / playerW
   const yRate = toPlayerH / playerH
   return {
-    x: x * xRate,
-    y: y * yRate,
+    x: Math.round(x * xRate),
+    y: Math.round(y * yRate),
   }
 }

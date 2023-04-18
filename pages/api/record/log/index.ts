@@ -124,7 +124,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                   for (let i = 0; i <= videoLength; i++) {
                     eyeTrackingLogs[i] = []
                   }
-                  
+
                   const addValue = (
                     playSecond: number,
                     value: EyeTrackingLog
@@ -152,7 +152,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                               heightRate: 9,
                             })
                             addValue(
-                              Math.floor(eyesTrack.focus.playSecond),
+                              Math.round(eyesTrack.focus.playSecond),
                               trackLog
                             )
                           }
