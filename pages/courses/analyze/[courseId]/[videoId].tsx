@@ -31,6 +31,10 @@ import PauseIcon from '@mui/icons-material/Pause'
 import ViewChart from '../../../../components/analyze/view-chart'
 import { ViewLog } from '../../../../types/videoLog'
 import { calculateXY, scaleXY, transformXY } from '../../../../util/calculate'
+import {
+  calculateCenterCoordinate,
+  smoothData,
+} from '../../../../util/data-process'
 
 const ReactPlayerDynamic = dynamic(() => import('react-player/lazy'), {
   loading: () => (
@@ -54,6 +58,19 @@ const initPlayerProgress: PlayerProgress = {
   duration: 0,
 }
 
+function downloadJSON(list) {
+  const data = JSON.stringify(list)
+  const blob = new Blob([data], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'data.json'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
+}
+
 function AnalyzeVideoPage() {
   const router = useRouter()
   const { courseId, videoId } = router.query
@@ -61,6 +78,8 @@ function AnalyzeVideoPage() {
   // Fetch video and view log
   const [video, setVideo] = useState<Video>(null)
   const [viewLog, setViewLog] = useState<ViewLog>(null)
+  const [views, setViews] = useState([])
+
   useEffect(() => {
     if (!router.isReady) return
     const fetchVideo = async () => {
@@ -75,7 +94,21 @@ function AnalyzeVideoPage() {
       const data: ViewLog = await res.json()
       setViewLog(data)
       console.log(data)
+
+      // downloadJSON(data)
+
+      // Chart
+      setViews(() => {
+        const viewsData = []
+        for (let i = 0; i < Object.keys(data).length; i++) {
+          const logs = data[i]
+          const viewers = logs.length
+          viewsData.push({ viewer: viewers })
+        }
+        return viewsData
+      })
     }
+
     fetchVideo()
     fetchViewLog()
   }, [router.isReady])
@@ -160,9 +193,11 @@ function AnalyzeVideoPage() {
       videoH.current = newPlayerH
     }
   }, [playerBoxRef.current?.clientWidth])
+
   useEffect(() => {
     playerXY()
   }, [playerXY])
+
   // Update heatmap
   useEffect(() => {
     if (
@@ -195,6 +230,7 @@ function AnalyzeVideoPage() {
         points.push(point)
       })
 
+      // const { avgX, avgY, medianX, medianY } = calculateCenterCoordinate(points)
       // heatmap data format
       var data = {
         min: 0,
@@ -206,18 +242,6 @@ function AnalyzeVideoPage() {
       heatmapRef.current.setData(data)
     }
   }, [playerProgress.playedSeconds])
-
-  // Chart
-  const data = []
-  for (let i = 0; i < 760; i++) {
-    data.push({ viewer: Math.floor(Math.random() * 31) })
-  }
-  const maxViewer = data.reduce((max, item) => {
-    return item.viewer > max ? item.viewer : max
-  }, 0)
-  const minViewer = data.reduce((min, item) => {
-    return item.viewer < min ? item.viewer : min
-  }, Infinity)
 
   if (!video || !viewLog) {
     return (
@@ -284,11 +308,11 @@ function AnalyzeVideoPage() {
             <Box
               position={'relative'}
               width={'100%'}
-              height={maxViewer + 20}
-              maxHeight={'60px'}
+              height={'70px'}
+              // maxHeight={'60px'}
               top={'37px'}
             >
-              <ViewChart data={data} />
+              <ViewChart data={views} />
             </Box>
             <Box>
               {/*時間軸*/}
