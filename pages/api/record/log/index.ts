@@ -134,7 +134,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     }
                   }
 
-                  await allPastView.map((pastView) => {
+                  allPastView.map((pastView) => {
                     if (pastView.viewLogs && Array.isArray(pastView.viewLogs)) {
                       // 將物件列表攤平並返回
                       const viewLog = pastView.viewLogs.map((viewLog) => {

@@ -58,6 +58,7 @@ const initPlayerProgress: PlayerProgress = {
   duration: 0,
 }
 
+
 function downloadJSON(list) {
   const data = JSON.stringify(list)
   const blob = new Blob([data], { type: 'application/json' })
