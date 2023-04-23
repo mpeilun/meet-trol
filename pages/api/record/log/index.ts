@@ -3,7 +3,7 @@ import prisma from '../../../../prisma/prisma'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../../auth/[...nextauth]'
 import { ViewLog } from '@prisma/client'
-import { EyeTrackingLog } from '../../../../types/videoLog'
+import { EyeTrack } from '../../../../types/videoLog'
 import { transformXY } from '../../../../util/calculate'
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -118,7 +118,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                   // TODO: save video length instead of hard code
                   const videoLength = 753
                   const eyeTrackingLogs: {
-                    [playSecond: number]: EyeTrackingLog[]
+                    [playSecond: number]: EyeTrack[]
                   } = {}
                   // create video length default key addValue
                   for (let i = 0; i <= videoLength; i++) {
@@ -127,7 +127,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
                   const addValue = (
                     playSecond: number,
-                    value: EyeTrackingLog
+                    value: EyeTrack
                   ) => {
                     if (value && playSecond >= 0 && playSecond <= videoLength) {
                       eyeTrackingLogs[playSecond].push(value)

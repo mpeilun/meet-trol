@@ -1,4 +1,4 @@
-import { EyeTrackingLog } from '../types/videoLog'
+import { EyeTrack } from '../types/videoLog'
 
 
 interface transformXY {
@@ -13,7 +13,7 @@ interface transformXY {
 }
 
 // 將眼動儀座標換算成影片座標 排除黑邊
-export const transformXY = ({ x, y, playerX, playerY, playerW, playerH, widthRate = 16, heightRate = 9 }: transformXY): EyeTrackingLog => {
+export const transformXY = ({ x, y, playerX, playerY, playerW, playerH, widthRate = 16, heightRate = 9 }: transformXY): EyeTrack => {
   const { newPlayerX, newPlayerY, newPlayerW, newPlayerH } = calculateXY( playerX, playerY, playerW, playerH, widthRate, heightRate )
   // 判斷是否注視在影像上
   if (

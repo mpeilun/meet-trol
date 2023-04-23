@@ -62,10 +62,11 @@ model InformedConsent {
 
 model Record {
   id       String     @id @default(auto()) @map("_id") @db.ObjectId
-  courseId String     @unique @db.ObjectId
   pastView PastView[]
   user     User       @relation(fields: [userId], references: [id])
   userId   String     @unique @db.ObjectId
+  Course   Course     @relation(fields: [courseId], references: [id])
+  courseId String     @unique @db.ObjectId
 }
 
 type PauseTime {
@@ -153,6 +154,7 @@ model Course {
   end         DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  records     Record[]
   chapters    Chapter[]
   members     User[]    @relation("meber", fields: [membersId], references: [id])
   membersId   String[]  @db.ObjectId
@@ -221,6 +223,7 @@ model ChoiceFeedback {
   choice    Choice   @relation(fields: [choiceId], references: [id], onDelete: Cascade)
   choiceId  String   @db.ObjectId
   createdAt DateTime @default(now())
+  isCorrect Boolean?
 }
 
 model Rank {
@@ -245,6 +248,7 @@ model RankFeedback {
   rank      Rank     @relation(fields: [rankId], references: [id], onDelete: Cascade)
   rankId    String   @db.ObjectId
   createdAt DateTime @default(now())
+  isCorrect Boolean?
 }
 
 model Fill {
@@ -269,6 +273,7 @@ model FillFeedback {
   fill      Fill     @relation(fields: [fillId], references: [id], onDelete: Cascade)
   fillId    String   @db.ObjectId
   createdAt DateTime @default(now())
+  isCorrect Boolean?
 }
 
 type Position {
@@ -302,4 +307,5 @@ model DragFeedback {
   drag      Drag       @relation(fields: [dragId], references: [id], onDelete: Cascade)
   dragId    String     @db.ObjectId
   createdAt DateTime   @default(now())
+  isCorrect Boolean?
 }
