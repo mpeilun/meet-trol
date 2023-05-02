@@ -110,8 +110,8 @@ function EyesTracking() {
         src="../external-script/webgazer.js"
         onLoad={() => {
           setWebgazerScript(true)
-          webgazer.showVideo(false)
-          webgazer.showPredictionPoints(false)
+          // webgazer.showVideo(false)
+          // webgazer.showPredictionPoints(false)
           // webgazer.setGazeListener(function (data: { x: any; y: any } | null, elapsedTime: any) {
           //   if (data == null) {
           //     return
