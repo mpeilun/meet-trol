@@ -31,10 +31,25 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
               ownerId: true,
             },
           })
+
+          const video = await prisma.video.findUnique({
+            where: {
+              id: videoId,
+            },
+            select: {
+              info: {
+                select: {
+                  id: true,
+                },
+              },
+              choice:{
+                
+              }
+            },
+          })
           if (check.ownerId.includes(session.user.id)) {
             // 處理全部的 feedback
           } else {
-            return res.status(403).json({ message: 'Forbidden' })
           }
         } else {
           return res.status(400).json({ message: 'Bad Request' })

@@ -29,6 +29,7 @@ import duration from 'dayjs/plugin/duration'
 import { PlayerProgress, ReactPlayerType } from '../../types/react-player'
 import { formatSeconds } from '../../util/common'
 import PlaceIcon from '@mui/icons-material/Place'
+import { red } from '@mui/material/colors'
 
 interface VideoRangeSliderProps {
   sx?: SxProps<Theme>
@@ -37,6 +38,7 @@ interface VideoRangeSliderProps {
   start?: number
   end?: number
   url: string
+  children?: ReactNode
   onUrlChange?: (url: string) => void
   onSelectRangeChange?: (start: number, end: number) => void
 }
@@ -47,17 +49,15 @@ const CustomSlider = styled(Slider)(({ theme }) => ({
   position: 'relative',
   height: '24px',
   top: '12px',
-  // '& .MuiSlider-track': {
-  //   display: 'none',
-  //   height: '100%',
-  // },
-  // '& .MuiSlider-rail': {
-  //   display: 'none',
-  //   height: '100%',
-  // },
+  '& .MuiSlider-track': {
+    borderRadius: '0',
+  },
+  '& .MuiSlider-rail': {
+    borderRadius: '0',
+  },
   '& .MuiSlider-thumb': {
     position: 'absolute',
-    top: '-14px',
+    top: '-18px',
     width: '30px',
     height: '30px',
     color: 'primary.main',
@@ -71,7 +71,7 @@ const CustomSlider = styled(Slider)(({ theme }) => ({
     width: '72px',
     height: '100%',
     position: 'absolute',
-    top: '80px',
+    top: '88px',
     backgroundColor: '#c4bad3',
     borderRadius: '5px',
     '&::before': {
@@ -79,7 +79,7 @@ const CustomSlider = styled(Slider)(({ theme }) => ({
       width: 0,
       height: 0,
       position: 'absolute',
-      top: '-10px',
+      top: '-12px',
       left: '26px',
       backgroundColor: 'transparent',
       borderStyle: 'solid',
@@ -96,7 +96,15 @@ function CustomThumb(props: { children: ReactNode; other: any }) {
   return (
     <SliderThumb {...other}>
       {children}
-      <PlaceIcon sx={{ width: '100%', height: '100%' }} />
+      <PlaceIcon sx={{ color: red[500], width: '100%', height: '100%' }} />
+      {/* <div
+        style={{
+          position: 'absolute',
+
+          borderRight: '2px solid red',
+          height: '32px',
+        }}
+      /> */}
     </SliderThumb>
   )
 }
@@ -126,6 +134,7 @@ function VideoRangeSlider(props: VideoRangeSliderProps) {
     start,
     end,
     url,
+    children,
     onUrlChange,
     onSelectRangeChange,
   } = props
@@ -192,6 +201,7 @@ function VideoRangeSlider(props: VideoRangeSliderProps) {
             },
           ]}
         />
+        {children}
       </Box>
     </>
   )

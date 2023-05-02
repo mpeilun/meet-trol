@@ -8,11 +8,32 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { answers, choiceId } = req.body
     const session = await getServerSession(req, res, authOptions)
     if (session) {
+      const choice = await prisma.choice.findUnique({
+        where: {
+          id: choiceId,
+        },
+        select: {
+          options: true,
+        },
+      })
+
+      
+      const correctAnswer = []
+      choice.options.map(({ isAnswer }, index) => {
+        if (isAnswer === true) {
+          correctAnswer.push(index)
+        }
+      })
+      const isCorrect = correctAnswer.every(
+        (answer, index) => answer === answers[index]
+      )
+
       const data = await prisma.choiceFeedback.create({
         data: {
           answers: answers,
           createdAt: new Date(),
           userId: session.user.id,
+          isCorrect: isCorrect,
           choice: {
             connect: {
               id: choiceId,

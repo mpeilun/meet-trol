@@ -3,7 +3,8 @@ import prisma from '../../../../prisma/prisma'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../../auth/[...nextauth]'
 import { ViewLog } from '@prisma/client'
-import { EyeTrackingLog } from '../../../../types/vlog'
+import { EyeTrack } from '../../../../types/videoLog'
+import { transformXY } from '../../../../util/calculate'
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await getServerSession(req, res, authOptions)
@@ -113,54 +114,23 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     },
                   })
 
-                  // 建立眼動資料
-                  const eyesTrackMap = new Map<number, EyeTrackingLog[]>()
-                  // 新增value到map
-                  const addValue = (key: number, value: EyeTrackingLog) => {
-                    if (eyesTrackMap.has(key)) {
-                      eyesTrackMap.get(key)!.push(value)
-                    } else {
-                      eyesTrackMap.set(key, [value])
-                    }
+                  // set videoLength
+                  // TODO: save video length instead of hard code
+                  const videoLength = 753
+                  const eyeTrackingLogs: {
+                    [playSecond: number]: EyeTrack[]
+                  } = {}
+                  // create video length default key addValue
+                  for (let i = 0; i <= videoLength; i++) {
+                    eyeTrackingLogs[i] = []
                   }
 
-                  const transformXY = (
-                    x: number,
-                    y: number,
-                    playerX: number,
-                    playerY: number,
-                    playerW: number,
-                    playerH: number,
-                    windowX: number,
-                    windowY: number
-                  ): {
-                    x: number
-                    y: number
-                    playerW: number
-                    playerH: number
-                  } => {
-                    const ratio = 16 / 9
-                    // 寬 > 高
-                    if (playerW / playerH < ratio) {
-                      const newPlayerW = playerH * ratio
-                      const diff = newPlayerW - playerW
-                      const newPlayerX = playerX + diff / 2
-                      if (
-                        x >= newPlayerX &&
-                        x <= newPlayerX + newPlayerW &&
-                        y >= playerY &&
-                        y <= playerY + playerH
-                      ) {
-                        return {
-                          x: x - newPlayerX,
-                          y: y - playerY,
-                          playerW: newPlayerW,
-                          playerH: playerH,
-                        }
-                      }
-                    } // 高 > 寬
-                    else if (playerW / playerH > ratio) {
-                    } else {
+                  const addValue = (
+                    playSecond: number,
+                    value: EyeTrack
+                  ) => {
+                    if (value && playSecond >= 0 && playSecond <= videoLength) {
+                      eyeTrackingLogs[playSecond].push(value)
                     }
                   }
 
@@ -169,9 +139,22 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                       // 將物件列表攤平並返回
                       const viewLog = pastView.viewLogs.map((viewLog) => {
                         viewLog.eyesTrack.forEach((eyesTrack) => {
-                          if (eyesTrack) {
-                            if (!eyesTrack.playerX || !eyesTrack.playerY) {
-                            }
+                          if (eyesTrack && eyesTrack.focus.onWindow) {
+                            const trackLog = transformXY({
+                              x: eyesTrack.x,
+                              y: eyesTrack.y,
+                              playerX:
+                                eyesTrack.playerX ?? eyesTrack.windowsW / 4.9,
+                              playerY: eyesTrack.playerY ?? 68.5,
+                              playerW: eyesTrack.playerW,
+                              playerH: eyesTrack.playerH,
+                              widthRate: 16,
+                              heightRate: 9,
+                            })
+                            addValue(
+                              Math.round(eyesTrack.focus.playSecond),
+                              trackLog
+                            )
                           }
                         })
                       })
@@ -179,7 +162,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                     return [] // 如果找不到目標鍵，返回空列表
                   })
 
-                  return res.status(200).json(data)
+                  return res.status(200).json(eyeTrackingLogs)
                 }
                 // 回傳個別viewLog
                 return res.status(200).json(data.viewLogs)

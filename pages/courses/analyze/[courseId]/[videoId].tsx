@@ -11,10 +11,16 @@ import {
   Select,
   IconButton,
 } from '@mui/material'
-import { useState, useEffect, useRef, SetStateAction, Dispatch } from 'react'
+import {
+  useState,
+  useEffect,
+  useRef,
+  SetStateAction,
+  Dispatch,
+  useCallback,
+} from 'react'
 import { useRouter } from 'next/router'
 import { Video } from '../../../../types/video-edit'
-import { ViewLog } from '@prisma/client'
 import TimeRangeSlider from '../../../../components/analyze/video-timeline'
 import dynamic from 'next/dynamic'
 import { PlayerProgress, ReactPlayerType } from '../../../../types/react-player'
@@ -22,6 +28,13 @@ import { OnProgressProps } from 'react-player/base'
 import h337, { Heatmap } from '@mars3d/heatmap.js'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import PauseIcon from '@mui/icons-material/Pause'
+import ViewChart from '../../../../components/analyze/view-chart'
+import { ViewLog } from '../../../../types/videoLog'
+import { calculateXY, scaleXY, transformXY } from '../../../../util/calculate'
+import {
+  calculateCenterCoordinate,
+  smoothData,
+} from '../../../../util/data-process'
 
 const ReactPlayerDynamic = dynamic(() => import('react-player/lazy'), {
   loading: () => (
@@ -45,15 +58,28 @@ const initPlayerProgress: PlayerProgress = {
   duration: 0,
 }
 
+
+function downloadJSON(list) {
+  const data = JSON.stringify(list)
+  const blob = new Blob([data], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'data.json'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
+}
+
 function AnalyzeVideoPage() {
   const router = useRouter()
   const { courseId, videoId } = router.query
 
+  // Fetch video and view log
   const [video, setVideo] = useState<Video>(null)
-  const [viewLog, setViewLog] = useState<ViewLog[]>([])
-
-  const playerBoxRef = useRef<HTMLDivElement>(null)
-  const heatmapRef = useRef<Heatmap<'value', 'x', 'y'>>(null)
+  const [viewLog, setViewLog] = useState<ViewLog>(null)
+  const [views, setViews] = useState([])
 
   useEffect(() => {
     if (!router.isReady) return
@@ -66,23 +92,40 @@ function AnalyzeVideoPage() {
       const res = await fetch(
         `/api/record/log?courseId=${courseId}&videoId=${videoId}`
       )
-      const data = await res.json()
+      const data: ViewLog = await res.json()
       setViewLog(data)
+      console.log(data)
+
+      // downloadJSON(data)
+
+      // Chart
+      setViews(() => {
+        const viewsData = []
+        for (let i = 0; i < Object.keys(data).length; i++) {
+          const logs = data[i]
+          const viewers = logs.length
+          viewsData.push({ viewer: viewers })
+        }
+        return viewsData
+      })
     }
+
     fetchVideo()
     fetchViewLog()
   }, [router.isReady])
 
+  // Player state
   const [selectRange, setSelectRange] = useState([0, 5])
-
   const [playing, setPlaying] = useState(false)
   const [ready, setReady] = useState(false)
+  const [playerProgress, setPlayerProgress] = useState(initPlayerProgress)
+  const [reactPlayer, setReactPlayer] = useState<ReactPlayerType>(null)
+  const playerBoxRef = useRef<HTMLDivElement>(null)
+
   const play = () => setPlaying(true)
   const pause = () => setPlaying(false)
-  const [playerProgress, setPlayerProgress] = useState(initPlayerProgress)
 
-  const [reactPlayer, setReactPlayer] = useState<ReactPlayerType>(null)
-
+  // Player event handler
   const handlePlayerProgress = (props: OnProgressProps) => {
     // const currentFocus = viewLog
 
@@ -110,35 +153,85 @@ function AnalyzeVideoPage() {
     }
   }
 
-  //init heatmap
+  // Init heatmap
+  const heatmapRef = useRef<Heatmap<'value', 'x', 'y'>>(null)
   useEffect(() => {
     if (ready && !heatmapRef.current) {
       heatmapRef.current = h337.create({
         container: document.querySelector('#analyze-player'),
+        blur: 0.8,
       })
+      document
+        .querySelector('.heatmap-canvas')
+        .setAttribute(
+          'style',
+          'position: absolute; top: 0; left: 0; pointer-events: none;'
+        )
     }
   }, [ready])
 
-  //update heatmap
+  const videoX = useRef<number>()
+  const videoY = useRef<number>()
+  const videoW = useRef<number>()
+  const videoH = useRef<number>()
+
+  const playerXY = useCallback(() => {
+    if (playerBoxRef.current) {
+      const playerW = playerBoxRef.current.clientWidth
+      const playerH = playerBoxRef.current.clientHeight
+      const playerX = playerBoxRef.current.offsetLeft
+      const playerY = playerBoxRef.current.offsetTop
+      console.log(playerW, playerH, playerX, playerY)
+      const { newPlayerX, newPlayerY, newPlayerW, newPlayerH } = calculateXY(
+        playerX,
+        playerY,
+        playerW,
+        playerH
+      )
+      videoX.current = newPlayerX
+      videoY.current = newPlayerY
+      videoW.current = newPlayerW
+      videoH.current = newPlayerH
+    }
+  }, [playerBoxRef.current?.clientWidth])
+
   useEffect(() => {
-    if (heatmapRef?.current != null && playerProgress.playedSeconds > 0) {
+    playerXY()
+  }, [playerXY])
+
+  // Update heatmap
+  useEffect(() => {
+    if (
+      heatmapRef?.current != null &&
+      playerProgress.playedSeconds > 0 &&
+      viewLog
+    ) {
       // now generate some random data
       var points = []
       var max = 0
-      var width = document.querySelector('#analyze-player').clientWidth
-      var height = document.querySelector('#analyze-player').clientHeight
-      var len = 200
+      // console.log(playerWidth, playerHeight, playerX, playerY)
+      // console.log(viewLog[Math.floor(playerProgress.playedSeconds)])
 
-      while (len--) {
-        var val = Math.floor(Math.random() * 100)
-        max = Math.max(max, val)
-        var point = {
-          x: Math.floor(Math.random() * width),
-          y: Math.floor(Math.random() * height),
-          value: val,
+      viewLog[Math.floor(playerProgress.playedSeconds)].map((v) => {
+        const widthBlackBlock = videoX.current - playerBoxRef.current.offsetLeft
+        const heightBlackBlock = videoY.current - playerBoxRef.current.offsetTop
+        const { x, y } = scaleXY(
+          v.x,
+          v.y,
+          v.playerW,
+          v.playerH,
+          videoW.current,
+          videoH.current
+        )
+        const point = {
+          x: Math.floor(x + widthBlackBlock),
+          y: Math.floor(y + heightBlackBlock),
+          value: 1,
         }
         points.push(point)
-      }
+      })
+
+      // const { avgX, avgY, medianX, medianY } = calculateCenterCoordinate(points)
       // heatmap data format
       var data = {
         min: 0,
@@ -151,7 +244,7 @@ function AnalyzeVideoPage() {
     }
   }, [playerProgress.playedSeconds])
 
-  if (!video || viewLog.length === 0) {
+  if (!video || !viewLog) {
     return (
       <CircularProgress
         sx={{
@@ -168,17 +261,6 @@ function AnalyzeVideoPage() {
 
   return (
     <>
-      <span
-        style={{
-          backgroundColor: 'red',
-          width: '16px',
-          height: '16px',
-          borderRadius: '50%',
-          position: 'absolute',
-          top: '500px',
-          left: '1000px',
-        }}
-      ></span>
       <Box display="flex" flexDirection="column" padding={2}>
         <Box
           display="flex"
@@ -190,7 +272,7 @@ function AnalyzeVideoPage() {
           <Box width="80%">
             {/*播放器*/}
             <Box ref={playerBoxRef}>
-              <Box
+              {/* <Box
                 position="absolute"
                 zIndex={1}
                 width={playerBoxRef.current?.clientWidth}
@@ -198,7 +280,7 @@ function AnalyzeVideoPage() {
                 onClick={() => {
                   playing ? pause() : play()
                 }}
-              />
+              /> */}
               <ReactPlayerDynamic
                 id={'analyze-player'}
                 fallback={<div>loading...</div>}
@@ -224,10 +306,19 @@ function AnalyzeVideoPage() {
                 }}
               />
             </Box>
+            <Box
+              position={'relative'}
+              width={'100%'}
+              height={'70px'}
+              // maxHeight={'60px'}
+              top={'37px'}
+            >
+              <ViewChart data={views} />
+            </Box>
             <Box>
               {/*時間軸*/}
               <TimeRangeSlider
-                sx={{ width: '100%', padding: '10px 0 10px 0' }}
+                sx={{ width: '100%', padding: '0 0 10px 0' }}
                 reactPlayer={reactPlayer}
                 playerProgress={playerProgress}
                 url={video.url}
@@ -241,7 +332,7 @@ function AnalyzeVideoPage() {
                 onSelectRangeChange={(startTime, endTime) => {
                   setSelectRange([startTime, endTime])
                 }}
-              />
+              ></TimeRangeSlider>
             </Box>
           </Box>
         </Box>
