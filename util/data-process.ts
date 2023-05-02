@@ -1,4 +1,4 @@
-import { EyeTrackingLog, ViewLog } from '../types/videoLog'
+import { EyeTrack, ViewLog } from '../types/videoLog'
 
 class KalmanFilter {
   private A: number // 状态转移矩阵
@@ -41,13 +41,13 @@ class KalmanFilter {
 }
 
 export function smoothData(
-  data: EyeTrackingLog[],
+  data: EyeTrack[],
   Q: number,
   R: number
-): EyeTrackingLog[] {
+): EyeTrack[] {
   const kfX = new KalmanFilter(1, 1, Q, R, 1, data[0].x)
   const kfY = new KalmanFilter(1, 1, Q, R, 1, data[0].y)
-  const result: EyeTrackingLog[] = []
+  const result: EyeTrack[] = []
   for (let i = 0; i < data.length; i++) {
     const x = kfX.predict()
     const y = kfY.predict()

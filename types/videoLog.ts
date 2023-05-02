@@ -16,13 +16,52 @@ type Action = {
     | 'submitAnswer'
   playSecond?: number
   questionId?: string
+  questionType?: string
   focusTime?: number
   isCorrect?: boolean
   x?: number
   y?: number
+  playerW?: number
+  playerH?: number
 }
 
-export type EyeTrackingLog = {
+export type AllAnalyticsLogActions = {
+  [userId: string]: Actions[][]
+}
+export interface AnalysisLogs {
+  [userId: string]: {
+    name: string
+    email: string
+    logs: Actions[][]
+  }
+}
+export type Logs = {
+  startTime: string
+  endTime: string
+  eyeTrackLogs: EyeTrackLogs
+  actionLogs: ActionLogs
+}
+
+export type EyeTrackLogs = {
+  [playSecond: number]: EyeTrack
+}
+
+export type ActionLogs = {
+  [time: string]: Action
+}
+
+export type Actions = {
+  time: Date
+  action: Action
+}
+export type Feedbacks = {
+  id: string
+  createdAt: Date
+  isCorrect: boolean
+  questionType: string
+}
+
+export type EyeTrack = {
   x: number
   y: number
   playerW: number
@@ -30,7 +69,7 @@ export type EyeTrackingLog = {
 }
 
 export type ViewLog = {
-  [playSecond: number]: EyeTrackingLog[]
+  [playSecond: number]: EyeTrack[]
 }
 
 export type AnalyticsLog = {
@@ -161,4 +200,11 @@ type drag = {
   options: Position[]
   questionType: string
 }
-export type allInteractionType = choice | rank | fill | drag
+export type allInteractionType = {
+  id: string
+  feedback: {
+    createdAt: Date
+    isCorrect: boolean
+  }[]
+  questionType: string
+}
